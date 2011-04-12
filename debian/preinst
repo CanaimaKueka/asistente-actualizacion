@@ -1,0 +1,78 @@
+#!/bin/bash -e
+#
+# ==============================================================================
+# PAQUETE: canaima-bienvenido
+# ARCHIVO: preinst
+# DESCRIPCIÓN: Configura el sistema antes de la instalación del paquete.
+# COPYRIGHT:
+#  (C) 2010 Luis Alejandro Martínez Faneyth <martinez.faneyth@gmail.com>
+#  (C) 2010 Diego Alberto Aguilera Zambrano <daguilera85@gmail.com>
+#  (C) 2010 Carlos Alejandro Guerrero Mora <guerrerocarlos@gmail.com>
+#  (C) 2010 Francisco Javier Vásquez Guerrero <franjvasquezg@gmail.com>
+# LICENCIA: GPL3
+# ==============================================================================
+#
+# Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo los
+# términos de la Licencia Pública General de GNU (versión 3).
+
+PKG="canaima-bienvenido"
+
+case ${1} in
+
+	install|upgrade)
+
+		if [ -e /etc/init.d/canaima-bienvenido-video ] || [ -e /usr/share/canaima-bienvenido/canaima-bienvenido-video.avi ]; then
+			rm -f /etc/init.d/canaima-bienvenido-video
+			rm -f /usr/share/canaima-bienvenido/canaima-bienvenido-video.avi
+		fi
+
+		if [ -e /etc/skel/Escritorio/Bienvenido\ a\ Canaima.desktop ]; then
+			rm -f /etc/skel/Escritorio/Bienvenido\ a\ Canaima.desktop
+		fi
+
+                if [ -e /etc/skel/.config/autostart/Bienvenido\ a\ Canaima.desktop ]; then
+                        rm -f /etc/skel/.config/autostart/Bienvenido\ a\ Canaima.desktop
+		fi
+
+		# Para cada usuario en /home/ ...
+		for usuario in /home/*? ; do
+
+			# Obteniendo sólo el nombre del usuario
+			usuario_min=$(basename ${usuario})
+
+                        # Y en caso de que el usuario sea un usuario activo (existente en /etc/shadow) ...
+                        case  $(grep "${usuario_min}:.*:.*:.*:.*:.*:::" /etc/shadow) in
+
+                                '')
+                                # No hace nada si no se encuentra en /etc/shadow
+                                ;;
+
+                                *)
+
+                		if [ -e ${usuario}/.config/autostart/Bienvenido\ a\ Canaima.desktop ]; then
+                		        rm -f ${usuario}/.config/autostart/Bienvenido\ a\ Canaima.desktop
+				fi
+
+                		if [ -e ${usuario}/Escritorio/Bienvenido\ a\ Canaima.desktop ]; then
+                		        rm -f ${usuario}/Escritorio/Bienvenido\ a\ Canaima.desktop
+				fi
+				;;
+
+			esac
+		done
+
+	;;
+
+        abort-upgrade)
+        ;;
+
+        *)
+                echo "preinst no reconoce el argumento '"${1}"'" >&2
+                exit 1
+        ;;
+
+esac
+
+#DEBHELPER#
+
+exit 0

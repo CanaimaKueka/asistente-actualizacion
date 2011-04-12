@@ -1,0 +1,17 @@
+Source: canaima-asistente-migracion
+Section: misc
+Priority: optional
+Maintainer: Equipo de Desarrollo de Canaima GNU/Linux <desarrolladores@canaima.softwarelibre.gob.ve>
+Uploaders: Equipo de Desarrollo de Canaima GNU/Linux <desarrolladores@canaima.softwarelibre.gob.ve>
+Build-Depends: debhelper (>= 7.0.50~), cdbs
+Standards-Version: 3.9.1
+Homepage: http://canaima.softwarelibre.gob.ve/
+Vcs-Git: git://gitorious.org/canaima-gnu-linux/canaima-asistente-migracion.git
+Vcs-Browser: http://gitorious.org/canaima-gnu-linux/canaima-asistente-migracion/trees/master
+
+Package: canaima-asistente-migracion
+Architecture: all
+Depends: python, ${shlibs:Depends}, ${misc:Depends}
+Description: Asistente para migrar de Canaima 2.0 o 2.1 a 3.0 
+ Asistente se encargado de proveer una forma facil e intuitiva
+ para actualizar el sistema a Canaima 3.0
