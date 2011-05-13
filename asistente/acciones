@@ -102,6 +102,13 @@ case "$PASO" in
         DEBIAN_FRONTEND=noninteractive aptitude --assume-yes canaima-escritorio-gnome
         DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes galeon
 	DEBIAN_FRONTEND=noninteractive aptitude --assume-yes full-upgrade
+	DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes gstreamer0.10-gnomevfs splashy
+	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes gdm3
+	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes burg
+	DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes canaima-base
+	DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes canaima-estilo-visual
+	DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes canaima-escritorio-gnome
+
 	echo 'PASO=6' > $BASE"pasobash"
 	echo "El sistema se reiniciará de nuevo en 15 segundos para continuar con la actualización" | zenity --notification --listen &
 	sleep 15
