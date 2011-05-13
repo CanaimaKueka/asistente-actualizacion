@@ -4,4 +4,4 @@ Pin-Priority: 900
 
 Package: *
 Pin: release o=Debian
-Pin-Priority: 100
+Pin-Priority: 800
