@@ -8,12 +8,28 @@ case "$PASO" in
 	echo "****************22"
 	mkdir -p $BASE
 
-
+	###VERIFICAR SOURCES.LIST
 
 
 	echo "****************instalando galeon" 
-	aptitude update && apt-get autoclean
+	# Obtenemos las ultimas versiones de los paquetes y actualizamos 2.1
+	aptitude update && apt-get autoclean&&aptitude --assume-yes full-upgrade
+	# Instalamos otro proveedor de gnome-www-browser
 	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes galeon 
+
+
+
+	rm /etc/default/grub
+	echo "Limpiando sistema" | zenity --notification --listen &
+	echo "Limpiando sistema quitando openoffice" 
+	DEBIAN_FRONTEND=noninteractive apt-get purge --force-yes -y openoffice* 
+	DEBIAN_FRONTEND=noninteractive apt-get purge --force-yes -y firefox*
+	echo "****************desinstalando thunderbird" 
+	DEBIAN_FRONTEND=noninteractive apt-get purge --force-yes -y thunderbird*
+	echo "****************desinstalando splashy" 
+	DEBIAN_FRONTEND=noninteractive apt-get purge --force-yes -y splashy*
+	echo "Limpiando sistema autoremove" 
+	DEBIAN_FRONTEND=noninteractive apt-get autoremove --force-yes -y 
 
 
 	echo "Actualizando fuentes de software del sistema" | zenity --notification --listen &
@@ -29,17 +45,9 @@ case "$PASO" in
 
 	aptitude update && apt-get autoclean
 
-	rm /etc/default/grub
-	echo "Limpiando sistema" | zenity --notification --listen &
-	echo "Limpiando sistema quitando openoffice" 
-	DEBIAN_FRONTEND=noninteractive apt-get purge --force-yes -y openoffice* 
-	DEBIAN_FRONTEND=noninteractive apt-get purge --force-yes -y firefox*
-	echo "****************desinstalando thunderbird" 
-	DEBIAN_FRONTEND=noninteractive apt-get purge --force-yes -y thunderbird*
-	echo "****************desinstalando splashy" 
-	DEBIAN_FRONTEND=noninteractive apt-get purge --force-yes -y splashy*
-	echo "Limpiando sistema autoremove" 
-	DEBIAN_FRONTEND=noninteractive apt-get autoremove --force-yes -y 
+
+
+
 	echo "****************2"
 	aptitude update && apt-get autoclean
 	echo "**************** sources.list final"
