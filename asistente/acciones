@@ -23,6 +23,7 @@ case "$PASO" in
 	DEBIAN_FRONTEND=noninteractive apt-get purge --force-yes -y openoffice* firefox* thunderbird* canaima-accesibilidad canaima-instalador-vivo canaima-particionador
 	echo "Limpiando sistema autoremove" 
 	DEBIAN_FRONTEND=noninteractive apt-get autoremove --force-yes -y 
+	BASE="/usr/share/asistente-actualizacion/"
 
 
 	echo "Actualizando fuentes de software del sistema" | zenity --notification --listen &
@@ -99,12 +100,13 @@ case "$PASO" in
 	aptitude install canaima-llaves
 	DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes epiphany-browser epiphany-browser-data libgraphviz4 libslab0 gtkhtml3.14 busybox-syslogd dsyslog inetutils-syslogd rsyslog socklog-run sysklogd syslog-ng libfam0c102
 	debconf-set-selections $BASE"selections.conf"
-        DEBIAN_FRONTEND=noninteractive aptitude --assume-yes canaima-escritorio-gnome
+        DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes canaima-escritorio-gnome
         DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes galeon
 	DEBIAN_FRONTEND=noninteractive aptitude --assume-yes full-upgrade
 	DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes gstreamer0.10-gnomevfs splashy
 	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes gdm3
 	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes burg
+	aptitude update
 	DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes canaima-base
 	DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes canaima-estilo-visual
 	DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes canaima-escritorio-gnome

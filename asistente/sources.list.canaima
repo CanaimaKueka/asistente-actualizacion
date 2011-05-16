@@ -1,2 +1,2 @@
-deb http://repositorio.canaima.softwarelibre.gob.ve/ roraima usuarios
-deb http://universo.canaima.softwarelibre.gob.ve/ squeeze main contrib non-free
+deb http://mirror/canaima3 roraima usuarios
+deb http://mirror/debian squeeze main contrib non-free
