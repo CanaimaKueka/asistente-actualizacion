@@ -5,94 +5,60 @@ BASE="/usr/share/asistente-actualizacion/"
 
 case "$PASO" in
   2)
-	echo "****************22"
+	echo "Entrando en Seccion 2 del actualizador"
 	mkdir -p $BASE
-
 	###VERIFICAR SOURCES.LIST
-
-
-	echo "****************instalando galeon" 
-	# Obtenemos las ultimas versiones de los paquetes y actualizamos 2.1
+	echo "**************** instalando galeon" 
+	# Obtenemos las ultimas versiones de los paquetes y actualizamos los ultimos paquetes de 2.1
 	aptitude update && apt-get autoclean&&aptitude --assume-yes full-upgrade
 	# Instalamos otro proveedor de gnome-www-browser
 	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes galeon 
-
-	rm /etc/default/grub
-	echo "Limpiando sistema" | zenity --notification --listen &
-	echo "Limpiando sistema quitando openoffice" 
+	##- rm /etc/default/grub
+	echo "Limpiando sistema, quitando openoffice" 
 	DEBIAN_FRONTEND=noninteractive apt-get purge --force-yes -y openoffice* firefox* thunderbird* canaima-accesibilidad canaima-instalador-vivo canaima-particionador
-	echo "Limpiando sistema autoremove" 
+	echo "Limpiando sistema con autoremove" 
 	DEBIAN_FRONTEND=noninteractive apt-get autoremove --force-yes -y 
 	BASE="/usr/share/asistente-actualizacion/"
-
-
 	echo "Actualizando fuentes de software del sistema" | zenity --notification --listen &
 	cp /etc/apt/sources.list $BASE"sources.list.original"
-	echo "**************** copindo sources.list"
+	echo "**************** copiando sources.list nuevo, respaldando el existente"
 	cat /etc/apt/sources.list
 	cp $BASE"sources.list" /etc/apt/sources.list
 	cp /etc/apt/preferences $BASE"preferences.original"
 	cp $BASE"preferences" /etc/apt/preferences
-
-	export DEBIAN_FRONTEND="noninteractive"
+	echo "**************** Presembrado de respuestas, no se realiza en acciones_manual ya que aun le falta automatización
 	debconf-set-selections $BASE"selections.conf"
-
-
-	echo "****************2"
+	echo "**************** Actualizando con nuevo sources.list
 	aptitude update && apt-get autoclean
-	echo "**************** sources.list final"
-	cat /etc/apt/sources.list
-	echo "*************3"
-	echo "Actualizando componentes basicos" | zenity --notification --listen &
-	echo "actualizando componentes basicos aptitude apt dpkg debian-keyring locales linux-image-2.6.32-5-686"
-
-	
+	echo "actualizando componentes basicos aptitude apt dpkg debian-keyring locales linux-image-2.6.32-5-686, etc"
 	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes aptitude apt dpkg debian-keyring locales --without-recommends && apt-get -f install
-	#
 	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes linux-image-2.6.32-5-686 perl libperl5.10
-	echo "**********4"
 	echo 'PASO=3' > $BASE"pasobash"
-	echo "El sistema se reiniciará en 15 segundos para continuar con la actualización" | zenity --notification --listen &
-	echo "********5"
-#	reboot
-        exit 1
+	echo "Por favor reinicie el sistema y vuelva a ejecutar este script para continuar"
+	read
+        exit 0
   ;;
   3)
-	echo "****************33"
-	echo "Actualizando segundos componentes basicos" | zenity --notification --listen &
+	echo "Entrando en Seccion 3 del actualizador"
+	echo "Actualizando segundos componentes basicos (udev)"
+	echo "**************** Presembrado de respuestas, no se realiza en acciones_manual ya que aun le falta automatización
 	debconf-set-selections $BASE"selections.conf"
-	#mkdir -p /etc/skel/.mozilla/firefox/canaima.default/
-	#touch /etc/skel/.mozilla/firefox/canaima.default/cert8.db
 	DEBIAN_FRONTEND=noninteractive apt-get --force-yes -y -f install 
 	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes udev
-	echo 'PASO=4' > $BASE"pasobash"
-	echo "El sistema se reiniciará de nuevo en 15 segundos para continuar con la actualización" | zenity --notification --listen &
-	sleep 15
-#	reboot
-        exit 1
-
+	echo "El sistema debe reiniciarse y volver a correr este script al iniciar"
+	read
+        exit 0
   ;;
   4)
-	echo "****************44"
-	echo "Actualizando base del sistema." | zenity --notification --listen &
-	cat /etc/apt/sources.list
-	cat /etc/apt/preferences
+	echo "Entrando en Seccion 4 del actualizador"
+	echo "Actualizando base del sistema."
+	echo "**************** Presembrado de respuestas, no se realiza en acciones_manual ya que aun le falta automatización
 	debconf-set-selections $BASE"selections.conf"
 	DEBIAN_FRONTEND=noninteractive aptitude --assume-yes install gconf2=2.28.1-6 libgconf2-4=2.28.1-6 gconf2-common=2.28.1-6
 	DEBIAN_FRONTEND=noninteractive apt-get --force-yes -y upgrade
 	DEBIAN_FRONTEND=noninteractive apt-get --force-yes -y dist-upgrade
 	DEBIAN_FRONTEND=noninteractive aptitude --assume-yes full-upgrade
-	echo 'PASO=5' > $BASE"pasobash"
-	echo "El sistema se reiniciará de nuevo en 15 segundos para continuar con la actualización" | zenity --notification --listen &
-	sleep 15
-#	reboot
-        exit 1
-
-	
-
-  ;;
-  5)
-	echo "Actualizando resto del sistema." | zenity --notification --listen &
+	echo "Actualizando resto del sistema."
 	rm /etc/skel/.purple/accels /etc/skel/.purple/accounts.xml /etc/skel/.purple/blist.xml /etc/skel/.purple/status.xml	
 	cp $BASE"preferences.canaima" /etc/apt/preferences
 	cp $BASE"sources.list.canaima" /etc/apt/sources.list
@@ -106,29 +72,23 @@ case "$PASO" in
 	DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes gstreamer0.10-gnomevfs splashy
 	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes gdm3
 	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes burg
-	aptitude update
 	DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes canaima-base
 	DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes canaima-estilo-visual
 	DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes canaima-escritorio-gnome
-	update-burg
 	echo "/usr/sbin/gdm3" > /etc/X11/default-display-manager
-	echo 'PASO=6' > $BASE"pasobash"
-	echo "El sistema se reiniciará de nuevo en 15 segundos para continuar con la actualización" | zenity --notification --listen &
-	sleep 15
-#	reboot
-        exit 1
-
-  ;;
-  6)
-    dpkg-reconfigure canaima-estilo-visual
-    ####borrar gconf de cada usuario
-	echo "Actualizacion finalizada con EXITO." | zenity --notification --listen &
-	echo "ya deberia tener hecho todo papito"
-        exit 1
+	update-burg
+	echo "Se quita icono de Thunderbird y Firefox"
+	rm -rf /home/w/.gconf/apps/panel/objects/browser* /home/w/.gconf/apps/panel/objects/email*
+	echo 'PASO=5' > $BASE"pasobash"
+	echo "El sistema debe reiniciarse una vez mas y ya tendrá canaima 3.0 instalado en su equipo."
+	read
+        exit 0
   ;;
   *)
 	echo 'PASO=2' > $BASE"pasobash"
-        echo "Ejecutese de nuevo"
+	echo "Entrando en Seccion 4 del actualizador"
+        echo "Ud. deberá ejecutar este script varias veces y reinciar cuando el script se lo indique, asi como responder las preguntas que amerite la actualización de cada paquete que lo amerite."
+	echo "Por favor, vuelva a ejecutar este script"
         exit 1
   ;;
 esac
