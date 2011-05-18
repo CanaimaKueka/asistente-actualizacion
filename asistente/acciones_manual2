@@ -12,12 +12,12 @@ case "$PASO" in
 	# Obtenemos las ultimas versiones de los paquetes y actualizamos los ultimos paquetes de 2.1
 	aptitude update && apt-get autoclean&&aptitude --assume-yes full-upgrade
 	# Instalamos otro proveedor de gnome-www-browser
-	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes galeon 
+	aptitude install --assume-yes galeon 
 	##- rm /etc/default/grub
 	echo "Limpiando sistema, quitando openoffice" 
-	DEBIAN_FRONTEND=noninteractive apt-get purge --force-yes -y openoffice* firefox* thunderbird* canaima-accesibilidad canaima-instalador-vivo canaima-particionador
+	apt-get purge --force-yes -y openoffice* firefox* thunderbird* canaima-accesibilidad canaima-instalador-vivo canaima-particionador
 	echo "Limpiando sistema con autoremove" 
-	DEBIAN_FRONTEND=noninteractive apt-get autoremove --force-yes -y 
+	apt-get autoremove --force-yes -y 
 	BASE="/usr/share/asistente-actualizacion/"
 	echo "Actualizando fuentes de software del sistema" 
 	cp /etc/apt/sources.list $BASE"sources.list.original"
@@ -26,14 +26,14 @@ case "$PASO" in
 	cp /etc/apt/preferences $BASE"preferences.original"
 	cp $BASE"preferences" /etc/apt/preferences
 	echo "**************** Presembrado de respuestas, no se realiza en acciones_manual ya que aun le falta automatización"
-	debconf-set-selections $BASE"selections.conf"
+	#debconf-set-selections $BASE"selections.conf"
 	echo "**************** Actualizando con nuevo sources.list"
 	aptitude update && apt-get autoclean
 	echo "actualizando componentes basicos aptitude apt dpkg debian-keyring locales linux-image-2.6.32-5-686, etc"
-	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes aptitude apt dpkg debian-keyring locales --without-recommends && apt-get -f install
-	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes linux-image-2.6.32-5-686 perl libperl5.10
+	aptitude install --assume-yes aptitude apt dpkg debian-keyring locales --without-recommends && apt-get -f install
+	aptitude install --assume-yes linux-image-2.6.32-5-686 perl libperl5.10
 	echo 'PASO=3' > $BASE"pasobash"
-	echo "Por favor reinicie el sistema y vuelva a ejecutar este script para continuar"
+	echo "Por favor reinicie el sistema seleccionando el nuevo kernel y vuelva a ejecutar este script para continuar"
 	read
         exit 0
   ;;
@@ -41,9 +41,9 @@ case "$PASO" in
 	echo "Entrando en Seccion 3 del actualizador"
 	echo "Actualizando segundos componentes basicos (udev)"
 	echo "**************** Presembrado de respuestas, no se realiza en acciones_manual ya que aun le falta automatización"
-	debconf-set-selections $BASE"selections.conf"
-	DEBIAN_FRONTEND=noninteractive apt-get --force-yes -y -f install 
-	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes udev
+	#debconf-set-selections $BASE"selections.conf"
+	apt-get --force-yes -y -f install 
+	aptitude install --assume-yes udev
 	echo "El sistema debe reiniciarse y volver a correr este script al iniciar"
 	echo 'PASO=4' > $BASE"pasobash"
 	read
@@ -53,28 +53,28 @@ case "$PASO" in
 	echo "Entrando en Seccion 4 del actualizador"
 	echo "Actualizando base del sistema."
 	echo "**************** Presembrado de respuestas, no se realiza en acciones_manual ya que aun le falta automatización"
-	debconf-set-selections $BASE"selections.conf"
-	DEBIAN_FRONTEND=noninteractive aptitude --assume-yes install gconf2=2.28.1-6 libgconf2-4=2.28.1-6 gconf2-common=2.28.1-6
-	DEBIAN_FRONTEND=noninteractive apt-get --force-yes -y upgrade
-	DEBIAN_FRONTEND=noninteractive apt-get --force-yes -y dist-upgrade
-	DEBIAN_FRONTEND=noninteractive aptitude --assume-yes full-upgrade
+	#debconf-set-selections $BASE"selections.conf"
+	aptitude --assume-yes install gconf2=2.28.1-6 libgconf2-4=2.28.1-6 gconf2-common=2.28.1-6
+	apt-get --force-yes -y upgrade
+	apt-get --force-yes -y dist-upgrade
+	aptitude --assume-yes full-upgrade
 	echo "Actualizando resto del sistema."
 	rm /etc/skel/.purple/accels /etc/skel/.purple/accounts.xml /etc/skel/.purple/blist.xml /etc/skel/.purple/status.xml	
 	cp $BASE"preferences.canaima" /etc/apt/preferences
 	cp $BASE"sources.list.canaima" /etc/apt/sources.list
 	aptitude update && apt-get autoclean
 	aptitude install canaima-llaves
-	DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes epiphany-browser epiphany-browser-data libgraphviz4 libslab0 gtkhtml3.14 busybox-syslogd dsyslog inetutils-syslogd rsyslog socklog-run sysklogd syslog-ng libfam0c102
-	debconf-set-selections $BASE"selections.conf"
-        DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes canaima-escritorio-gnome
-        DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes galeon
-	DEBIAN_FRONTEND=noninteractive aptitude --assume-yes full-upgrade
-	DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes gstreamer0.10-gnomevfs splashy
-	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes gdm3
-	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes burg
-	DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes canaima-base
-	DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes canaima-estilo-visual
-	DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes canaima-escritorio-gnome
+	aptitude purge --assume-yes epiphany-browser epiphany-browser-data libgraphviz4 libslab0 gtkhtml3.14 busybox-syslogd dsyslog inetutils-syslogd rsyslog socklog-run sysklogd syslog-ng libfam0c102
+	#debconf-set-selections $BASE"selections.conf"
+        aptitude install --assume-yes canaima-escritorio-gnome
+        aptitude purge --assume-yes galeon
+	aptitude --assume-yes full-upgrade
+	aptitude purge --assume-yes gstreamer0.10-gnomevfs splashy
+	aptitude install --assume-yes gdm3
+	aptitude install --assume-yes burg
+	aptitude reinstall --assume-yes canaima-base
+	aptitude reinstall --assume-yes canaima-estilo-visual
+	aptitude reinstall --assume-yes canaima-escritorio-gnome
 	echo "/usr/sbin/gdm3" > /etc/X11/default-display-manager
 	update-burg
 	echo "Se quita icono de Thunderbird y Firefox"
