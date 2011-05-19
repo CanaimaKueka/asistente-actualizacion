@@ -26,7 +26,7 @@ case "$PASO" in
 	cp /etc/apt/preferences $BASE"preferences.original"
 	cp $BASE"preferences" /etc/apt/preferences
 	echo "**************** Presembrado de respuestas, no se realiza en acciones_manual ya que aun le falta automatización"
-	debconf-set-selections $BASE"selections.conf"
+	#debconf-set-selections $BASE"selections.conf"
 	echo "**************** Actualizando con nuevo sources.list"
 	aptitude update && apt-get autoclean
 	echo "actualizando componentes basicos aptitude apt dpkg debian-keyring locales linux-image-2.6.32-5-686, etc"
@@ -41,7 +41,7 @@ case "$PASO" in
 	echo "Entrando en Seccion 3 del actualizador"
 	echo "Actualizando segundos componentes basicos (udev)"
 	echo "**************** Presembrado de respuestas, no se realiza en acciones_manual ya que aun le falta automatización"
-	debconf-set-selections $BASE"selections.conf"
+	#debconf-set-selections $BASE"selections.conf"
 	DEBIAN_FRONTEND=noninteractive apt-get --force-yes -y -f install 
 	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes udev
 	echo "El sistema debe reiniciarse y volver a correr este script al iniciar"
@@ -53,7 +53,7 @@ case "$PASO" in
 	echo "Entrando en Seccion 4 del actualizador"
 	echo "Actualizando base del sistema."
 	echo "**************** Presembrado de respuestas, no se realiza en acciones_manual ya que aun le falta automatización"
-	debconf-set-selections $BASE"selections.conf"
+	#debconf-set-selections $BASE"selections.conf"
 	DEBIAN_FRONTEND=noninteractive aptitude --assume-yes install gconf2=2.28.1-6 libgconf2-4=2.28.1-6 gconf2-common=2.28.1-6
 	DEBIAN_FRONTEND=noninteractive apt-get --force-yes -y upgrade
 	DEBIAN_FRONTEND=noninteractive apt-get --force-yes -y dist-upgrade
@@ -65,7 +65,7 @@ case "$PASO" in
 	aptitude update && apt-get autoclean
 	aptitude install canaima-llaves
 	DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes epiphany-browser epiphany-browser-data libgraphviz4 libslab0 gtkhtml3.14 busybox-syslogd dsyslog inetutils-syslogd rsyslog socklog-run sysklogd syslog-ng libfam0c102
-	debconf-set-selections $BASE"selections.conf"
+	#debconf-set-selections $BASE"selections.conf"
         DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes canaima-escritorio-gnome
         DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes galeon
 	DEBIAN_FRONTEND=noninteractive aptitude --assume-yes full-upgrade
