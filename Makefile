@@ -42,6 +42,7 @@ install:
 	cp -r asistente/acciones $(DESTDIR)/usr/share/asistente-actualizacion/
 	cp -r asistente/selections.conf $(DESTDIR)/usr/share/asistente-actualizacion/
 	cp -r asistente/acciones $(DESTDIR)/usr/bin/asistente-actualizacion
+	chmod +x $(DESTDIR)/usr/bin/asistente-actualizacion
 
 uninstall:
 
