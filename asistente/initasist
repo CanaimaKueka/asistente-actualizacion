@@ -1,0 +1,70 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+import os
+import gobject
+import pynotify
+import subprocess
+
+
+def foo_cb(n, action):
+       print "INICIAR ACTUALIZACION"
+       subprocess.Popen(["gksu","asistente-actualizacion"])
+       n.close()
+       loop.quit()
+
+def default_cb(n, action):
+       print "NO PASA NADA"
+       n.close()
+       loop.quit()
+
+def default_cb2(n, action):
+       check_cb_conf=open(os.environ['HOME']+"/.config/asistente.conf","w")
+       check_cb_conf.write("MOSTRAR=0")
+       check_cb_conf.close()
+       print "aja22"
+       n.close()
+       loop.quit()
+
+if __name__ == '__main__':
+
+       try:
+           check_cb_conf=open("/usr/share/asistente-actualizacion/paso.conf","r")
+           paso=check_cb_conf.readline()
+       except:
+           paso=""
+       if len(paso) > 0 :
+           if paso.find("6"):
+               check_cb_conf=open("/usr/share/asistente-actualizacion/paso.conf","w")
+               check_cb_conf.write("PASO=7")
+               check_cb_conf.close()
+               if mostrar.find("0") is -1:
+                   pynotify.init ("Asistente Actualización")
+                   loop = gobject.MainLoop ()
+                   n = pynotify.Notification("Actualización exitosa", "Ya puede utilizar Canaima 3.0")
+                   n.set_timeout (pynotify.EXPIRES_NEVER)
+                   n.add_action ("blah", "Actualizar Ahora", foo_cb)
+                   n.add_action("default", "Ignorar", default_cb)
+                   n.add_action("blah2", "No volver a mostrar", default_cb2)
+                   n.show()
+                   loop.run ()
+           else:
+               subprocess.Popen(["gksu","asistente-actualizacion"])
+
+
+       try:
+           check_cb_conf=open(os.environ['HOME']+"/.config/asistente.conf","r")
+           mostrar=check_cb_conf.readline()
+       except:
+           mostrar=""
+       print mostrar
+       if mostrar.find("0") is -1:
+           pynotify.init ("Asistente Actualización")
+           loop = gobject.MainLoop ()
+           n = pynotify.Notification("Nueva actualización disponible", "Ya puede actualizar a Canaima 3.0")
+           n.set_urgency(pynotify.URGENCY_CRITICAL)
+           n.set_timeout (pynotify.EXPIRES_NEVER)
+           n.add_action ("blah", "Actualizar Ahora", foo_cb)
+           n.add_action("default", "Ignorar", default_cb)
+           n.add_action("blah2", "No volver a mostrar", default_cb2)
+           n.show()
+           loop.run ()

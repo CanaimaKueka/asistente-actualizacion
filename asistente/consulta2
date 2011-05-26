@@ -1,0 +1,16 @@
+#!/usr/bin/python
+import pynotify
+import gtk
+
+def callbackGetCancel(notification, action):
+     print "callback:", notification, action
+
+pynotify.init("g2u")	
+note = pynotify.Notification("g2u", "Downloading ...")
+note.set_urgency(pynotify.URGENCY_NORMAL)
+note.set_timeout(pynotify.EXPIRES_NEVER)
+note.add_action("clicked", "Cancel", callbackGetCancel)
+note.show()
+
+gtk.main()
+
