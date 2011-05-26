@@ -48,7 +48,8 @@ if __name__ == '__main__':
                    n.show()
                    loop.run ()
            else:
-               subprocess.Popen(["gksu","asistente-actualizacion"])
+               subprocess.Popen(["gnome-terminal","--command='su-to-root -X -c asistente-actualizacion'")
+               #os.system('gnome-terminal --command="suto"')
 
 
        try:
