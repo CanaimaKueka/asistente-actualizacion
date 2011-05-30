@@ -18,6 +18,8 @@ asistente-actualizacion
 # ------- PREPARANDO CANAIMA 2.1 ------------------------------------------------------------------#
 #==================================================================================================#
 
+debconf-set-selections $BASE"selections.conf"
+
 # Aseguramos que tenemos los repositorios correctos
 cat <<EOF >/etc/apt/sources.list
 #
@@ -25,42 +27,40 @@ cat <<EOF >/etc/apt/sources.list
 #
 
 # Repositorio Antiguo
-deb http://repositorio.canaima.softwarelibre.gob.ve/ aponwao usuarios
+deb http://mirror/canaima3/repositorio/ aponwao usuarios
 
 # Repositorio Estable
-#deb http://repositorio.canaima.softwarelibre.gob.ve/ roraima usuarios
+#deb http://mirror/canaima3/repositorio/ roraima usuarios
 
 # Repositorio de Desarrollo
-#deb http://repositorio.canaima.softwarelibre.gob.ve/ auyantepui usuarios
+#deb http://mirror/canaima3/repositorio/ auyantepui usuarios
 
 # Repositorio de la Base (Debian)
-deb http://universo.canaima.softwarelibre.gob.ve/ lenny main contrib non-free
+deb http://mirror/debian/ lenny main contrib non-free
 
-# Repositorio de actualizaciones de Emergencia
-deb http://seguridad.canaima.softwarelibre.gob.ve/ seguridad usuarios
 
 EOF
 
 # Actualizamos la lista de paquetes
-( aptitude update && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando lista de paquetes ..." --progress --pulsate --auto-close --width=600
+( aptitude update >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando lista de paquetes ..." --progress --pulsate --auto-close --width=600
 
 # Removemos paquetes huérfanos
-( apt-get autoclean && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes huérfanos ..." --progress --pulsate --auto-close --width=600
+( apt-get autoclean >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes huérfanos ..." --progress --pulsate --auto-close --width=600
 
 # Actualizamos Canaima 2.1
-( DEBIAN_FRONTEND=noninteractive aptitude --assume-yes full-upgrade && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando Canaima 2.1 ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude --assume-yes full-upgrade >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando Canaima 2.1 ..." --progress --pulsate --auto-close --width=600
 
 # Instalamos otro proveedor de gnome-www-browser
-( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes galeon && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Preparando migración de Firefox a Cunaguaro ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes galeon >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Preparando migración de Firefox a Cunaguaro ..." --progress --pulsate --auto-close --width=600
 
 # Removemos la configuración vieja del GRUB
-( rm /etc/default/grub && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Preparando migración de Firefox a Cunaguaro ..." --progress --pulsate --auto-close --width=600
+( rm /etc/default/grub >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Preparando migración de Firefox a Cunaguaro ..." --progress --pulsate --auto-close --width=600
 
 # Limpiando Canaima 2.1 de aplicaciones no utilizadas en 3.0
-( DEBIAN_FRONTEND=noninteractive apt-get purge --force-yes -y openoffice* firefox* thunderbird* canaima-accesibilidad canaima-instalador-vivo canaima-particionador && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Limpiando Canaima 2.1 de aplicaciones no utilizadas en 3.0 ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive apt-get purge --force-yes -y openoffice* firefox* thunderbird* canaima-accesibilidad canaima-instalador-vivo canaima-particionador >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Limpiando Canaima 2.1 de aplicaciones no utilizadas en 3.0 ..." --progress --pulsate --auto-close --width=600
 
 # Limpiando paquetes huérfanos
-( DEBIAN_FRONTEND=noninteractive apt-get autoremove --force-yes -y && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes huérfanos ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive apt-get autoremove --force-yes -y >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes huérfanos ..." --progress --pulsate --auto-close --width=600
 
 
 # ------- ACTUALIZANDO COMPONENTES DE INSTALACIÓN DE LA BASE (DEBIAN SQUEEZE) ---------------------#
@@ -68,7 +68,7 @@ EOF
 
 # Estableciendo repositorios sólo para el sistema base
 cat <<EOF >/etc/apt/sources.list
-deb http://universo.canaima.softwarelibre.gob.ve/ squeeze main contrib non-free
+deb http://mirror/debian/ squeeze main contrib non-free
 
 EOF
 
@@ -81,19 +81,19 @@ Pin-Priority: 800
 EOF
 
 # Actualizamos la lista de paquetes
-( aptitude update && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando lista de paquetes ..." --progress --pulsate --auto-close --width=600
+( aptitude update >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando lista de paquetes ..." --progress --pulsate --auto-close --width=600
 
 # Removemos paquetes huérfanos
-( apt-get autoclean && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes huérfanos ..." --progress --pulsate --auto-close --width=600
+( apt-get autoclean >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes huérfanos ..." --progress --pulsate --auto-close --width=600
 
 # Actualizando componentes fundamentales de instalación
-( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes aptitude apt dpkg debian-keyring locales --without-recommends && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando componentes fundamentales de instalación ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes aptitude apt dpkg debian-keyring locales --without-recommends >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando componentes fundamentales de instalación ..." --progress --pulsate --auto-close --width=600
 
 # Arreglando paquetes en mal estado
-( DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -f install && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Arreglando paquetes en mal estado ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -f install >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Arreglando paquetes en mal estado ..." --progress --pulsate --auto-close --width=600
 
 # Instalando nuevo Kernel y librerías Perl
-( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes linux-image-2.6.32-5-686 perl libperl5.10 && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Instalando nuevo Kernel y librerías Perl ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes linux-image-2.6.32-5-686 perl libperl5.10 >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Instalando nuevo Kernel y librerías Perl ..." --progress --pulsate --auto-close --width=600
 
 echo 'PASO=3' > ${PASO_BASH}
 
@@ -104,8 +104,11 @@ reboot && exit 0
 3)
 
 # Estableciendo repositorios sólo para el sistema base
+
+
+debconf-set-selections $BASE"selections.conf"
 cat <<EOF >/etc/apt/sources.list
-deb http://universo.canaima.softwarelibre.gob.ve/ squeeze main contrib non-free
+deb http://mirror/debian/ squeeze main contrib non-free
 
 EOF
 
@@ -118,16 +121,16 @@ Pin-Priority: 800
 EOF
 
 # Actualizamos la lista de paquetes
-( aptitude update && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando lista de paquetes ..." --progress --pulsate --auto-close --width=600
+( aptitude update >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando lista de paquetes ..." --progress --pulsate --auto-close --width=600
 
 # Removemos paquetes huérfanos
-( apt-get autoclean && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes huérfanos ..." --progress --pulsate --auto-close --width=600
+( apt-get autoclean >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes huérfanos ..." --progress --pulsate --auto-close --width=600
 
 # Arreglando paquetes en mal estado
-( DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -f install && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Arreglando paquetes en mal estado ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -f install >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Arreglando paquetes en mal estado ..." --progress --pulsate --auto-close --width=600
 
 # Actualizando gestor de dispositivos UDEV
-( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes udev && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando gestor de dispositivos UDEV ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes udev >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando gestor de dispositivos UDEV ..." --progress --pulsate --auto-close --width=600
 
 echo 'PASO=4' > ${PASO_BASH}
 
@@ -138,8 +141,11 @@ reboot && exit 0
 4)
 
 # Estableciendo repositorios sólo para el sistema base
+
+
+debconf-set-selections $BASE"selections.conf"
 cat <<EOF >/etc/apt/sources.list
-deb http://universo.canaima.softwarelibre.gob.ve/ squeeze main contrib non-free
+deb http://mirror/debian/ squeeze main contrib non-free
 
 EOF
 
@@ -152,25 +158,25 @@ Pin-Priority: 800
 EOF
 
 # Actualizamos la lista de paquetes
-( aptitude update && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando lista de paquetes ..." --progress --pulsate --auto-close --width=600
+( aptitude update >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando lista de paquetes ..." --progress --pulsate --auto-close --width=600
 
 # Removemos paquetes huérfanos
-( apt-get autoclean && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes huérfanos ..." --progress --pulsate --auto-close --width=600
+( apt-get autoclean >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes huérfanos ..." --progress --pulsate --auto-close --width=600
 
 # Arreglando paquetes en mal estado
-( DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -f install && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Arreglando paquetes en mal estado ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -f install >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Arreglando paquetes en mal estado ..." --progress --pulsate --auto-close --width=600
 
 # Actualizando gconf2
-( DEBIAN_FRONTEND=noninteractive aptitude --assume-yes install gconf2=2.28.1-6 libgconf2-4=2.28.1-6 gconf2-common=2.28.1-6 && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando gconf2 ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude --assume-yes install gconf2=2.28.1-6 libgconf2-4=2.28.1-6 gconf2-common=2.28.1-6 >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando gconf2 ..." --progress --pulsate --auto-close --width=600
 
 # Actualización parcial de la base
-( DEBIAN_FRONTEND=noninteractive apt-get --force-yes -y upgrade && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualización parcial de la base ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive apt-get --force-yes -y upgrade >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualización parcial de la base ..." --progress --pulsate --auto-close --width=600
 
 # Actualización total de la base
-( DEBIAN_FRONTEND=noninteractive apt-get --force-yes -y dist-upgrade && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualización total de la base ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive apt-get --force-yes -y dist-upgrade >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualización total de la base ..." --progress --pulsate --auto-close --width=600
 
 # Actualización completa de la base
-( DEBIAN_FRONTEND=noninteractive aptitude --assume-yes full-upgrade && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualización completa de la base ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude --assume-yes full-upgrade >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualización completa de la base ..." --progress --pulsate --auto-close --width=600
 
 echo 'PASO=5' > ${PASO_BASH}
 
@@ -181,9 +187,11 @@ reboot && exit 0
 5)
 
 # Estableciendo repositorios sólo para el sistema base
+
+debconf-set-selections $BASE"selections.conf"
 cat <<EOF >/etc/apt/sources.list
-deb http://repositorio.canaima.softwarelibre.gob.ve/ roraima usuarios
-deb http://universo.canaima.softwarelibre.gob.ve/ squeeze main contrib non-free
+deb http://mirror/canaima3/repositorio/ roraima usuarios
+deb http://mirror/debian/ squeeze main contrib non-free
 
 EOF
 
@@ -200,58 +208,58 @@ Pin-Priority: 800
 EOF
 
 # Actualizamos la lista de paquetes
-( aptitude update && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando lista de paquetes ..." --progress --pulsate --auto-close --width=600
+( aptitude update >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando lista de paquetes ..." --progress --pulsate --auto-close --width=600
 
 # Removemos paquetes huérfanos
-( apt-get autoclean && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes huérfanos ..." --progress --pulsate --auto-close --width=600
+( apt-get autoclean >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes huérfanos ..." --progress --pulsate --auto-close --width=600
 
 # Arreglando paquetes en mal estado
-( DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -f install && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Arreglando paquetes en mal estado ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -f install >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Arreglando paquetes en mal estado ..." --progress --pulsate --auto-close --width=600
 
 # Removemos configuraciones obsoletas
-( rm /etc/skel/.purple/accels /etc/skel/.purple/accounts.xml /etc/skel/.purple/blist.xml /etc/skel/.purple/status.xml && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo configuraciones obsoletas ..." --progress --pulsate --auto-close --width=600
+( rm -rf /etc/skel/.purple/ >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo configuraciones obsoletas ..." --progress --pulsate --auto-close --width=600
 
 # Instalando llaves del repositorio Canaima
-( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes canaima-llaves && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Instalando llaves del repositorio Canaima ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes canaima-llaves >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Instalando llaves del repositorio Canaima ..." --progress --pulsate --auto-close --width=600
 
 # Removiendo paquetes innecesarios
-( DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes epiphany-browser epiphany-browser-data libgraphviz4 libslab0 gtkhtml3.14 busybox-syslogd dsyslog inetutils-syslogd rsyslog socklog-run sysklogd syslog-ng libfam0c102 && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes innecesarios ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes epiphany-browser epiphany-browser-data libgraphviz4 libslab0 gtkhtml3.14 busybox-syslogd dsyslog inetutils-syslogd rsyslog socklog-run sysklogd syslog-ng libfam0c102 >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes innecesarios ..." --progress --pulsate --auto-close --width=600
 
 # Instalando escritorio de Canaima 3.0
-( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes canaima-escritorio-gnome && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Instalando escritorio de Canaima 3.0 ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes canaima-escritorio-gnome >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Instalando escritorio de Canaima 3.0 ..." --progress --pulsate --auto-close --width=600
 
 # Removiendo Navegador web de transición
-( DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes galeon && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo Navegador web de transición ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes galeon >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo Navegador web de transición ..." --progress --pulsate --auto-close --width=600
 
 # Actualización final a Canaima 3.0
-( DEBIAN_FRONTEND=noninteractive aptitude --assume-yes full-upgrade && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualización final a Canaima 3.0 ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude --assume-yes full-upgrade >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualización final a Canaima 3.0 ..." --progress --pulsate --auto-close --width=600
 
 # Removiendo paquetes innecesarios
-( DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes gstreamer0.10-gnomevfs splashy && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes innecesarios ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes gstreamer0.10-gnomevfs splashy >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes innecesarios ..." --progress --pulsate --auto-close --width=600
 
 # Actualizando a GDM3
-( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes gdm3 && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando a GDM3 ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes gdm3 >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando a GDM3 ..." --progress --pulsate --auto-close --width=600
 
 # Actualizando a BURG
-( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes burg && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando a BURG ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes burg >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando a BURG ..." --progress --pulsate --auto-close --width=600
 
 # Reinstalando Base de Canaima
-( DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes canaima-base && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Reinstalando Base de Canaima ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes canaima-base >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Reinstalando Base de Canaima ..." --progress --pulsate --auto-close --width=600
 
 # Reinstalando Estilo Visual
-( DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes canaima-estilo-visual && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Reinstalando Estilo Visual ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes canaima-estilo-visual >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Reinstalando Estilo Visual ..." --progress --pulsate --auto-close --width=600
 
 # Reinstalando Escritorio
-( DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes canaima-escritorio-gnome && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Reinstalando Escritorio ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes canaima-escritorio-gnome >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Reinstalando Escritorio ..." --progress --pulsate --auto-close --width=600
 
 # Actualizando entradas del BURG
-( update-burg && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando entradas del BURG ..." --progress --pulsate --auto-close --width=600
+( update-burg >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando entradas del BURG ..." --progress --pulsate --auto-close --width=600
 
 # Estableciendo GDM3 como Manejador de Pantalla por defecto
-( echo "/usr/sbin/gdm3" > /etc/X11/default-display-manager && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Estableciendo GDM3 como Manejador de Pantalla por defecto ..." --progress --pulsate --auto-close --width=600
+( echo "/usr/sbin/gdm3" > /etc/X11/default-display-manager >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Estableciendo GDM3 como Manejador de Pantalla por defecto ..." --progress --pulsate --auto-close --width=600
 
 # Reconfigurando el Estilo Visual
-( dpkg-reconfigure canaima-estilo-visual && sleep 2 ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Reconfigurando el Estilo Visual ..." --progress --pulsate --auto-close --width=600
+( dpkg-reconfigure canaima-estilo-visual >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Reconfigurando el Estilo Visual ..." --progress --pulsate --auto-close --width=600
 
 echo 'PASO=6' > ${PASO_BASH}
 
