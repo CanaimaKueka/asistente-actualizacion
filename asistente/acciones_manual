@@ -15,7 +15,7 @@ case "$PASO" in
 	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes galeon 
 	##- rm /etc/default/grub
 	echo "Limpiando sistema, quitando openoffice" 
-	DEBIAN_FRONTEND=noninteractive apt-get purge --force-yes -y openoffice* firefox* thunderbird* canaima-accesibilidad canaima-instalador-vivo canaima-particionador
+	DEBIAN_FRONTEND=noninteractive apt-get purge --force-yes -y openoffice* firefox* thunderbird* canaima-instalador-vivo canaima-particionador
 	echo "Limpiando sistema con autoremove" 
 	DEBIAN_FRONTEND=noninteractive apt-get autoremove --force-yes -y 
 	BASE="/usr/share/asistente-actualizacion/"
@@ -68,6 +68,7 @@ case "$PASO" in
 	#debconf-set-selections $BASE"selections.conf"
         DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes canaima-escritorio-gnome
         DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes galeon
+	DEBIAN_FRONTEND=noninteractive apt-get purge --force-yes -y canaima-accesibilidad
 	DEBIAN_FRONTEND=noninteractive aptitude --assume-yes full-upgrade
 	DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes gstreamer0.10-gnomevfs splashy
 	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes gdm3

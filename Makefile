@@ -28,15 +28,21 @@ install:
 	mkdir -p $(DESTDIR)/etc/skel/Escritorio/
 	mkdir -p $(DESTDIR)/etc/skel/.config/autostart/
 	mkdir -p $(DESTDIR)/usr/share/applications/
+	mkdir -p $(DESTDIR)/etc/xdg/autostart/
 	cp -r asistente/principal.py $(DESTDIR)/usr/share/asistente-actualizacion/
+	cp -r asistente/asistente-actualizacion.desktop $(DESTDIR)/etc/xdg/autostart/
+	cp -r asistente/paso.conf $(DESTDIR)/usr/share/asistente-actualizacion/
 	cp -r asistente/gui.glade $(DESTDIR)/usr/share/asistente-actualizacion/
 	cp -r asistente/asistente.png $(DESTDIR)/usr/share/asistente-actualizacion/
+	cp -r asistente/initasist $(DESTDIR)/usr/share/asistente-actualizacion/
 	cp -r asistente/preferences.canaima $(DESTDIR)/usr/share/asistente-actualizacion/
 	cp -r asistente/preferences $(DESTDIR)/usr/share/asistente-actualizacion/
 	cp -r asistente/sources.list $(DESTDIR)/usr/share/asistente-actualizacion/
 	cp -r asistente/sources.list.canaima $(DESTDIR)/usr/share/asistente-actualizacion/
 	cp -r asistente/acciones $(DESTDIR)/usr/share/asistente-actualizacion/
 	cp -r asistente/selections.conf $(DESTDIR)/usr/share/asistente-actualizacion/
+	cp -r asistente/acciones $(DESTDIR)/usr/bin/asistente-actualizacion
+	chmod +x $(DESTDIR)/usr/bin/asistente-actualizacion
 
 uninstall:
 
