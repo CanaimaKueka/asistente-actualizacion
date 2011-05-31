@@ -95,16 +95,7 @@ EOF
 # Instalando nuevo Kernel y librerías Perl
 ( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes linux-image-2.6.32-5-686 perl libperl5.10 >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Instalando nuevo Kernel y librerías Perl ..." --progress --pulsate --auto-close --width=600
 
-echo 'PASO=3' > ${PASO_BASH}
-
-reboot && exit 0
-
-;;
-
-3)
-
 # Estableciendo repositorios sólo para el sistema base
-
 
 debconf-set-selections $BASE"selections.conf"
 cat <<EOF >/etc/apt/sources.list
@@ -132,13 +123,6 @@ EOF
 # Actualizando gestor de dispositivos UDEV
 ( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes udev >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando gestor de dispositivos UDEV ..." --progress --pulsate --auto-close --width=600
 
-echo 'PASO=4' > ${PASO_BASH}
-
-reboot && exit 0
-
-;;
-
-4)
 
 # Estableciendo repositorios sólo para el sistema base
 
@@ -178,13 +162,6 @@ EOF
 # Actualización completa de la base
 ( DEBIAN_FRONTEND=noninteractive aptitude --assume-yes full-upgrade >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualización completa de la base ..." --progress --pulsate --auto-close --width=600
 
-echo 'PASO=5' > ${PASO_BASH}
-
-reboot && exit 0
-
-;;
-
-5)
 
 # Estableciendo repositorios sólo para el sistema base
 
