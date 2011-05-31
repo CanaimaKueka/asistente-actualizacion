@@ -256,7 +256,7 @@ EOF
 ( update-burg >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando entradas del BURG ..." --progress --pulsate --auto-close --width=600
 
 # Estableciendo GDM3 como Manejador de Pantalla por defecto
-( echo "/usr/sbin/gdm3" > /etc/X11/default-display-manager >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Estableciendo GDM3 como Manejador de Pantalla por defecto ..." --progress --pulsate --auto-close --width=600
+( echo "/usr/sbin/gdm3" > /etc/X11/default-display-manager &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Estableciendo GDM3 como Manejador de Pantalla por defecto ..." --progress --pulsate --auto-close --width=600
 
 # Reconfigurando el Estilo Visual
 ( dpkg-reconfigure canaima-estilo-visual >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Reconfigurando el Estilo Visual ..." --progress --pulsate --auto-close --width=600
