@@ -243,6 +243,29 @@ rm /usr/share/applications/openoffice.org-*
 
 update-burg
 
+		# Para cada usuario en /home/ ...
+		for usuario in /home/*? ; do
+
+			#Obteniendo sólo el nombre del usuario
+			usuario_min=$(basename ${usuario})
+
+			#Y en caso de que el usuario sea un usuario activo (existente en /etc/shadow) ...
+			case  $(grep "${usuario_min}:.*:.*:.*:.*:.*:::" /etc/shadow) in
+
+				'')
+				#No hace nada si no se encuentra en /etc/shadow
+				;;
+
+				*)
+
+					# Elimina configuracion de gconf previo
+					rm -rf ${usuario}/.gconf/
+				;;
+			esac
+
+		done
+
+
 echo 'PASO=6' > ${PASO_BASH}
 
 ;;
