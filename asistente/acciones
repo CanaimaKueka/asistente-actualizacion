@@ -54,7 +54,7 @@ EOF
 ( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes galeon >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Preparando migración de Firefox a Cunaguaro ..." --progress --pulsate --auto-close --width=600
 
 # Removemos la configuración vieja del GRUB
-( rm /etc/default/grub >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Preparando migración de Firefox a Cunaguaro ..." --progress --pulsate --auto-close --width=600
+( rm /etc/default/grub &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Preparando migración de Firefox a Cunaguaro ..." --progress --pulsate --auto-close --width=600
 
 # Limpiando Canaima 2.1 de aplicaciones no utilizadas en 3.0
 ( DEBIAN_FRONTEND=noninteractive apt-get purge --force-yes -y openoffice* firefox* thunderbird* canaima-accesibilidad canaima-instalador-vivo canaima-particionador >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Limpiando Canaima 2.1 de aplicaciones no utilizadas en 3.0 ..." --progress --pulsate --auto-close --width=600
@@ -217,7 +217,7 @@ EOF
 ( DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -f install >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Arreglando paquetes en mal estado ..." --progress --pulsate --auto-close --width=600
 
 # Removemos configuraciones obsoletas
-( rm -rf /etc/skel/.purple/ >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo configuraciones obsoletas ..." --progress --pulsate --auto-close --width=600
+( rm -rf /etc/skel/.purple/  &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo configuraciones obsoletas ..." --progress --pulsate --auto-close --width=600
 
 # Instalando llaves del repositorio Canaima
 ( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes canaima-llaves >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Instalando llaves del repositorio Canaima ..." --progress --pulsate --auto-close --width=600
