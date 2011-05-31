@@ -203,6 +203,7 @@ EOF
 # Removemos configuraciones obsoletas
 rm -rf /etc/skel/.purple/ 
 rm /etc/canaima_version 
+rm /usr/share/applications/openoffice.org-*
 
 # Instalando escritorio de Canaima 3.0
 ( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted canaima-escritorio-gnome >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Instalando escritorio de Canaima 3.0 ..." --progress --pulsate --auto-close --width=600
