@@ -34,52 +34,47 @@ def default_cb2(n, action):
 if __name__ == '__main__':
 
        try:
+           check_cb_conf=open(os.environ['HOME']+"/.config/asistente.conf","r")
+           mostrar=check_cb_conf.readline()
+       except:
+           mostrar=""
+
+
+       try:
            check_cb_conf=open("/usr/share/asistente-actualizacion/paso.conf","r")
            paso=check_cb_conf.readline()
            check_cb_conf.close()
        except:
            paso=""
-       if len(paso) > 0 :
-           if paso.find("6"):
-               check_cb_conf=open("/usr/share/asistente-actualizacion/paso.conf","w")
-               check_cb_conf.write("PASO=7")
-               check_cb_conf.close()
-               if mostrar.find("0") is -1:
-                   pynotify.init ("Asistente Actualización")
-                   loop = gobject.MainLoop ()
-                   n = pynotify.Notification("Fin de la actualización", "Debe reiniciar para finalizar la actualización")
-                   n.set_timeout (pynotify.EXPIRES_NEVER)
-                   n.add_action ("blah", "Reiniciar", reboot_cb)
-                   n.show()
-                   loop.run ()
-           if paso.find("7"):
-               check_cb_conf=open("/usr/share/asistente-actualizacion/paso.conf","r")
-               check_cb_conf.write("PASO=")
-               check_cb_conf.close()
-               if mostrar.find("0") is -1:
-                   pynotify.init ("Asistente Actualización")
-                   loop = gobject.MainLoop ()
-                   n = pynotify.Notification("Actualización exitosa", "Ya puede utilizar Canaima 3.0")
-                   n.add_action("default", "Cerrar", default_cb)
-                   n.set_timeout (pynotify.EXPIRES_NEVER)
-                   n.show()
-                   loop.run ()
+       print paso
+       if mostrar.find("0") is -1:
+           if paso.find("6") > 0:
+               pynotify.init ("Asistente Actualización")
+               loop = gobject.MainLoop ()
+               n = pynotify.Notification("Fin de la actualización", "Debe reiniciar para finalizar la actualización")
+               n.set_timeout (pynotify.EXPIRES_NEVER)
+               n.add_action ("blah", "Reiniciar", reboot_cb)
+               n.show()
+               loop.run ()
+           if paso.find("7") > 0:
+               pynotify.init ("Asistente Actualización")
+               loop = gobject.MainLoop ()
+               n = pynotify.Notification("Actualización exitosa", "Ya puede utilizar Canaima 3.0")
+               n.add_action("default", "Cerrar", default_cb)
+               n.set_timeout (pynotify.EXPIRES_NEVER)
+               n.show()
+               loop.run ()
                #subprocess.Popen(["gnome-terminal","--command='su-to-root -X -c asistente-actualizacion'")
                #os.system('gnome-terminal --command="suto"')
 
-       try:
-           check_cb_conf=open(os.environ['HOME']+"/.config/asistente.conf","r")
-           mostrar=check_cb_conf.readline()
-       except:
-           mostrar=""
-       if mostrar.find("0") is -1:
-           pynotify.init ("Asistente Actualización")
-           loop = gobject.MainLoop ()
-           n = pynotify.Notification("Nueva actualización disponible", "Ya puede actualizar a Canaima 3.0")
-           n.set_urgency(pynotify.URGENCY_CRITICAL)
-           n.set_timeout (pynotify.EXPIRES_NEVER)
-           n.add_action ("blah", "Actualizar Ahora", foo_cb)
-           n.add_action("default", "Ignorar", default_cb)
-           n.add_action("blah2", "No volver a mostrar", default_cb2)
-           n.show()
-           loop.run ()
+           if paso.find("1") > 0:
+               pynotify.init ("Asistente Actualización")
+               loop = gobject.MainLoop ()
+               n = pynotify.Notification("Nueva actualización disponible", "Ya puede actualizar a Canaima 3.0")
+               n.set_urgency(pynotify.URGENCY_CRITICAL)
+               n.set_timeout (pynotify.EXPIRES_NEVER)
+               n.add_action ("blah", "Actualizar Ahora", foo_cb)
+               n.add_action("default", "Ignorar", default_cb)
+               n.add_action("blah2", "No volver a mostrar", default_cb2)
+               n.show()
+               loop.run ()
