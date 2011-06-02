@@ -4,4 +4,4 @@
 	dh ${@}
 
 override_dh_auto_install:
-	$(MAKE) DESTDIR=$(CURDIR)/debian/canaima-bienvenido install
+	$(MAKE) DESTDIR=$(CURDIR)/debian/asistente-actualizacion2 install

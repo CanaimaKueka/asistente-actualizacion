@@ -1,7 +1,0 @@
-?package(canaima-bienvenido):\
-    needs="x11"\
-    section="Applications/Editors"\
-    title="Bienvenido a Canaima GNU/Linux"\
-    longtitle="Bienvenido a Canaima GNU/Linux"\
-    icon="/usr/share/icons/canaima-iconos/128x128/places/start-here.png"\
-    command="canaima-bienvenido"
