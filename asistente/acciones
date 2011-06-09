@@ -15,16 +15,6 @@ echo $result
 echo 'sed -i "s/\/dev\/xxx/$result/g" $BASE/selections.conf'
 sed -i "s/\/dev\/xxx/$result/g" $BASE/selections.conf
 
-
-
-parts=$(/sbin/fdisk -l | awk '/^\/dev\// {if ($2 == "*") {if ($6 == "83") { print $1 };}}' |sed s/+//g )
-text_orig=/dev/xxx
-disco=${parts:0:8}
-result=$(echo $disco | sed -e 's/\//\\\//g')
-echo $result
-echo 'sed -e "s/\/dev\/xxx/$result/g" '$BASE'selections.conf > /tmp/selections.conf && mv /tmp/selections.conf '$BASE'selections.conf'
-eval 'sed -e "s/\/dev\/xxx/$result/g" '$BASE'selections.conf > /tmp/selections.conf && mv /tmp/selections.conf '$BASE'selections.conf'
-
 case ${PASO} in
 
 1)
@@ -172,6 +162,16 @@ EOF
 
 # Actualizando gconf2
 ( DEBIAN_FRONTEND=noninteractive aptitude --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" install gconf2=2.28.1-6 libgconf2-4=2.28.1-6 gconf2-common=2.28.1-6 >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando gconf2 ..." --progress --pulsate --auto-close --width=600
+
+# Actualización de componentes adicionales instalados por el usuario (no incluidos en canaima 2.1)
+
+dpkg-query -W -f='${Package}\n' > $BASE/este
+diff $BASE/21 $BASE/este | grep ">" | awk '{ print $2 }' > $BASE/actualizar
+for cadauno in $(cat $BASE/actualizar)
+do
+        todos=$todos" "$cadauno
+done
+gnome-terminal --command="aptitude --assume-yes --allow-untrusted install $todos"
 
 # Actualización parcial de la base
 ( DEBIAN_FRONTEND=noninteractive apt-get --force-yes -y upgrade >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualización parcial de la base ..." --progress --pulsate --auto-close --width=600
