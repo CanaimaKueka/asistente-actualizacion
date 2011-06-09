@@ -5,6 +5,26 @@ PASO_BASH="/usr/share/asistente-actualizacion/paso.conf"
 
 . ${PASO_BASH}
 
+##Determina el Disco Duro al cual instalar y actualizar el burg
+parts=$(/sbin/fdisk -l | awk '/^\/dev\// {if ($2 == "*") {if ($6 == "83") { print $1 };}}' |sed s/+//g )
+text_orig=/dev/c
+disco=${parts:0:8}
+result=$(echo $disco | sed -e 's/\//\\\//g')
+echo $result
+
+echo 'sed -i "s/\/dev\/xxx/$result/g" $BASE/selections.conf'
+sed -i "s/\/dev\/xxx/$result/g" $BASE/selections.conf
+
+
+
+parts=$(/sbin/fdisk -l | awk '/^\/dev\// {if ($2 == "*") {if ($6 == "83") { print $1 };}}' |sed s/+//g )
+text_orig=/dev/xxx
+disco=${parts:0:8}
+result=$(echo $disco | sed -e 's/\//\\\//g')
+echo $result
+echo 'sed -e "s/\/dev\/xxx/$result/g" '$BASE'selections.conf > /tmp/selections.conf && mv /tmp/selections.conf '$BASE'selections.conf'
+eval 'sed -e "s/\/dev\/xxx/$result/g" '$BASE'selections.conf > /tmp/selections.conf && mv /tmp/selections.conf '$BASE'selections.conf'
+
 case ${PASO} in
 
 1)
