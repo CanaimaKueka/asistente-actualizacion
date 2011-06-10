@@ -105,6 +105,8 @@ EOF
 # Instalando nuevo Kernel y librerías Perl
 ( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" linux-image-2.6.32-5-686 perl libperl5.10 >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Instalando nuevo Kernel y librerías Perl ..." --progress --pulsate --auto-close --width=600
 
+dhclient
+
 # Estableciendo repositorios sólo para el sistema base
 
 debconf-set-selections $BASE"selections.conf"
@@ -151,6 +153,8 @@ Pin-Priority: 800
 
 EOF
 
+dhclient
+
 # Actualizamos la lista de paquetes
 ( aptitude update >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando lista de paquetes ..." --progress --pulsate --auto-close --width=600
 
@@ -159,6 +163,7 @@ EOF
 
 # Arreglando paquetes en mal estado
 ( DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -f install >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Arreglando paquetes en mal estado ..." --progress --pulsate --auto-close --width=600
+
 
 # Actualizando gconf2
 ( DEBIAN_FRONTEND=noninteractive aptitude --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" install gconf2=2.28.1-6 libgconf2-4=2.28.1-6 gconf2-common=2.28.1-6 >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando gconf2 ..." --progress --pulsate --auto-close --width=600
