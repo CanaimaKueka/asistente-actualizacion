@@ -8,5 +8,7 @@ GRANDES MODIFICACIONES
 
 PEQUEÑAS MODIFICACIONES
 
-* 
+* Eliminar kernels que no se estan usando
+
+* Agregar "pasos" para saber donde queda en caso de que se suspenda la instalacion (mecanismo para reiniciar la actualizacion)
 
