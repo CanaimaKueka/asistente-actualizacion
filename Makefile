@@ -35,6 +35,7 @@ install:
 	cp -r asistente/gui.glade $(DESTDIR)/usr/share/asistente-actualizacion/
 	cp -r asistente/asistente.png $(DESTDIR)/usr/share/asistente-actualizacion/
 	cp -r asistente/initasist $(DESTDIR)/usr/share/asistente-actualizacion/
+	cp -r asistente/finasist $(DESTDIR)/usr/share/asistente-actualizacion/
 	cp -r asistente/preferences.canaima $(DESTDIR)/usr/share/asistente-actualizacion/
 	cp -r asistente/preferences $(DESTDIR)/usr/share/asistente-actualizacion/
 	cp -r asistente/sources.list $(DESTDIR)/usr/share/asistente-actualizacion/
