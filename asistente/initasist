@@ -8,8 +8,10 @@ import subprocess
 
 def foo_cb(n, action):
        print "INICIAR ACTUALIZACION"
-       subprocess.Popen(["gksu","asistente-actualizacion"])
-       subprocess.Popen(["/usr/share/asistente-actualizacion/finasist"])
+       #subprocess.Popen(["gksu","asistente-actualizacion"])
+       #subprocess.Popen(["/usr/share/asistente-actualizacion/finasist"])
+       os.system("gksu asistente-actualizacion")
+       os.system("/usr/share/asistente-actualizacion/finasist")
        n.close()
        loop.quit()
 
@@ -57,13 +59,13 @@ if __name__ == '__main__':
        print paso
        if mostrar.find("0") is -1:
            if paso.find("70") > 0:
+               subprocess.Popen(["gksu","limpiarkernels"])
                check_cb_conf=open(os.environ['HOME']+"/.config/asistente.conf","w")
                check_cb_conf.write("MOSTRAR=0")
                check_cb_conf.close()
                pynotify.init ("Asistente Actualización")
                loop = gobject.MainLoop ()
-               n = pynotify.Notification("Bienvenido a Canaima GNU/Linux 3.0", "Si lo desea puede quitar los kernels anteriores.")
-               n.add_action("quitar", "Quitar kernels anteriores.", quitar_cb)
+               n = pynotify.Notification("Bienvenido a Canaima GNU/Linux 3.0", "Ya puede usar su sistema.")
                n.set_timeout (pynotify.EXPIRES_NEVER)
                n.show()
                loop.run ()
