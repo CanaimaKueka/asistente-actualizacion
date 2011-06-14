@@ -47,11 +47,10 @@ if __name__ == '__main__':
        except:
            paso=""
        print paso
-       if mostrar.find("0") is -1:
-           pynotify.init ("Asistente Actualización")
-           loop = gobject.MainLoop ()
-           n = pynotify.Notification("Fin de la actualización", "Debe reiniciar para finalizar la actualización")
-           n.set_timeout (pynotify.EXPIRES_NEVER)
-           n.add_action ("blah", "Reiniciar", reboot_cb)
-           n.show()
-           loop.run ()
+       pynotify.init ("Asistente Actualización")
+       loop = gobject.MainLoop ()
+       n = pynotify.Notification("Fin de la actualización", "Debe reiniciar para finalizar la actualización")
+       n.set_timeout (pynotify.EXPIRES_NEVER)
+       n.add_action ("blah", "Reiniciar", reboot_cb)
+       n.show()
+       loop.run()

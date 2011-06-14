@@ -9,8 +9,16 @@ import subprocess
 def foo_cb(n, action):
        print "INICIAR ACTUALIZACION"
        subprocess.Popen(["gksu","asistente-actualizacion"])
+       subprocess.Popen(["/usr/share/asistente-actualizacion/finasist"])
        n.close()
        loop.quit()
+
+def quitar_cb(n, action):
+       print "INICIAR ACTUALIZACION"
+       subprocess.Popen(["gksu","limpiarkernels"])
+       n.close()
+       loop.quit()
+
 
 def reboot_cb(n, action):
        print "REINICIAR"
@@ -48,19 +56,14 @@ if __name__ == '__main__':
            paso=""
        print paso
        if mostrar.find("0") is -1:
-           if paso.find("6") > 0:
+           if paso.find("70") > 0:
+               check_cb_conf=open(os.environ['HOME']+"/.config/asistente.conf","w")
+               check_cb_conf.write("MOSTRAR=0")
+               check_cb_conf.close()
                pynotify.init ("Asistente Actualización")
                loop = gobject.MainLoop ()
-               n = pynotify.Notification("Fin de la actualización", "Debe reiniciar para finalizar la actualización")
-               n.set_timeout (pynotify.EXPIRES_NEVER)
-               n.add_action ("blah", "Reiniciar", reboot_cb)
-               n.show()
-               loop.run ()
-           if paso.find("7") > 0:
-               pynotify.init ("Asistente Actualización")
-               loop = gobject.MainLoop ()
-               n = pynotify.Notification("Actualización exitosa", "Ya puede utilizar Canaima 3.0")
-               n.add_action("default", "Cerrar", default_cb)
+               n = pynotify.Notification("Bienvenido a Canaima GNU/Linux 3.0", "Si lo desea puede quitar los kernels anteriores.")
+               n.add_action("quitar", "Quitar kernels anteriores.", quitar_cb)
                n.set_timeout (pynotify.EXPIRES_NEVER)
                n.show()
                loop.run ()
