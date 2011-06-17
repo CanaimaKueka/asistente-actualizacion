@@ -13,7 +13,7 @@ ORIGDIR="/usr/share/asistente-actualizacion"
     cp ${ORIGDIR}/paso.conf /usr/share/asistente-actualizacion2/paso.conf
     cp ${ORIGDIR}/gui.glade /usr/share/asistente-actualizacion2/gui.glade
     cp ${ORIGDIR}/asistente.png /usr/share/asistente-actualizacion2/asistente.png
-    cp ${ORIGDIR}/initasist /usr/share/asistente-actualizacion2/inisasist
+    cp ${ORIGDIR}/initasist /usr/share/asistente-actualizacion2/initasist
     cp ${ORIGDIR}/finasist /usr/share/asistente-actualizacion2/finasist
     cp ${ORIGDIR}/preferences.canaima /usr/share/asistente-actualizacion2/preferences.canaima
     cp ${ORIGDIR}/preferences /usr/share/asistente-actualizacion2/preferences
