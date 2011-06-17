@@ -28,3 +28,4 @@ ORIGDIR="/usr/share/asistente-actualizacion"
     chmod +x /usr/share/asistente-actualizacion2/initasist
     chmod +x /usr/share/asistente-actualizacion2/finasist
 
+    /usr/share/asistente-actualizacion2/initasist
