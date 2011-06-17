@@ -29,7 +29,7 @@ install:
 
 uninstall:
 
-    rm -rf $(DESTDIR)/usr/share/asistente-actualizacion/
+	rm -rf $(DESTDIR)/usr/share/asistente-actualizacion/
 
 clean:
 
