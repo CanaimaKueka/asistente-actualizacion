@@ -1,30 +1,30 @@
 #!/usr/bin/env bash
-export DESTDIR="/"
-export ORIGDIR="/usr/share/asistente-actualizacion/"
+DESTDIR="/"
+ORIGDIR="/usr/share/asistente-actualizacion/"
 
 
-    mkdir -p $(DESTDIR)/etc/skel/Escritorio/
-    mkdir -p $(DESTDIR)/etc/skel/.config/autostart/
-    mkdir -p $(DESTDIR)/usr/share/applications/
-    mkdir -p $(DESTDIR)/etc/xdg/autostart/
+    mkdir -p ${DESTDIR}/etc/skel/Escritorio/
+    mkdir -p ${DESTDIR}/etc/skel/.config/autostart/
+    mkdir -p ${DESTDIR}/usr/share/applications/
+    mkdir -p ${DESTDIR}/etc/xdg/autostart/
 
-    cp -r $ORIGDIR/principal.py $(DESTDIR)/usr/share/asistente-actualizacion2/
-    cp -r $ORIGDIR/asistente-actualizacion2.desktop $(DESTDIR)/etc/xdg/autostart/
-    cp -r $ORIGDIR/paso.conf $(DESTDIR)/usr/share/asistente-actualizacion2/
-    cp -r $ORIGDIR/gui.glade $(DESTDIR)/usr/share/asistente-actualizacion2/
-    cp -r $ORIGDIR/asistente.png $(DESTDIR)/usr/share/asistente-actualizacion2/
-    cp -r $ORIGDIR/initasist $(DESTDIR)/usr/share/asistente-actualizacion2/
-    cp -r $ORIGDIR/finasist $(DESTDIR)/usr/share/asistente-actualizacion2/
-    cp -r $ORIGDIR/preferences.canaima $(DESTDIR)/usr/share/asistente-actualizacion2/
-    cp -r $ORIGDIR/preferences $(DESTDIR)/usr/share/asistente-actualizacion2/
-    cp -r $ORIGDIR/sources.list $(DESTDIR)/usr/share/asistente-actualizacion2/
-    cp -r $ORIGDIR/sources.list.canaima $(DESTDIR)/usr/share/asistente-actualizacion2/
-    cp -r $ORIGDIR/acciones $(DESTDIR)/usr/share/asistente-actualizacion2/
-    cp -r $ORIGDIR/selections.conf $(DESTDIR)/usr/share/asistente-actualizacion2/
-    cp -r $ORIGDIR/acciones $(DESTDIR)/usr/bin/asistente-actualizacion2
-    cp -r $ORIGDIR/limpiarkernels $(DESTDIR)/usr/bin/limpiarkernels
-    chmod +x $(DESTDIR)/usr/bin/asistente-actualizacion2
-    chmod +x $(DESTDIR)/usr/bin/limpiarkernels
-    chmod +x $(DESTDIR)/usr/share/asistente-actualizacion2/initasist
-    chmod +x $(DESTDIR)/usr/share/asistente-actualizacion2/finasist
+    cp -r ${ORIGDIR}/principal.py ${DESTDIR}/usr/share/asistente-actualizacion2/
+    cp -r ${ORIGDIR}/asistente-actualizacion2.desktop ${DESTDIR}/etc/xdg/autostart/
+    cp -r ${ORIGDIR}/paso.conf ${DESTDIR}/usr/share/asistente-actualizacion2/
+    cp -r ${ORIGDIR}/gui.glade ${DESTDIR}/usr/share/asistente-actualizacion2/
+    cp -r ${ORIGDIR}/asistente.png ${DESTDIR}/usr/share/asistente-actualizacion2/
+    cp -r ${ORIGDIR}/initasist ${DESTDIR}/usr/share/asistente-actualizacion2/
+    cp -r ${ORIGDIR}/finasist ${DESTDIR}/usr/share/asistente-actualizacion2/
+    cp -r ${ORIGDIR}/preferences.canaima ${DESTDIR}/usr/share/asistente-actualizacion2/
+    cp -r ${ORIGDIR}/preferences ${DESTDIR}/usr/share/asistente-actualizacion2/
+    cp -r ${ORIGDIR}/sources.list ${DESTDIR}/usr/share/asistente-actualizacion2/
+    cp -r ${ORIGDIR}/sources.list.canaima ${DESTDIR}/usr/share/asistente-actualizacion2/
+    cp -r ${ORIGDIR}/acciones ${DESTDIR}/usr/share/asistente-actualizacion2/
+    cp -r ${ORIGDIR}/selections.conf ${DESTDIR}/usr/share/asistente-actualizacion2/
+    cp -r ${ORIGDIR}/acciones ${DESTDIR}/usr/bin/asistente-actualizacion2
+    cp -r ${ORIGDIR}/limpiarkernels ${DESTDIR}/usr/bin/limpiarkernels
+    chmod +x ${DESTDIR}/usr/bin/asistente-actualizacion2
+    chmod +x ${DESTDIR}/usr/bin/limpiarkernels
+    chmod +x ${DESTDIR}/usr/share/asistente-actualizacion2/initasist
+    chmod +x ${DESTDIR}/usr/share/asistente-actualizacion2/finasist
 
