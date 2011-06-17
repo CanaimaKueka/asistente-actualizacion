@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-DESTDIR="/"
-ORIGDIR="/usr/share/asistente-actualizacion/"
+export DESTDIR="/"
+export ORIGDIR="/usr/share/asistente-actualizacion/"
 
 
     mkdir -p $(DESTDIR)/etc/skel/Escritorio/
