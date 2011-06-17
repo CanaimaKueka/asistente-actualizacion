@@ -24,12 +24,12 @@ build:
 
 install:
 
-    mkdir -p $(DESTDIR)/usr/share/asistente-actualizacion/
-    cp -rf asistente/* $(DESTDIR)/usr/share/asistente-actualizacion/
+	mkdir -p $(DESTDIR)/usr/share/asistente-actualizacion/
+	cp -rf asistente/* $(DESTDIR)/usr/share/asistente-actualizacion/
 
 uninstall:
 
-	rm -rf $(DESTDIR)/usr/share/asistente-actualizacion/
+    rm -rf $(DESTDIR)/usr/share/asistente-actualizacion/
 
 clean:
 
