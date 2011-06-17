@@ -21,9 +21,9 @@ ORIGDIR="/usr/share/asistente-actualizacion"
     cp ${ORIGDIR}/sources.list.canaima /usr/share/asistente-actualizacion2/sources.list.canaima
     cp ${ORIGDIR}/acciones /usr/share/asistente-actualizacion2/acciones
     cp ${ORIGDIR}/selections.conf /usr/share/asistente-actualizacion2/selections.conf
-    cp ${ORIGDIR}/acciones /usr/bin/asistente-actualizacion2
+    cp ${ORIGDIR}/acciones /usr/bin/asistente-actualizacion
     cp ${ORIGDIR}/limpiarkernels /usr/bin/limpiarkernels
-    chmod +x /usr/bin/asistente-actualizacion2
+    chmod +x /usr/bin/asistente-actualizacion
     chmod +x /usr/bin/limpiarkernels
     chmod +x /usr/share/asistente-actualizacion2/initasist
     chmod +x /usr/share/asistente-actualizacion2/finasist
