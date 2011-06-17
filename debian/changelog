@@ -1,9 +1,42 @@
 asistente-actualizacion2 (0.1) unstable; urgency=low
 
+  [ Carlos Guerrero ]
   * Primera versión para prueba
   * [0c61db6] para prueba
   * [0a1123b] para prueba
   * [279374a] temporal
   * [1ee7398] para prueba
+  * [340661f] temporal2
 
- -- Carlos Guerrero <guerrerocarlos@gmail.com>  Thu, 02 Jun 2011 10:35:33 -0430
+  [ root ]
+  * [777de18] Modifica automaticamente selections.conf a disco duro
+    correcto para burg
+
+  [ w ]
+  * [44f755f] Secuencia de actualizacion para paquetes no 2.1,
+    instalados por el usuario
+
+  [ root ]
+  * [c0bc526] nuevas acciones
+
+  [ Carlos Guerrero ]
+  * [2f36aba] Elimina kernels anteriores. Correccion en lista de
+    paquetes de 21
+  * [7c816b3] nuevo mensaje de bienvenida
+
+  [ root ]
+  * [1cbe536] Nuevo script finasist con mensaje al final de la
+    actualizacion
+  * [56b35d9] corregido sistema de pasos para restauracion de
+    actualizacion al ultimo punto
+  * [774e161] Rutina de eliminacion de kernels, en script aparte,
+    revision de mensajes del sistema
+  * [910c238] Afinando limpieza de kernels y mensaje final de
+    actualizacion
+  * [1c6969c] Modificacion en instrucciones principales. Reinicio
+    automatico
+
+  [ Carlos Guerrero ]
+  * [9431765] Empaquetado con copiado preventivo
+
+ -- Carlos Guerrero <guerrerocarlos@gmail.com>  Fri, 17 Jun 2011 00:47:41 -0430
