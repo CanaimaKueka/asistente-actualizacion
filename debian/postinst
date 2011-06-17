@@ -2,7 +2,6 @@ DESTDIR="/"
 ORIGDIR="/usr/share/asistente-actualizacion/"
 
 
-    mkdir -p $(DESTDIR)/usr/share/asistente-actualizacion/
     mkdir -p $(DESTDIR)/etc/skel/Escritorio/
     mkdir -p $(DESTDIR)/etc/skel/.config/autostart/
     mkdir -p $(DESTDIR)/usr/share/applications/

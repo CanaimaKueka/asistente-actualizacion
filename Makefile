@@ -24,6 +24,7 @@ build:
 
 install:
 
+    mkdir -p $(DESTDIR)/usr/share/asistente-actualizacion/
 	cp -r asistente/* $(DESTDIR)/usr/share/asistente-actualizacion/
 
 uninstall:
