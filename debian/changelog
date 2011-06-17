@@ -1,3 +1,9 @@
+asistente-actualizacion2 (0.11) unstable; urgency=low
+
+  * [6a5d9a2] Mensaje sale tan pronto se instala la actualizacion
+
+ -- Carlos Guerrero <guerrerocarlos@gmail.com>  Fri, 17 Jun 2011 02:52:30 -0430
+
 asistente-actualizacion2 (0.10) unstable; urgency=low
 
   * [3181603] detalle de transcripcion
