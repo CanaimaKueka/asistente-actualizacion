@@ -1,3 +1,9 @@
+asistente-actualizacion2 (0.9) unstable; urgency=low
+
+  * [49ba51a] Problemas con variables de bash
+
+ -- Carlos Guerrero <guerrerocarlos@gmail.com>  Fri, 17 Jun 2011 02:47:50 -0430
+
 asistente-actualizacion2 (0.8) unstable; urgency=low
 
   * [6b44112] Corrigiendo sintaxis4
