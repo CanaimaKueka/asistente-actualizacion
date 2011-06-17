@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 DESTDIR=""
-ORIGDIR="/usr/share/asistente-actualizacion/"
+ORIGDIR="/usr/share/asistente-actualizacion"
 
     mkdir -p ${DESTDIR}/etc/skel/Escritorio/
     mkdir -p ${DESTDIR}/etc/skel/.config/autostart/
@@ -8,6 +8,7 @@ ORIGDIR="/usr/share/asistente-actualizacion/"
     mkdir -p ${DESTDIR}/etc/xdg/autostart/
 
     cp ${ORIGDIR}/principal.py ${DESTDIR}/usr/share/asistente-actualizacion2/
+    echo "cp ${ORIGDIR}/asistente-actualizacion2.desktop ${DESTDIR}/etc/xdg/autostart/"
     cp ${ORIGDIR}/asistente-actualizacion2.desktop ${DESTDIR}/etc/xdg/autostart/
     cp ${ORIGDIR}/paso.conf ${DESTDIR}/usr/share/asistente-actualizacion2/
     cp ${ORIGDIR}/gui.glade ${DESTDIR}/usr/share/asistente-actualizacion2/
