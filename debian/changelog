@@ -1,3 +1,9 @@
+asistente-actualizacion2 (0.2) unstable; urgency=low
+
+  * [054a956] preinst y postinst
+
+ -- Carlos Guerrero <guerrerocarlos@gmail.com>  Fri, 17 Jun 2011 02:31:31 -0430
+
 asistente-actualizacion2 (0.1) unstable; urgency=low
 
   [ Carlos Guerrero ]
