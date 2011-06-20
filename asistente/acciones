@@ -18,7 +18,7 @@ sed -i "s/\/dev\/xxx/$result/g" $BASE/selections.conf
 while [ ${PASO} -lt 60 ]
 do
 
-[ -e /var/lib/dpkg/lock || $(ps -A | grep -cw apt-get) == 1 || $(ps -A | grep -cw aptitude) == 1 ] && zenity --title="Asistente de Actualización a Canaima 3.0" --text="¡Existe un getor de paquetes trabajando! No podemos continuar." --error --width=600 && exit 1
+[ -e /var/lib/dpkg/lock ] || [ $(ps -A | grep -cw apt-get) == 1 ] || [ $(ps -A | grep -cw aptitude) == 1 ] && zenity --title="Asistente de Actualización a Canaima 3.0" --text="¡Existe un getor de paquetes trabajando! No podemos continuar." --error --width=600 && exit 1
 
 . ${PASO_BASH}
 case ${PASO} in
@@ -62,25 +62,25 @@ EOF
 3)
 # Actualizamos la lista de paquetes
 dhclient
-( aptitude update >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando lista de paquetes ..." --progress --pulsate --auto-close --width=600
+( aptitude update | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando lista de paquetes ..." --progress --pulsate --auto-close --width=600
 echo "PASO=4" > $PASO_BASH
 
 ;;
 4)
 # Removemos paquetes huérfanos
-( apt-get autoclean >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes huérfanos ..." --progress --pulsate --auto-close --width=600
+( apt-get autoclean | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes huérfanos ..." --progress --pulsate --auto-close --width=600
 echo "PASO=5" > $PASO_BASH
 
 ;;
 5)
 # Actualizamos Canaima 2.1
-( DEBIAN_FRONTEND=noninteractive aptitude --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" full-upgrade >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando Canaima 2.1 ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" full-upgrade | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando Canaima 2.1 ..." --progress --pulsate --auto-close --width=600
 echo "PASO=6" > $PASO_BASH
 
 ;;
 6)
 # Instalamos otro proveedor de gnome-www-browser
-( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" galeon >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Preparando migración de Firefox a Cunaguaro ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" galeon | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Preparando migración de Firefox a Cunaguaro ..." --progress --pulsate --auto-close --width=600
 echo "PASO=7" > $PASO_BASH
 
 ;;
@@ -92,13 +92,13 @@ echo "PASO=8" > $PASO_BASH
 ;;
 8)
 # Limpiando Canaima 2.1 de aplicaciones no utilizadas en 3.0
-( DEBIAN_FRONTEND=noninteractive apt-get purge --force-yes -y openoffice* firefox* thunderbird* canaima-accesibilidad canaima-instalador-vivo canaima-particionador >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Limpiando Canaima 2.1 de aplicaciones no utilizadas en 3.0 ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive apt-get purge --force-yes -y openoffice* firefox* thunderbird* canaima-accesibilidad canaima-instalador-vivo canaima-particionador | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Limpiando Canaima 2.1 de aplicaciones no utilizadas en 3.0 ..." --progress --pulsate --auto-close --width=600
 echo "PASO=9" > $PASO_BASH
 
 ;;
 9) 
 # Limpiando paquetes huérfanos
-( DEBIAN_FRONTEND=noninteractive apt-get autoremove --force-yes -y >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes huérfanos ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive apt-get autoremove --force-yes -y | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes huérfanos ..." --progress --pulsate --auto-close --width=600
 echo "PASO=10" > $PASO_BASH
 
 
@@ -127,31 +127,31 @@ echo "PASO=11" > $PASO_BASH
 11) 
 # Actualizamos la lista de paquetes
 dhclient
-( aptitude update >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando lista de paquetes ..." --progress --pulsate --auto-close --width=600
+( aptitude update | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando lista de paquetes ..." --progress --pulsate --auto-close --width=600
 echo "PASO=12" > $PASO_BASH
 
 ;;
 12) 
 # Removemos paquetes huérfanos
-( apt-get autoclean >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes huérfanos ..." --progress --pulsate --auto-close --width=600
+( apt-get autoclean | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes huérfanos ..." --progress --pulsate --auto-close --width=600
 echo "PASO=13" > $PASO_BASH
 
 ;;
 13) 
 # Actualizando componentes fundamentales de instalación
-( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" aptitude apt dpkg debian-keyring locales --without-recommends >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando componentes fundamentales de instalación ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" aptitude apt dpkg debian-keyring locales --without-recommends | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando componentes fundamentales de instalación ..." --progress --pulsate --auto-close --width=600
 echo "PASO=14" > $PASO_BASH
 
 ;;
 14) 
 # Arreglando paquetes en mal estado
-( DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -f install >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Arreglando paquetes en mal estado ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -f install | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Arreglando paquetes en mal estado ..." --progress --pulsate --auto-close --width=600
 echo "PASO=15" > $PASO_BASH
 
 ;;
 15) 
 # Instalando nuevo Kernel y librerías Perl
-( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" linux-image-2.6.32-5-686 perl libperl5.10 >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Instalando nuevo Kernel y librerías Perl ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" linux-image-2.6.32-5-686 perl libperl5.10 | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Instalando nuevo Kernel y librerías Perl ..." --progress --pulsate --auto-close --width=600
 echo "PASO=16" > $PASO_BASH
 
 
@@ -179,28 +179,28 @@ echo "PASO=17" > $PASO_BASH
 17) 
 # Actualizamos la lista de paquetes
 dhclient
-( aptitude update >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando lista de paquetes ..." --progress --pulsate --auto-close --width=600
+( aptitude update | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando lista de paquetes ..." --progress --pulsate --auto-close --width=600
 
 
 echo "PASO=18" > $PASO_BASH
 ;;
 18) 
 # Removemos paquetes huérfanos
-( apt-get autoclean >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes huérfanos ..." --progress --pulsate --auto-close --width=600
+( apt-get autoclean | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes huérfanos ..." --progress --pulsate --auto-close --width=600
 
 echo "PASO=19" > $PASO_BASH
 
 ;;
 19) 
 # Arreglando paquetes en mal estado
-( DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -f install >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Arreglando paquetes en mal estado ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -f install | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Arreglando paquetes en mal estado ..." --progress --pulsate --auto-close --width=600
 
 
 echo "PASO=20" > $PASO_BASH
 ;;
 20) 
 # Actualizando gestor de dispositivos UDEV
-( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" udev >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando gestor de dispositivos UDEV ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" udev | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando gestor de dispositivos UDEV ..." --progress --pulsate --auto-close --width=600
 
 
 
@@ -233,57 +233,57 @@ dhclient
 
 # Actualizamos la lista de paquetes
 
-( aptitude update >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando lista de paquetes ..." --progress --pulsate --auto-close --width=600
+( aptitude update | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando lista de paquetes ..." --progress --pulsate --auto-close --width=600
 
 echo "PASO=24" > $PASO_BASH
 ;;
 24) 
 # Removemos paquetes huérfanos
-( apt-get autoclean >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes huérfanos ..." --progress --pulsate --auto-close --width=600
+( apt-get autoclean | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes huérfanos ..." --progress --pulsate --auto-close --width=600
 
 echo "PASO=25" > $PASO_BASH
 ;;
 25) 
 # Arreglando paquetes en mal estado
-( DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -f install >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Arreglando paquetes en mal estado ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -f install | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Arreglando paquetes en mal estado ..." --progress --pulsate --auto-close --width=600
 
 echo "PASO=26" > $PASO_BASH
 ;;
 26) 
 # Actualizando gconf2
-( DEBIAN_FRONTEND=noninteractive aptitude --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" install gconf2=2.28.1-6 libgconf2-4=2.28.1-6 gconf2-common=2.28.1-6 >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando gconf2 ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" install gconf2=2.28.1-6 libgconf2-4=2.28.1-6 gconf2-common=2.28.1-6 | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando gconf2 ..." --progress --pulsate --auto-close --width=600
 
 echo "PASO=27" > $PASO_BASH
 ;;
 27) 
 # Actualización de componentes adicionales instalados por el usuario (no incluidos en canaima 2.1)
 
-dpkg-query -W -f='${Package}\t${Status}\n' | grep "install ok installed" | awk '{ print $1 }' > $BASE/este
+#dpkg-query -W -f='${Package}\t${Status}\n' | grep "install ok installed" | awk '{ print $1 }' > $BASE/este
 
-diff $BASE/21 $BASE/este | grep ">" | awk '{ print $2 }' > $BASE/actualizar
+#diff $BASE/21 $BASE/este | grep ">" | awk '{ print $2 }' > $BASE/actualizar
 for cadauno in $(cat $BASE/actualizar)
 do
         todos=$todos" "$cadauno
 done
-gnome-terminal --command="aptitude --assume-yes --allow-untrusted install $todos"
+xterm -e "aptitude --assume-yes --allow-untrusted install $todos"
 
 echo "PASO=28" > $PASO_BASH
 ;;
 28) 
 # Actualización parcial de la base
-( DEBIAN_FRONTEND=noninteractive apt-get --force-yes -y upgrade >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualización parcial de la base ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive apt-get --force-yes -y upgrade | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualización parcial de la base ..." --progress --pulsate --auto-close --width=600
 
 echo "PASO=29" > $PASO_BASH
 ;;
 29) 
 # Actualización total de la base
-( DEBIAN_FRONTEND=noninteractive apt-get --force-yes -y dist-upgrade >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualización total de la base ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive apt-get --force-yes -y dist-upgrade | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualización total de la base ..." --progress --pulsate --auto-close --width=600
 
 echo "PASO=30" > $PASO_BASH
 ;;
 30) 
 # Actualización completa de la base
-( DEBIAN_FRONTEND=noninteractive aptitude --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" full-upgrade >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualización completa de la base ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" full-upgrade | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualización completa de la base ..." --progress --pulsate --auto-close --width=600
 
 echo "PASO=31" > $PASO_BASH
 ;;
@@ -317,31 +317,31 @@ echo "PASO=33" > $PASO_BASH
 33) 
 # Actualizamos la lista de paquetes
 dhclient
-( aptitude update >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando lista de paquetes ..." --progress --pulsate --auto-close --width=600
+( aptitude update | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando lista de paquetes ..." --progress --pulsate --auto-close --width=600
 
 echo "PASO=34" > $PASO_BASH
 ;;
 34) 
 # Removemos paquetes huérfanos
-( apt-get autoclean >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes huérfanos ..." --progress --pulsate --auto-close --width=600
+( apt-get autoclean | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes huérfanos ..." --progress --pulsate --auto-close --width=600
 
 echo "PASO=36" > $PASO_BASH
 ;;
 36) 
 # Arreglando paquetes en mal estado
-( DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -f install >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Arreglando paquetes en mal estado ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -f install | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Arreglando paquetes en mal estado ..." --progress --pulsate --auto-close --width=600
 
 echo "PASO=37" > $PASO_BASH
 ;;
 37) 
 # Instalando llaves del repositorio Canaima
-( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" canaima-llaves >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Instalando llaves del repositorio Canaima ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" canaima-llaves | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Instalando llaves del repositorio Canaima ..." --progress --pulsate --auto-close --width=600
 
 echo "PASO=38" > $PASO_BASH
 ;;
 38) 
 # Removiendo paquetes innecesarios
-( DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" epiphany-browser epiphany-browser-data libgraphviz4 libslab0 gtkhtml3.14 busybox-syslogd dsyslog inetutils-syslogd rsyslog socklog-run sysklogd syslog-ng libfam0c102 >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes innecesarios ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" epiphany-browser epiphany-browser-data libgraphviz4 libslab0 gtkhtml3.14 busybox-syslogd dsyslog inetutils-syslogd rsyslog socklog-run sysklogd syslog-ng libfam0c102 | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes innecesarios ..." --progress --pulsate --auto-close --width=600
 
 echo "PASO=39" > $PASO_BASH
 ;;
@@ -356,61 +356,61 @@ echo "PASO=40" > $PASO_BASH
 40) 
 dhclient
 # Instalando escritorio de Canaima 3.0
-( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" canaima-escritorio-gnome >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Instalando escritorio de Canaima 3.0 ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" canaima-escritorio-gnome | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Instalando escritorio de Canaima 3.0 ..." --progress --pulsate --auto-close --width=600
 
 echo "PASO=41" > $PASO_BASH
 ;;
 41) 
 dhclient
 # Removiendo Navegador web de transición
-( DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" galeon >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo Navegador web de transición ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" galeon | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo Navegador web de transición ..." --progress --pulsate --auto-close --width=600
 
 echo "PASO=42" > $PASO_BASH
 ;;
 42) 
 dhclient
 # Actualización final a Canaima 3.0
-( DEBIAN_FRONTEND=noninteractive aptitude --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" full-upgrade >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualización final a Canaima 3.0 ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" full-upgrade | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualización final a Canaima 3.0 ..." --progress --pulsate --auto-close --width=600
 
 echo "PASO=43" > $PASO_BASH
 ;;
 43) 
 dhclient
 # Removiendo paquetes innecesarios
-( DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" gstreamer0.10-gnomevfs splashy >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes innecesarios ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" gstreamer0.10-gnomevfs splashy | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Removiendo paquetes innecesarios ..." --progress --pulsate --auto-close --width=600
 
 echo "PASO=44" > $PASO_BASH
 ;;
 44) 
 dhclient
 # Actualizando a GDM3
-( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" gdm3 >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando a GDM3 ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" gdm3 | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando a GDM3 ..." --progress --pulsate --auto-close --width=600
 
 echo "PASO=46" > $PASO_BASH
 ;;
 46) 
 dhclient
 # Actualizando a BURG
-( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" burg >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando a BURG ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" burg | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando a BURG ..." --progress --pulsate --auto-close --width=600
 
 echo "PASO=47" > $PASO_BASH
 ;;
 47) 
 dhclient
 # Reinstalando Base de Canaima
-( DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" canaima-base >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Reinstalando Base de Canaima ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" canaima-base | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Reinstalando Base de Canaima ..." --progress --pulsate --auto-close --width=600
 
 echo "PASO=48" > $PASO_BASH
 ;;
 48) 
 # Reinstalando Estilo Visual
-( DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" canaima-estilo-visual >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Reinstalando Estilo Visual ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" canaima-estilo-visual | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Reinstalando Estilo Visual ..." --progress --pulsate --auto-close --width=600
 
 echo "PASO=49" > $PASO_BASH
 ;;
 49) 
 # Reinstalando Escritorio
-( DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" canaima-escritorio-gnome >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Reinstalando Escritorio ..." --progress --pulsate --auto-close --width=600
+( DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" canaima-escritorio-gnome | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Reinstalando Escritorio ..." --progress --pulsate --auto-close --width=600
 
 ##ESTO SE PASO A UN SCRIPT APARTE
 #Eliminando kernels anteriores
@@ -425,7 +425,7 @@ echo "PASO=50" > $PASO_BASH
 ;;
 50) 
 # Actualizando entradas del BURG
-( update-burg >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando entradas del BURG ..." --progress --pulsate --auto-close --width=600
+( update-burg | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Actualizando entradas del BURG ..." --progress --pulsate --auto-close --width=600
 
 echo "PASO=51" > $PASO_BASH
 ;;
@@ -437,7 +437,7 @@ echo "PASO=52" > $PASO_BASH
 ;;
 52) 
 # Reconfigurando el Estilo Visual
-( dpkg-reconfigure canaima-estilo-visual >> /var/log/salida   &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Reconfigurando el Estilo Visual ..." --progress --pulsate --auto-close --width=600
+( dpkg-reconfigure canaima-estilo-visual | tee /var/log/salida &&  sleep 2  ) | zenity --title="Asistente de Actualización a Canaima 3.0" --text="Reconfigurando el Estilo Visual ..." --progress --pulsate --auto-close --width=600
 
 echo "PASO=53" > $PASO_BASH
 ;;
