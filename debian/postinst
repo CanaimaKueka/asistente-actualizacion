@@ -27,6 +27,8 @@ ORIGDIR="/usr/share/asistente-actualizacion"
     chmod +x /usr/bin/limpiarkernels
     chmod +x /usr/share/asistente-actualizacion2/initasist
     chmod +x /usr/share/asistente-actualizacion2/finasist
+
+    BASE="/usr/share/asistente-actualizacion/"
     dpkg-query -W -f='${Package}\t${Status}\n' | grep "install ok installed" | awk '{ print $1 }' > $BASE/este
     diff $BASE/21 $BASE/este | grep ">" | awk '{ print $2 }' > $BASE/actualizar
 
