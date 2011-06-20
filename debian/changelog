@@ -1,3 +1,9 @@
+asistente-actualizacion2 (0.15) unstable; urgency=low
+
+  * [15b48a1] Corrigiendo nombre de ejecutable
+
+ -- Carlos Guerrero <guerrerocarlos@gmail.com>  Mon, 20 Jun 2011 12:29:38 -0430
+
 asistente-actualizacion2 (0.14) unstable; urgency=low
 
   * [3f46747] Corrigiendo nombre de ejecutable
