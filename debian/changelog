@@ -1,3 +1,11 @@
+asistente-actualizacion2 (0.21) unstable; urgency=low
+
+  * [1ad4530] guardando todos los .deb en una carpeta
+  * [0c7862d] version interna para obtener todos los paquetes que se
+    usan en la instalacion3
+
+ -- Carlos Guerrero <guerrerocarlos@gmail.com>  Mon, 27 Jun 2011 17:29:12 -0430
+
 asistente-actualizacion2 (0.20) unstable; urgency=low
 
   * [9f8e269] Corrigiendo archivo de paquetes 21
