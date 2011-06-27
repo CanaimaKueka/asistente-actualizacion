@@ -1,9 +1,10 @@
 #!/bin/bash
 
 BASE="/usr/share/asistente-actualizacion/"
+PASO_BASH="/usr/share/asistente-actualizacion/paso.conf"
+
 DEPOSITO="/var/log/actualizacion/"
 DEPOSITOAPT="/var/cache/apt/archives/*"
-PASO_BASH="/usr/share/asistente-actualizacion/paso.conf"
 
 . ${PASO_BASH}
 
