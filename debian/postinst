@@ -17,10 +17,19 @@ ORIGDIR="/usr/share/asistente-actualizacion"
     cp ${ORIGDIR}/finasist /usr/share/asistente-actualizacion2/finasist
     cp ${ORIGDIR}/preferences.canaima /usr/share/asistente-actualizacion2/preferences.canaima
     cp ${ORIGDIR}/preferences /usr/share/asistente-actualizacion2/preferences
+    cp ${ORIGDIR}/paquetes /usr/share/asistente-actualizacion2/
+    cp ${ORIGDIR}/predescarga /usr/share/asistente-actualizacion2/
     cp ${ORIGDIR}/sources.list /usr/share/asistente-actualizacion2/sources.list
     cp ${ORIGDIR}/sources.list.canaima /usr/share/asistente-actualizacion2/sources.list.canaima
     cp ${ORIGDIR}/acciones /usr/share/asistente-actualizacion2/acciones
     cp ${ORIGDIR}/selections.conf /usr/share/asistente-actualizacion2/selections.conf
+    cp ${ORIGDIR}/gui/uno /usr/share/asistente-actualizacion2/
+    cp ${ORIGDIR}/gui/dos /usr/share/asistente-actualizacion2/
+    cp ${ORIGDIR}/gui/msjprogreso /usr/share/asistente-actualizacion2/
+    cp ${ORIGDIR}/gui/progreso /usr/share/asistente-actualizacion2/
+    cp ${ORIGDIR}/gui/dialogo1.glade /usr/share/asistente-actualizacion2/
+    cp ${ORIGDIR}/gui/icono.png /usr/share/asistente-actualizacion2/
+    cp ${ORIGDIR}/gui/actualizador /usr/bin/
     cp ${ORIGDIR}/21 /usr/share/asistente-actualizacion2/21
     cp ${ORIGDIR}/acciones /usr/bin/asistente-actualizacion
     cp ${ORIGDIR}/limpiarkernels /usr/bin/limpiarkernels
@@ -28,6 +37,7 @@ ORIGDIR="/usr/share/asistente-actualizacion"
     chmod +x /usr/bin/limpiarkernels
     chmod +x /usr/share/asistente-actualizacion2/initasist
     chmod +x /usr/share/asistente-actualizacion2/finasist
+    chmod +x /usr/bin/actualizador
 
     BASE="/usr/share/asistente-actualizacion2/"
     dpkg-query -W -f='${Package}\t${Status}\n' | grep "install ok installed" | awk '{ print $1 }' > $BASE/este

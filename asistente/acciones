@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASE="/usr/share/asistente-actualizacion/"
+BASE="/usr/share/asistente-actualizacion2/"
 PASO_BASH="/usr/share/asistente-actualizacion/paso.conf"
 
 DEPOSITO="/var/log/actualizacion/"
@@ -36,6 +36,19 @@ asistente-actualizacion
 ;;
 
 2)
+
+#Pre descarga de todos los paquetes requeridos para la instalación
+for paquete in $(cat $BASE'predescargar')
+do
+$contador=$[$contador+1]
+aptitude install --download-only $paquete
+echo "scale=3;$contador/1440*40" | bc > $BASE"progreso"
+echo 'Descargando: $paquete' > $BASE"msjprogreso"
+
+done
+
+mkdir /usr/share/asistente-actualizacion2/predescargados
+cp /var/cache/apt/archives/* /usr/share/asistente-actualizacion2/predescargados
 
 echo "PASO=3" > $PASO_BASH
 # ------- PREPARANDO CANAIMA 2.1 ------------------------------------------------------------------#
