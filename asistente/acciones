@@ -15,6 +15,12 @@ PARTS=$/sbin/fdisk -l | awk '/^\/dev\// {if ($2 == "*") {if ($6 == "83") { print
 DISCO=${parts:0:8}
 RESULT=$echo ${DISCO} | sed -e 's/\//\\\//g')
 
+for cadauno in $(cat $BASE/actualizar)
+do
+        todos=$todos" "$cadauno
+done
+
+
 sed -i "s/\/dev\/xxx/${RESULT}/g" ${DEBCONF_SEL}
 
 while [ ${PASO} -lt 60 ]
@@ -34,6 +40,8 @@ actualizador
 ;;
 
 2)
+
+echo $todos >> $BASE'predescargar'
 
 #Pre descarga de todos los paquetes requeridos para la instalación
 for paquete in $(cat $BASE'predescargar')
@@ -258,10 +266,7 @@ echo "PASO=27" > ${PASO}
 
 27) 
 # Actualización de componentes adicionales instalados por el usuario (no incluidos en canaima 2.1)
-for cadauno in $(cat $BASE/actualizar)
-do
-        todos=$todos" "$cadauno
-done
+
 xterm -e "aptitude --assume-yes --allow-untrusted install $todos"
 
 echo "PASO=28" > ${PASO}
