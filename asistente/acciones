@@ -2,6 +2,8 @@
 
 BASE="/usr/share/asistente-actualizacion2/"
 PASO_BASH="/usr/share/asistente-actualizacion/paso.conf"
+DIFERENCIA="/usr/share/asistente-actualizacion2/actualizar"
+PREDESCARGAR="/usr/share/asistente-actualizacion2/predescargar"
 
 UNO="/usr/share/asistente-actualizacion2/uno"
 DOS="/usr/share/asistente-actualizacion2/dos"
@@ -11,34 +13,32 @@ MSJPROGRESO="/usr/share/asistente-actualizacion2/msjprogreso"
 . ${PASO}
 
 # Determina el Disco Duro al cual instalar y actualizar el burg
-PARTS=$/sbin/fdisk -l | awk '/^\/dev\// {if ($2 == "*") {if ($6 == "83") { print $1 };}}' | sed 's/+//g' )
+PARTS=$( /sbin/fdisk -l | awk '/^\/dev\// {if ($2 == "*") {if ($6 == "83") { print $1 };}}' | sed 's/+//g' )
 DISCO=${parts:0:8}
-RESULT=$echo ${DISCO} | sed -e 's/\//\\\//g')
-
-for cadauno in $(cat $BASE/actualizar)
-do
-        todos=$todos" "$cadauno
-done
-
-
+RESULT=$( echo ${DISCO} | sed -e 's/\//\\\//g' )
 sed -i "s/\/dev\/xxx/${RESULT}/g" ${DEBCONF_SEL}
+
+# Organiza los paquetes diferentes entre 2.1 oficial y el del usuario
+DIFF21=$( cat ${DIFERENCIA} | awk 'BEGIN {OFS = "\n"; ORS = " " }; {print $1}' )
 
 while [ ${PASO} -lt 60 ]
 do
 
-[ $ps -A | grep -cw update-manager ) == 1 ] || [ $ps -A | grep -cw apt-get ) == 1 ] || [ $ps -A | grep -cw aptitude ) == 1 ] &&  zenity --title="Asistente de Actualización a Canaima 3.0" --text="¡Existe un gestor de paquetes trabajando! No podemos continuar." --error --width=600 && exit 1
+# Verificar si existe un gestor de paquetes
+[ $ps -A | grep -cw update-manager ) == 1 ] || [ $ps -A | grep -cw apt-get ) == 1 ] || [ $ps -A | grep -cw aptitude ) == 1 ] &&  zenity --title="Asistente de Actualización a Canaima 3.0" --text="¡Existe un gestor de paquetes trabajando! No podemos continuar." --error --width=600 && exit 1 && pkill actualizador
 
 . ${PASO}
 
 case ${PASO} in
 
 1)
+# Ventana de bienvenida
 zenity --title="Asistente de Actualización a Canaima 3.0" --text="Este asistente se encargará de hacer los cambios necesarios\npara actualizar el sistema a la versión 3.0 de Canaima.\n\nSe realizará la actualizacion de gran cantidad de paquetes\nLas aplicaciones que ud haya instalado en 2.X que requieran\nconfiguración durante la instalacion ameritaran de su intervención para ser configuradas, \nel resto de la actualización se realizará de forma transparente.\n\n\nSe recomienda conectar el equipo a una fuente de alimentación continua, al finalizar la actualizacion el sistema se reiniciará automaticamente, no apague el equipo hasta haber recibido el mensaje de \"Actualizacion Completada\".\nSe descargarán aprox: 1200MB.\n\n¿Desea continuar con la actualización?" --question --width=600
 [ $? == 1 ] && exit 1
 echo "Inicializando el Asistente" > ${UNO}
-echo "Inicializando el Asistente" > ${UNO}
-echo "Inicializando el Asistente" > ${UNO}
-echo "Inicializando el Asistente" > ${UNO}
+echo "Ejecutando procesos iniciales ..." > ${DOS}
+echo "0" > ${PROGRESO}
+echo "--" > ${MSJPROGRESO}
 echo 'PASO=2' > ${PASO}
 actualizador
 ;;
@@ -47,20 +47,25 @@ actualizador
 echo "Descargando paquetes" >> ${UNO}
 echo "Se descargarán una serie de paquetes necesarios para la actualización del sistema (1.5G aprox.)" > ${DOS}
 
+# Aseguramos que tenemos los repositorios correctos
+cat <<EOF >/etc/apt/sources.list
+deb http://mirror/debian/ squeeze main contrib non-free
+EOF
+
+aptitude update | tee /var/log/salida && sleep 2
+
 # Predescarga de todos los paquetes requeridos para la instalación
+echo ${DIFF21} >> ${PREDESCARGAR}
 
-echo $todos >> $BASE'predescargar'
-
-for paquete in $(cat $BASE'predescargar')
-do
+for paquete in $( cat ${PREDESCARGAR} ); do
 $contador=$[$contador+1]
-aptitude install --download-only $paquete
+aptitude download $paquete
 echo "scale=6;$contador/1440*40" | bc > ${PROGRESO}
 echo "Descargando: $paquete" > ${MSJPROGRESO}
 done
 
 mkdir /usr/share/asistente-actualizacion2/predescargados/
-cp /var/cache/apt/archives/* /usr/share/asistente-actualizacion2/predescargados/
+mv /var/cache/apt/archives/*.deb /usr/share/asistente-actualizacion2/predescargados/
 
 # ------- PREPARANDO CANAIMA 2.1 ------------------------------------------------------------------#
 #==================================================================================================#
