@@ -29,26 +29,30 @@ case ${PASO} in
 1)
 zenity --title="Asistente de Actualización a Canaima 3.0" --text="Este asistente se encargará de hacer los cambios necesarios\npara actualizar el sistema a la versión 3.0 de Canaima.\n\nSe realizará la actualizacion de gran cantidad de paquetes\nLas aplicaciones que ud haya instalado en 2.X que requieran\nconfiguración durante la instalacion ameritaran de su intervención para ser configuradas, \nel resto de la actualización se realizará de forma transparente.\n\n\nSe recomienda conectar el equipo a una fuente de alimentación continua, al finalizar la actualizacion el sistema se reiniciará automaticamente, no apague el equipo hasta haber recibido el mensaje de \"Actualizacion Completada\".\nSe descargarán aprox: 1200MB.\n\n¿Desea continuar con la actualización?" --question --width=600
 [ $? == 1 ] && exit 1
+echo "Inicializando el Asistente" > ${UNO}
+echo "Inicializando el Asistente" > ${UNO}
+echo "Inicializando el Asistente" > ${UNO}
+echo "Inicializando el Asistente" > ${UNO}
 echo 'PASO=2' > ${PASO}
 actualizador
 ;;
 
 2)
+echo "Descargando paquetes" >> ${UNO}
+echo "Se descargarán una serie de paquetes necesarios para la actualización del sistema (1.5G aprox.)" > ${DOS}
 
-#Pre descarga de todos los paquetes requeridos para la instalación
+# Predescarga de todos los paquetes requeridos para la instalación
 for paquete in $(cat $BASE'predescargar')
 do
 $contador=$[$contador+1]
 aptitude install --download-only $paquete
-echo "scale=3;$contador/1440*40" | bc > $BASE"progreso"
-echo 'Descargando: $paquete' > $BASE"msjprogreso"
-
+echo "scale=6;$contador/1440*40" | bc > ${PROGRESO}
+echo "Descargando: $paquete" > ${MSJPROGRESO}
 done
 
-mkdir /usr/share/asistente-actualizacion2/predescargados
-cp /var/cache/apt/archives/* /usr/share/asistente-actualizacion2/predescargados
+mkdir /usr/share/asistente-actualizacion2/predescargados/
+cp /var/cache/apt/archives/* /usr/share/asistente-actualizacion2/predescargados/
 
-echo "PASO=3" > $PASO_BASH
 # ------- PREPARANDO CANAIMA 2.1 ------------------------------------------------------------------#
 #==================================================================================================#
 
@@ -73,7 +77,6 @@ deb http://mirror/canaima3/repositorio/ aponwao usuarios
 deb http://mirror/debian/ lenny main contrib non-free
 
 EOF
-echo
 echo "PASO=3" > ${PASO}
 ;;
 
