@@ -17,7 +17,7 @@
         <child>
           <widget class="GtkLabel" id="mensaje1">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">Asistente de Actualizaci&#xF3;n</property>
+            <property name="label" translatable="yes">Asistente de Actualizaci&#xF3;n de Canaima 2.1 a 3.0</property>
           </widget>
           <packing>
             <property name="position">0</property>
@@ -30,7 +30,7 @@
             <child>
               <widget class="GtkLabel" id="trabajando0">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Progreso general:</property>
+                <property name="label" translatable="yes">uno</property>
               </widget>
               <packing>
                 <property name="position">0</property>
@@ -40,7 +40,7 @@
               <widget class="GtkProgressBar" id="progreso">
                 <property name="visible">True</property>
                 <property name="fraction">0.5</property>
-                <property name="text" translatable="yes">Descargando archivos</property>
+                <property name="text" translatable="yes">msjprogreso</property>
               </widget>
               <packing>
                 <property name="position">1</property>
@@ -58,7 +58,7 @@
             <child>
               <widget class="GtkLabel" id="trabajando">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Asistente de Actualizaci&#xF3;n</property>
+                <property name="label" translatable="yes">dos</property>
               </widget>
               <packing>
                 <property name="position">0</property>
