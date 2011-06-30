@@ -1,7 +1,7 @@
 #!/bin/bash
 
 BASE="/usr/share/asistente-actualizacion2/"
-PASO_BASH="/usr/share/asistente-actualizacion/paso.conf"
+PASO="/usr/share/asistente-actualizacion/paso.conf"
 DIFERENCIA="/usr/share/asistente-actualizacion2/actualizar"
 PREDESCARGAR="/usr/share/asistente-actualizacion2/predescargar"
 
@@ -25,7 +25,7 @@ while [ ${PASO} -lt 60 ]
 do
 
 # Verificar si existe un gestor de paquetes
-[ $ps -A | grep -cw update-manager ) == 1 ] || [ $ps -A | grep -cw apt-get ) == 1 ] || [ $ps -A | grep -cw aptitude ) == 1 ] &&  zenity --title="Asistente de Actualización a Canaima 3.0" --text="¡Existe un gestor de paquetes trabajando! No podemos continuar." --error --width=600 && exit 1 && pkill actualizador
+[ $( ps -A | grep -cw update-manager ) == 1 ] || [ $( ps -A | grep -cw apt-get ) == 1 ] || [ $( ps -A | grep -cw aptitude ) == 1 ] &&  zenity --title="Asistente de Actualización a Canaima 3.0" --text="¡Existe un gestor de paquetes trabajando! No podemos continuar." --error --width=600 && exit 1 && pkill actualizador
 
 . ${PASO}
 
@@ -65,7 +65,7 @@ echo "Descargando: $paquete" > ${MSJPROGRESO}
 done
 
 mkdir /usr/share/asistente-actualizacion2/predescargados/
-mv /var/cache/apt/archives/*.deb /usr/share/asistente-actualizacion2/predescargados/
+mv *.deb /usr/share/asistente-actualizacion2/predescargados/
 
 # ------- PREPARANDO CANAIMA 2.1 ------------------------------------------------------------------#
 #==================================================================================================#
@@ -195,6 +195,7 @@ echo "PASO=13" > ${PASO}
 # Actualizando componentes fundamentales de instalación
 echo "Actualizando componentes fundamentales de instalación" >> ${DOS}
 echo "51" > ${PROGRESO}
+cp /usr/share/asistente-actualizacion2/predescargados/*.deb /var/cache/apt/archives/
 DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" aptitude apt dpkg debian-keyring locales --without-recommends | tee /var/log/salida && sleep 2 
 echo "PASO=14" > ${PASO}
 ;;
@@ -257,6 +258,7 @@ echo "PASO=19" > ${PASO}
 19) 
 # Arreglando paquetes en mal estado
 echo "Arreglando paquetes en mal estado" >> ${DOS}
+cp /usr/share/asistente-actualizacion2/predescargados/*.deb /var/cache/apt/archives/
 echo "58" > ${PROGRESO}
 DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -f install | tee /var/log/salida && sleep 2
 echo "PASO=20" > ${PASO}
@@ -306,6 +308,7 @@ echo "PASO=24" > ${PASO}
 echo "Removemos paquetes huérfanos" >> ${DOS}
 echo "63" > ${PROGRESO}
 apt-get autoclean | tee /var/log/salida && sleep 2
+cp /usr/share/asistente-actualizacion2/predescargados/*.deb /var/cache/apt/archives/
 echo "PASO=25" > ${PASO}
 ;;
 
