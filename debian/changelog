@@ -1,3 +1,9 @@
+asistente-actualizacion2 (0.30) unstable; urgency=low
+
+  * [de800a8] corrigiendo errores encontrados en script
+
+ -- Carlos Guerrero <guerrerocarlos@gmail.com>  Thu, 30 Jun 2011 15:18:17 -0430
+
 asistente-actualizacion2 (0.29) unstable; urgency=low
 
   * [848c30c] corrigiendo errores encontrados en script
