@@ -44,7 +44,7 @@ actualizador
 ;;
 
 2)
-echo "Descargando paquetes" >>> ${UNO}
+echo "Descargando paquetes" >> ${UNO}
 echo "Se descargarán una serie de paquetes necesarios para la actualización del sistema (1.5G aprox.)" >> ${DOS}
 
 # Aseguramos que tenemos los repositorios correctos
@@ -107,7 +107,7 @@ echo "PASO=4" > ${PASO}
 
 4)
 # Removemos paquetes huérfanos
-echo "Removiendo paquetes huerfanos..." >>> ${DOS}
+echo "Removiendo paquetes huerfanos..." >> ${DOS}
 echo "42" >> ${PROGRESO}
 apt-get autoclean | tee /var/log/salida && sleep 2
 echo "PASO=5" > ${PASO}
