@@ -42,10 +42,11 @@ echo "Ejecutando procesos iniciales ..." > ${DOS}
 echo "1" > ${PROGRESO}
 echo "--" > ${MSJPROGRESO}
 echo 'PASO=2' > ${PASO_FILE}
-actualizador
 ;;
 
 2)
+
+actualizador
 echo "Descargando paquetes" >> ${UNO}
 echo "Se descargarán una serie de paquetes necesarios para la actualización del sistema (1.5G aprox.)" >> ${DOS}
 

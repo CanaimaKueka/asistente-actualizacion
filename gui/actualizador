@@ -7,7 +7,6 @@ import time
 
 import gtk, gtk.glade
 import os
-from multiprocessing import Process
 
 base="/usr/share/asistente-actualizacion2/"
 
@@ -89,7 +88,7 @@ class ProgressThread(threading.Thread):
 
             uno=open(base+"progreso","r")
             lineasuno=uno.readlines()
-            self.tb0.set_fraction(float(lineasuno[len(lineasuno)-1])/100)
+            self.pb.set_fraction(float(lineasuno[len(lineasuno)-1])/100)
             uno.close()
 
             uno=open(base+"uno","r")
