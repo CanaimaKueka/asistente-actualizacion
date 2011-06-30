@@ -26,7 +26,7 @@ install:
 
 	mkdir -p $(DESTDIR)/usr/share/asistente-actualizacion/
 	cp -rf asistente/* $(DESTDIR)/usr/share/asistente-actualizacion/
-	cp asistente/gui/actualizador $(DESTDIR)/usr/bin/
+	cp gui/actualizador $(DESTDIR)/usr/bin/
 	chmod +x $(DESTDIR)/usr/bin/actualizador
 
 uninstall:
