@@ -25,6 +25,7 @@ build:
 install:
 
 	mkdir -p $(DESTDIR)/usr/share/asistente-actualizacion/
+	mkdir -p $(DESTDIR)/usr/bin/
 	cp -rf asistente/* $(DESTDIR)/usr/share/asistente-actualizacion/
 	cp gui/actualizador $(DESTDIR)/usr/bin/
 	chmod +x $(DESTDIR)/usr/bin/actualizador
