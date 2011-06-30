@@ -11,7 +11,7 @@ PROGRESO="/usr/share/asistente-actualizacion2/progreso"
 MSJPROGRESO="/usr/share/asistente-actualizacion2/msjprogreso"
 
 . ${PASO_FILE}
-
+echo "uno"
 # Determina el Disco Duro al cual instalar y actualizar el burg
 PARTS=$( /sbin/fdisk -l | awk '/^\/dev\// {if ($2 == "*") {if ($6 == "83") { print $1 };}}' | sed 's/+//g' )
 DISCO=${parts:0:8}
@@ -21,12 +21,14 @@ sed -i "s/\/dev\/xxx/${RESULT}/g" ${DEBCONF_SEL}
 # Organiza los paquetes diferentes entre 2.1 oficial y el del usuario
 DIFF21=$( cat ${DIFERENCIA} | awk 'BEGIN {OFS = "\n"; ORS = " " }; {print $1}' )
 
+echo "dos"
 while [ ${PASO} -lt 60 ]
 do
 
 # Verificar si existe un gestor de paquetes
 [ $( ps -A | grep -cw update-manager ) == 1 ] || [ $( ps -A | grep -cw apt-get ) == 1 ] || [ $( ps -A | grep -cw aptitude ) == 1 ] &&  zenity --title="Asistente de Actualización a Canaima 3.0" --text="¡Existe un gestor de paquetes trabajando! No podemos continuar." --error --width=600 && exit 1 && pkill actualizador
 
+echo "for"
 . ${PASO_FILE}
 
 case ${PASO_FILE} in
