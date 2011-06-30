@@ -28,10 +28,10 @@ do
 # Verificar si existe un gestor de paquetes
 [ $( ps -A | grep -cw update-manager ) == 1 ] || [ $( ps -A | grep -cw apt-get ) == 1 ] || [ $( ps -A | grep -cw aptitude ) == 1 ] &&  zenity --title="Asistente de Actualización a Canaima 3.0" --text="¡Existe un gestor de paquetes trabajando! No podemos continuar." --error --width=600 && exit 1 && pkill actualizador
 
-echo "for"
+echo $PASO
 . ${PASO_FILE}
 
-case ${PASO_FILE} in
+case ${PASO} in
 
 1)
 # Ventana de bienvenida
