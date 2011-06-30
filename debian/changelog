@@ -1,3 +1,25 @@
+asistente-actualizacion2 (0.22) unstable; urgency=low
+
+  [ Luis Alejandro Martínez Faneyth ]
+  * [54bb8d9] Adecuando script al nuevo esquema
+  * [5ffe19e] Siguiendo con la adecuación.
+  * [aca3c5a] X
+
+  [ Carlos Guerrero ]
+  * [fd92385] interfaz grafica
+  * [b9ddf06] Creando asistente grafico completo
+  * [d94e766] Cambiado texto de gui y se puso en cola de predescarga los
+    paquetes custom
+
+  [ Luis Alejandro Martínez Faneyth ]
+  * [c0f34ff] X
+
+  [ Carlos Guerrero ]
+  * [597fcc1] Mensajes por nueva gui
+  * [9bc069a] para prueba
+
+ -- Carlos Guerrero <guerrerocarlos@gmail.com>  Thu, 30 Jun 2011 11:44:54 -0430
+
 asistente-actualizacion2 (0.21) unstable; urgency=low
 
   * [1ad4530] guardando todos los .deb en una carpeta
