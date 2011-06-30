@@ -37,15 +37,15 @@ zenity --title="Asistente de Actualización a Canaima 3.0" --text="Este asistent
 [ $? == 1 ] && exit 1
 echo "Inicializando el Asistente" > ${UNO}
 echo "Ejecutando procesos iniciales ..." > ${DOS}
-echo "0" > ${PROGRESO}
+echo "1" > ${PROGRESO}
 echo "--" > ${MSJPROGRESO}
 echo 'PASO=2' > ${PASO}
 actualizador
 ;;
 
 2)
-echo "Descargando paquetes" >> ${UNO}
-echo "Se descargarán una serie de paquetes necesarios para la actualización del sistema (1.5G aprox.)" > ${DOS}
+echo "Descargando paquetes" >>> ${UNO}
+echo "Se descargarán una serie de paquetes necesarios para la actualización del sistema (1.5G aprox.)" >> ${DOS}
 
 # Aseguramos que tenemos los repositorios correctos
 cat <<EOF >/etc/apt/sources.list
@@ -96,42 +96,59 @@ echo "PASO=3" > ${PASO}
 
 3)
 # Actualizamos la lista de paquetes
+echo "Ejecutando rutina de actualizacion" >> ${UNO}
+echo "Actualizando lista de paquetes ..." >> ${DOS}
+echo "41" > ${PROGRESO}
+echo "" > ${MSJPROGRESO}
+
 aptitude update | tee /var/log/salida && sleep 2
 echo "PASO=4" > ${PASO}
 ;;
 
 4)
 # Removemos paquetes huérfanos
+echo "Removiendo paquetes huerfanos..." >>> ${DOS}
+echo "42" >> ${PROGRESO}
 apt-get autoclean | tee /var/log/salida && sleep 2
 echo "PASO=5" > ${PASO}
 ;;
 
 5)
 # Actualizamos Canaima 2.1
+echo "Actualizacion de Canaima 2.1..." >> ${DOS}
+echo "43" > ${PROGRESO}
 DEBIAN_FRONTEND=noninteractive aptitude --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" full-upgrade | tee /var/log/salida && sleep 2
 echo "PASO=6" > ${PASO}
 ;;
 
 6)
 # Instalamos otro proveedor de gnome-www-browser
+echo "Instacion de otro proveedor de gnome-www-browser" >> ${DOS}
+echo "44" > ${PROGRESO}
 DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" galeon | tee /var/log/salida && sleep 2
 echo "PASO=7" > ${PASO}
 ;;
 
 7)
 # Removemos la configuración vieja del GRUB
+echo "Eliminando configuracion anterior del GRUB" >> ${DOS}
+echo "45" > ${PROGRESO}
 rm /etc/default/grub && sleep 2
 echo "PASO=8" > ${PASO}
 ;;
 
 8)
 # Limpiando Canaima 2.1 de aplicaciones no utilizadas en 3.0
+echo "Limpiando Canaima 2.1 de aplicaciones no utilizadas en 3.0" >> ${DOS}
+echo "46" > ${PROGRESO}
 DEBIAN_FRONTEND=noninteractive apt-get purge --force-yes -y openoffice* firefox* thunderbird* canaima-accesibilidad canaima-instalador-vivo canaima-particionador | tee /var/log/salida && sleep 2
 echo "PASO=9" > ${PASO}
 ;;
 
 9) 
 # Limpiando paquetes huérfanos
+echo "Limpiando paquetes huérfanos" >> ${DOS}
+echo "47" > ${PROGRESO}
 DEBIAN_FRONTEND=noninteractive apt-get autoremove --force-yes -y | tee /var/log/salida && sleep 2
 echo "PASO=10" > ${PASO}
 ;;
@@ -139,7 +156,8 @@ echo "PASO=10" > ${PASO}
 10) 
 # ------- ACTUALIZANDO COMPONENTES DE INSTALACIÓN DE LA BASE (DEBIAN SQUEEZE) ---------------------#
 #==================================================================================================#
-
+echo "Actualizando componentes de la instalacion de la base (squeeze)" >> ${DOS}
+echo "48" > ${PROGRESO}
 # Estableciendo repositorios sólo para el sistema base
 cat <<EOF >/etc/apt/sources.list
 deb http://mirror/debian/ squeeze main contrib non-free
@@ -159,36 +177,48 @@ echo "PASO=11" > ${PASO}
 
 11) 
 # Actualizamos la lista de paquetes
+echo "Actualizamos la lista de paquetes" >> ${DOS}
+echo "49" > ${PROGRESO}
 aptitude update | tee /var/log/salida && sleep 2
 echo "PASO=12" > ${PASO}
 ;;
 
 12) 
 # Removemos paquetes huérfanos
+echo "Removemos paquetes huérfanos" >> ${DOS}
+echo "50" > ${PROGRESO}
 apt-get autoclean | tee /var/log/salida && sleep 2
 echo "PASO=13" > ${PASO}
 ;;
 
 13) 
 # Actualizando componentes fundamentales de instalación
+echo "Actualizando componentes fundamentales de instalación" >> ${DOS}
+echo "51" > ${PROGRESO}
 DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" aptitude apt dpkg debian-keyring locales --without-recommends | tee /var/log/salida && sleep 2 
 echo "PASO=14" > ${PASO}
 ;;
 
 14) 
 # Arreglando paquetes en mal estado
+echo "Arreglando paquetes en mal estado" >> ${DOS}
+echo "52" > ${PROGRESO}
 DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -f install | tee /var/log/salida && sleep 2
 echo "PASO=15" > ${PASO}
 ;;
 
 15) 
 # Instalando nuevo Kernel y librerías Perl
+echo "Instalando nuevo Kernel y librerías Perl" >> ${DOS}
+echo "53" > ${PROGRESO}
 DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" linux-image-2.6.32-5-686 perl libperl5.10 | tee /var/log/salida && sleep 2
 echo "PASO=16" > ${PASO}
 ;;
 
 16) 
 # Estableciendo repositorios sólo para el sistema base
+echo "Estableciendo repositorios sólo para el sistema base" >> ${DOS}
+echo "54" > ${PROGRESO}
 debconf-set-selections ${DEBCONF_SEL}
 cat <<EOF >/etc/apt/sources.list
 deb http://mirror/debian/ squeeze main contrib non-free
@@ -196,6 +226,8 @@ deb http://mirror/debian/ squeeze main contrib non-free
 EOF
 
 # Estableciendo prioridades superiores para paquetes provenientes de Debian
+echo "Estableciendo prioridades superiores para paquetes provenientes de Debian" >> ${DOS}
+echo "55" > ${PROGRESO}
 cat <<EOF >/etc/apt/preferences
 Package: *
 Pin: release o=Debian
@@ -208,30 +240,40 @@ echo "PASO=17" > ${PASO}
 
 17) 
 # Actualizamos la lista de paquetes
+echo "Actualizamos la lista de paquetes" >> ${DOS}
+echo "56" > ${PROGRESO}
 aptitude update | tee /var/log/salida && sleep 2
 echo "PASO=18" > ${PASO}
 ;;
 
 18) 
 # Removemos paquetes huérfanos
+echo "Removemos paquetes huérfanos" >> ${DOS}
+echo "57" > ${PROGRESO}
 apt-get autoclean | tee /var/log/salida && sleep 2
 echo "PASO=19" > ${PASO}
 ;;
 
 19) 
 # Arreglando paquetes en mal estado
+echo "Arreglando paquetes en mal estado" >> ${DOS}
+echo "58" > ${PROGRESO}
 DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -f install | tee /var/log/salida && sleep 2
 echo "PASO=20" > ${PASO}
 ;;
 
 20) 
 # Actualizando gestor de dispositivos UDEV
+echo "Actualizando gestor de dispositivos UDEV" >> ${DOS}
+echo "59" > ${PROGRESO}
 DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" udev | tee /var/log/salida && sleep 2
 echo "PASO=21" > ${PASO}
 ;;
 
 21) 
 # Estableciendo repositorios sólo para el sistema base
+echo "Estableciendo repositorios sólo para el sistema base" >> ${DOS}
+echo "60" > ${PROGRESO}
 debconf-set-selections ${DEBCONF_SEL}
 cat <<EOF >/etc/apt/sources.list
 deb http://mirror/debian/ squeeze main contrib non-free
@@ -241,6 +283,8 @@ echo "PASO=22" > ${PASO}
 
 22) 
 # Estableciendo prioridades superiores para paquetes provenientes de Debian
+echo "Estableciendo prioridades superiores para paquetes provenientes de Debian" >> ${DOS}
+echo "61" > ${PROGRESO}
 cat <<EOF >/etc/apt/preferences
 Package: *
 Pin: release o=Debian
@@ -251,30 +295,40 @@ echo "PASO=23" > ${PASO}
 
 23) 
 # Actualizamos la lista de paquetes
+echo "Actualizamos la lista de paquetes" >> ${DOS}
+echo "62" > ${PROGRESO}
 aptitude update | tee /var/log/salida && sleep 2
 echo "PASO=24" > ${PASO}
 ;;
 
 24) 
 # Removemos paquetes huérfanos
+echo "Removemos paquetes huérfanos" >> ${DOS}
+echo "63" > ${PROGRESO}
 apt-get autoclean | tee /var/log/salida && sleep 2
 echo "PASO=25" > ${PASO}
 ;;
 
 25) 
 # Arreglando paquetes en mal estado
+echo "Arreglando paquetes en mal estado" >> ${DOS}
+echo "64" > ${PROGRESO}
 DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -f install | tee /var/log/salida && sleep 2
 echo "PASO=26" > ${PASO}
 ;;
 
 26) 
 # Actualizando gconf2
+echo "Actualizando gconf2" >> ${DOS}
+echo "65" > ${PROGRESO}
 DEBIAN_FRONTEND=noninteractive aptitude --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" install gconf2=2.28.1-6 libgconf2-4=2.28.1-6 gconf2-common=2.28.1-6 | tee /var/log/salida && sleep 2
 echo "PASO=27" > ${PASO}
 ;;
 
 27) 
 # Actualización de componentes adicionales instalados por el usuario (no incluidos en canaima 2.1)
+echo "Actualización de componentes adicionales instalados por el usuario" >> ${DOS}
+echo "66" > ${PROGRESO}
 
 xterm -e "aptitude --assume-yes --allow-untrusted install $todos"
 
@@ -283,24 +337,32 @@ echo "PASO=28" > ${PASO}
 
 28) 
 # Actualización parcial de la base
+echo "Actualización parcial de la base" >> ${DOS}
+echo "67" > ${PROGRESO}
 DEBIAN_FRONTEND=noninteractive apt-get --force-yes -y upgrade | tee /var/log/salida && sleep 2
 echo "PASO=29" > ${PASO}
 ;;
 
 29) 
 # Actualización total de la base
+echo "Actualización total de la base" >> ${DOS}
+echo "68" > ${PROGRESO}
 DEBIAN_FRONTEND=noninteractive apt-get --force-yes -y dist-upgrade | tee /var/log/salida && sleep 2
 echo "PASO=30" > ${PASO}
 ;;
 
 30) 
 # Actualización completa de la base
+echo "Actualización completa de la base" >> ${DOS}
+echo "69" > ${PROGRESO}
 DEBIAN_FRONTEND=noninteractive aptitude --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" full-upgrade | tee /var/log/salida && sleep 2
 echo "PASO=31" > ${PASO}
 ;;
 
 31) 
 # Estableciendo repositorios sólo para el sistema base
+echo "Estableciendo repositorios sólo para el sistema base" >> ${DOS}
+echo "70" > ${PROGRESO}
 debconf-set-selections ${DEBCONF_SEL}
 cat <<EOF >/etc/apt/sources.list
 deb http://mirror/canaima3/repositorio/ roraima usuarios
@@ -311,6 +373,8 @@ echo "PASO=32" > ${PASO}
 
 32) 
 # Estableciendo prioridades superiores para paquetes provenientes de Debian
+echo "Estableciendo prioridades superiores para paquetes provenientes de Debian" >> ${DOS}
+echo "71" > ${PROGRESO}
 cat <<EOF >/etc/apt/preferences
 Package: *
 Pin: release o=Canaima
@@ -325,36 +389,48 @@ echo "PASO=33" > ${PASO}
 
 33) 
 # Actualizamos la lista de paquetes
+echo "Actualizamos la lista de paquetes" >> ${DOS}
+echo "72" > ${PROGRESO}
 aptitude update | tee /var/log/salida && sleep 2
 echo "PASO=34" > ${PASO}
 ;;
 
 34) 
 # Removemos paquetes huérfanos
+echo "Removemos paquetes huérfanos" >> ${DOS}
+echo "73" > ${PROGRESO}
 apt-get autoclean | tee /var/log/salida && sleep 2
 echo "PASO=36" > ${PASO}
 ;;
 
 36) 
 # Arreglando paquetes en mal estado
+echo "Arreglando paquetes en mal estado" >> ${DOS}
+echo "74" > ${PROGRESO}
 DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -f install | tee /var/log/salida && sleep 2
 echo "PASO=37" > ${PASO}
 ;;
 
 37) 
 # Instalando llaves del repositorio Canaima
+echo "Instalando llaves del repositorio Canaima" >> ${DOS}
+echo "75" > ${PROGRESO}
 DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" canaima-llaves | tee /var/log/salida && sleep 2
 echo "PASO=38" > ${PASO}
 ;;
 
 38) 
 # Removiendo paquetes innecesarios
+echo "Removiendo paquetes innecesarios" >> ${DOS}
+echo "76" > ${PROGRESO}
 DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" epiphany-browser epiphany-browser-data libgraphviz4 libslab0 gtkhtml3.14 busybox-syslogd dsyslog inetutils-syslogd rsyslog socklog-run sysklogd syslog-ng libfam0c102 | tee /var/log/salida && sleep 2
 echo "PASO=39" > ${PASO}
 ;;
 
 39) 
 # Removemos configuraciones obsoletas
+echo "Removemos configuraciones obsoletas" >> ${DOS}
+echo "77" > ${PROGRESO}
 rm -rf /etc/skel/.purple/ 
 rm /etc/canaima_version 
 rm /usr/share/applications/openoffice.org-*
@@ -363,77 +439,105 @@ echo "PASO=40" > ${PASO}
 
 40) 
 # Instalando escritorio de Canaima 3.0
+echo "Instalando escritorio de Canaima 3.0" >> ${DOS}
+echo "78" > ${PROGRESO}
 DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" canaima-escritorio-gnome | tee /var/log/salida && sleep 2
 echo "PASO=41" > ${PASO}
 ;;
 
 41) 
 # Removiendo Navegador web de transición
+echo "Removiendo Navegador web de transición" >> ${DOS}
+echo "79" > ${PROGRESO}
 DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" galeon | tee /var/log/salida && sleep 2
 echo "PASO=42" > ${PASO}
 ;;
 
 42) 
 # Actualización final a Canaima 3.0
+echo "Actualización final a Canaima 3.0" >> ${DOS}
+echo "80" > ${PROGRESO}
 DEBIAN_FRONTEND=noninteractive aptitude --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" full-upgrade | tee /var/log/salida && sleep 2
 echo "PASO=43" > ${PASO}
 ;;
 
 43) 
 # Removiendo paquetes innecesarios
+echo "Removiendo paquetes innecesarios" >> ${DOS}
+echo "81" > ${PROGRESO}
 DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" gstreamer0.10-gnomevfs splashy | tee /var/log/salida && sleep 2
 echo "PASO=44" > ${PASO}
 ;;
 
 44) 
 # Actualizando a GDM3
+echo "Actualizando a GDM3" >> ${DOS}
+echo "82" > ${PROGRESO}
 DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" gdm3 | tee /var/log/salida && sleep 2
 echo "PASO=46" > ${PASO}
 ;;
 
 46) 
 # Actualizando a BURG
+echo "Actualizando a BURG" >> ${DOS}
+echo "83" > ${PROGRESO}
 DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" burg | tee /var/log/salida && sleep 2
 echo "PASO=47" > ${PASO}
 ;;
 
 47) 
 # Reinstalando Base de Canaima
+echo "Reinstalando Base de Canaima" >> ${DOS}
+echo "84" > ${PROGRESO}
 DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" canaima-base | tee /var/log/salida && sleep 2
 echo "PASO=48" > ${PASO}
 ;;
 
 48) 
 # Reinstalando Estilo Visual
+echo "Finalizando rutina de actualización" >> ${UNO}
+echo "Reinstalando Estilo Visual" >> ${DOS}
+echo "85" > ${PROGRESO}
 DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" canaima-estilo-visual | tee /var/log/salida && sleep 2
 echo "PASO=49" > ${PASO}
 ;;
 
 49) 
 # Reinstalando Escritorio
+echo "Reinstalando Escritorio" >> ${DOS}
+echo "86" > ${PROGRESO}
 DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" canaima-escritorio-gnome | tee /var/log/salida && sleep 2
 echo "PASO=50" > ${PASO}
 ;;
 
 50) 
 # Actualizando entradas del BURG
+echo "Actualizando entradas del BURG" >> ${DOS}
+echo "87" > ${PROGRESO}
 update-burg | tee /var/log/salida && sleep 2
 echo "PASO=51" > ${PASO}
 ;;
 
 51) 
 # Estableciendo GDM3 como Manejador de Pantalla por defecto
+echo "Estableciendo GDM3 como Manejador de Pantalla por defecto" >> ${DOS}
+echo "88" > ${PROGRESO}
 echo "/usr/sbin/gdm3" > /etc/X11/default-display-manager && sleep 2
 echo "PASO=52" > ${PASO}
 ;;
 
 52) 
 # Reconfigurando el Estilo Visual
+echo "Fin de la actualización" >> ${UNO}
+echo "Reconfigurando el Estilo Visual" >> ${DOS}
+echo "90" > ${PROGRESO}
 dpkg-reconfigure canaima-estilo-visual | tee /var/log/salida && sleep 2
 echo "PASO=53" > ${PASO}
 ;;
 
 53) 
+echo "" >> ${DOS}
+echo "95" > ${PROGRESO}
 update-burg
 
 		# Para cada usuario en /home/ ...
@@ -457,8 +561,9 @@ update-burg
 			esac
 
 		done
-
-
+echo "Reiniciando el sistema en 20 segundos..." >> ${DOS}
+echo "99" > ${PROGRESO}
+sleep 20
 echo 'PASO=70' > ${PASO}
 reboot
 exit 0
