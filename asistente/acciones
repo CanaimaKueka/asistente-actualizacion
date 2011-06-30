@@ -21,7 +21,7 @@ sed -i "s/\/dev\/xxx/${RESULT}/g" ${DEBCONF_SEL}
 # Organiza los paquetes diferentes entre 2.1 oficial y el del usuario
 DIFF21=$( cat ${DIFERENCIA} | awk 'BEGIN {OFS = "\n"; ORS = " " }; {print $1}' )
 
-while [ ${PASO_FILE} -lt 60 ]
+while [ ${PASO} -lt 60 ]
 do
 
 # Verificar si existe un gestor de paquetes
