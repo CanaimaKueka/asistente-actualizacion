@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import pynotify, sys
+
 try:
     import pygtk
     import time
@@ -9,12 +10,15 @@ try:
     import subprocess
     import subprocess 
     pygtk.require("2.0")
+
 except:
     pass
+
 try:
     import gtk
     import gtk.glade
     import pango
+
 except:
     sys.exit(1)
 
@@ -29,7 +33,7 @@ class AsistenteGTK:
         self.pos=0
         self.MAX=2
         self.MIN=0
-        self.gladefile = "gui.glade"
+        self.gladefile = "aa-principal.glade"
         self.glade = gtk.Builder()
         self.glade.add_from_file(self.gladefile)
         self.sig = self.glade.get_object('siguiente')
@@ -38,7 +42,6 @@ class AsistenteGTK:
         self.ant.connect('clicked', self.anterior)
         self.ayuda = self.glade.get_object('ayuda')
         self.ayuda.connect('clicked', self.dale)
-	pynotify.init("Actualizacion Canaima")
 
         self.window = self.glade.get_object('window1')       
         self.v = self.glade.get_object('vbox1')       
@@ -88,7 +91,7 @@ class AsistenteGTK:
             while gtk.events_pending():
                 gtk.main_iteration()
 
-            subprocess.Popen(["/usr/share/asistente-actualizacion/acciones"],shell=True)
+            subprocess.Popen(["aa-principal"],shell=True)
 
         else:
             print 'Desconocido...' 
@@ -99,12 +102,11 @@ class AsistenteGTK:
         self.v.pack_start(box2, True, True, 0)
         box2.show()
 
-
     def contenido(self,widget):
         self.contenido = self.glade.get_object('contenido')       
         self.contenido.set_text("Hola")
 
-
+"""
     def actualizar(self, widget):
         n = pynotify.Notification("Actualización a Versión 3.0", "Ya se encuentra disponible la versión 3.0 de Canaima GNU/Linux.", "dialog-warning")
         #n = pynotify.Notification("Actualización a Versión 3.0", "Ya se encuentra disponible la versión 3.0 de Canaima GNU/Linux.")
@@ -130,11 +132,11 @@ class AsistenteGTK:
 
     def callback_function():
         print "Hola"
-
+"""
 
 if __name__ == "__main__":
     Asistente = AsistenteGTK()
-    Asistente.actualizar(Asistente)
+    #Asistente.actualizar(Asistente)
     gtk.main()
 
 
