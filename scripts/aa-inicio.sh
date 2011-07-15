@@ -2,5 +2,5 @@
 
 VARIABLES="/usr/share/asistente-actualizacion/conf/variables.conf"
 
-echo "[bash:aa-inicio.sh] ejecutando notificar.py, localizado en "$( pwd ) > ${log}
+echo "[BASH:aa-inicio.sh] ejecutando notificar.py, localizado en "$( pwd ) > ${LOG}
 python /usr/share/asistente-actualizacion/gui/aa-notificar.py

@@ -1,48 +1,46 @@
-#!/usr/bin/env bash
+#!/bin/bash -e
+#
+# ==============================================================================
+# PAQUETE: asistente-actualizacion
+# ARCHIVO: postinst
+# DESCRIPCIÓN: Configura el sistema despues la instalación del paquete.
+# COPYRIGHT:
+#  (C) 2010 Luis Alejandro Martínez Faneyth <martinez.faneyth@gmail.com>
+#  (C) 2010 Diego Alberto Aguilera Zambrano <daguilera85@gmail.com>
+#  (C) 2010 Carlos Alejandro Guerrero Mora <guerrerocarlos@gmail.com>
+#  (C) 2010 Francisco Javier Vásquez Guerrero <franjvasquezg@gmail.com>
+# LICENCIA: GPL3
+# ==============================================================================
+#
+# Este programa es software libre. Puede redistribuirlo y/o modificarlo bajo los
+# términos de la Licencia Pública General de GNU (versión 3).
 
+PKG="asistente-actualizacion"
 BASE="/usr/share/asistente-actualizacion/"
 ORIGINAL=${BASE}"listas/canaima-original-paquetes.list"
 LOCAL=${BASE}"listas/canaima-local-paquetes.list"
 DIFERENCIA=${BASE}"listas/canaima-diferencia-paquetes.list"
 
-    mkdir -p /etc/skel/Escritorio/
-    mkdir -p /etc/skel/.config/autostart/
-    mkdir -p /usr/share/applications/
-    mkdir -p /etc/xdg/autostart/
-    mkdir -p /etc/xdg/autostart/
-    mkdir -p /usr/share/asistente-actualizacion2/
+case ${1} in
 
-    cp ${ORIGDIR}/principal.py /usr/share/asistente-actualizacion2/principal.py
-    cp ${ORIGDIR}/asistente-actualizacion.desktop /etc/xdg/autostart/asistente-actualizacion.desktop
-    cp ${ORIGDIR}/paso.conf /usr/share/asistente-actualizacion2/paso.conf
-    cp ${ORIGDIR}/gui.glade /usr/share/asistente-actualizacion2/gui.glade
-    cp ${ORIGDIR}/asistente.png /usr/share/asistente-actualizacion2/asistente.png
-    cp ${ORIGDIR}/initasist /usr/share/asistente-actualizacion2/initasist
-    cp ${ORIGDIR}/finasist /usr/share/asistente-actualizacion2/finasist
-    cp ${ORIGDIR}/preferences.canaima /usr/share/asistente-actualizacion2/preferences.canaima
-    cp ${ORIGDIR}/preferences /usr/share/asistente-actualizacion2/preferences
-    cp ${ORIGDIR}/paquetes /usr/share/asistente-actualizacion2/
-    cp ${ORIGDIR}/predescarga /usr/share/asistente-actualizacion2/
-    cp ${ORIGDIR}/sources.list /usr/share/asistente-actualizacion2/sources.list
-    cp ${ORIGDIR}/sources.list.canaima /usr/share/asistente-actualizacion2/sources.list.canaima
-    cp ${ORIGDIR}/acciones /usr/share/asistente-actualizacion2/acciones
-    cp ${ORIGDIR}/selections.conf /usr/share/asistente-actualizacion2/selections.conf
-    cp ${ORIGDIR}/gui/uno /usr/share/asistente-actualizacion2/
-    cp ${ORIGDIR}/gui/dos /usr/share/asistente-actualizacion2/
-    cp ${ORIGDIR}/gui/msjprogreso /usr/share/asistente-actualizacion2/
-    cp ${ORIGDIR}/gui/progreso /usr/share/asistente-actualizacion2/
-    cp ${ORIGDIR}/gui/dialogo1.glade /usr/share/asistente-actualizacion2/
-    cp ${ORIGDIR}/gui/icono.png /usr/share/asistente-actualizacion2/
-    cp ${ORIGDIR}/gui/actualizador /usr/bin/
-    cp ${ORIGDIR}/21 /usr/share/asistente-actualizacion2/21
-    cp ${ORIGDIR}/acciones /usr/bin/asistente-actualizacion
-    cp ${ORIGDIR}/limpiarkernels /usr/bin/limpiarkernels
-    chmod +x /usr/bin/asistente-actualizacion
-    chmod +x /usr/bin/limpiarkernels
-    chmod +x /usr/share/asistente-actualizacion2/initasist
-    chmod +x /usr/share/asistente-actualizacion2/finasist
-    chmod +x /usr/bin/actualizador
+	configure)
 
-dpkg-query -W -f='${Package}\t${Status}\n' | grep "install ok installed" | awk '{ print $1 }' > ${LOCAL}
-diff ${ORIGINAL} ${LOCAL} | grep ">" | awk '{ print $2 }' > ${DIFERENCIA}
+		dpkg-query -W -f='${Package}\t${Status}\n' | grep "install ok installed" | awk '{ print $1 }' > ${LOCAL}
+		diff ${ORIGINAL} ${LOCAL} | grep ">" | awk '{ print $2 }' > ${DIFERENCIA}
+	;;
 
+        abort-upgrade|abort-remove|abort-deconfigure)
+        ;;
+
+        *)
+
+		ERROR "postinst no reconoce el argumento '"${1}"'" >&2
+                exit 1
+
+        ;;
+
+esac
+
+#DEBHELPER#
+
+exit 0

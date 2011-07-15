@@ -1,64 +1,64 @@
-asistente-actualizacion2 (0.32) unstable; urgency=low
+asistente-actualizacion (0.32) unstable; urgency=low
 
   * [538c4c4] corrigiendo errores encontrados en script
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Thu, 30 Jun 2011 15:27:37 -0430
 
-asistente-actualizacion2 (0.31) unstable; urgency=low
+asistente-actualizacion (0.31) unstable; urgency=low
 
   * [f35c7fe] corrigiendo errores encontrados en script
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Thu, 30 Jun 2011 15:19:45 -0430
 
-asistente-actualizacion2 (0.30) unstable; urgency=low
+asistente-actualizacion (0.30) unstable; urgency=low
 
   * [de800a8] corrigiendo errores encontrados en script
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Thu, 30 Jun 2011 15:18:17 -0430
 
-asistente-actualizacion2 (0.29) unstable; urgency=low
+asistente-actualizacion (0.29) unstable; urgency=low
 
   * [848c30c] corrigiendo errores encontrados en script
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Thu, 30 Jun 2011 15:15:17 -0430
 
-asistente-actualizacion2 (0.28) unstable; urgency=low
+asistente-actualizacion (0.28) unstable; urgency=low
 
   * [360afda] corrigiendo errores encontrados en script
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Thu, 30 Jun 2011 15:10:00 -0430
 
-asistente-actualizacion2 (0.27) unstable; urgency=low
+asistente-actualizacion (0.27) unstable; urgency=low
 
   * [663b75b] corrigiendo errores encontrados en script
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Thu, 30 Jun 2011 15:00:51 -0430
 
-asistente-actualizacion2 (0.26) unstable; urgency=low
+asistente-actualizacion (0.26) unstable; urgency=low
 
   * [dee4392] corrigiendo errores encontrados en script
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Thu, 30 Jun 2011 14:58:04 -0430
 
-asistente-actualizacion2 (0.25) unstable; urgency=low
+asistente-actualizacion (0.25) unstable; urgency=low
 
   * [80a5cd6] corrigiendo errores encontrados en script
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Thu, 30 Jun 2011 14:50:58 -0430
 
-asistente-actualizacion2 (0.24) unstable; urgency=low
+asistente-actualizacion (0.24) unstable; urgency=low
 
   * [b105bbc] para nueva version
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Thu, 30 Jun 2011 14:41:34 -0430
 
-asistente-actualizacion2 (0.23) unstable; urgency=low
+asistente-actualizacion (0.23) unstable; urgency=low
 
   * [c918442] para nueva version
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Thu, 30 Jun 2011 14:39:48 -0430
 
-asistente-actualizacion2 (0.22) unstable; urgency=low
+asistente-actualizacion (0.22) unstable; urgency=low
 
   [ Luis Alejandro Martínez Faneyth ]
   * [54bb8d9] Adecuando script al nuevo esquema
@@ -85,7 +85,7 @@ asistente-actualizacion2 (0.22) unstable; urgency=low
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Thu, 30 Jun 2011 11:47:13 -0430
 
-asistente-actualizacion2 (0.21) unstable; urgency=low
+asistente-actualizacion (0.21) unstable; urgency=low
 
   * [1ad4530] guardando todos los .deb en una carpeta
   * [0c7862d] version interna para obtener todos los paquetes que se
@@ -93,124 +93,124 @@ asistente-actualizacion2 (0.21) unstable; urgency=low
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Mon, 27 Jun 2011 17:29:12 -0430
 
-asistente-actualizacion2 (0.20) unstable; urgency=low
+asistente-actualizacion (0.20) unstable; urgency=low
 
   * [9f8e269] Corrigiendo archivo de paquetes 21
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Tue, 21 Jun 2011 11:37:16 -0430
 
-asistente-actualizacion2 (0.19) unstable; urgency=low
+asistente-actualizacion (0.19) unstable; urgency=low
 
   * [d5c49fa] Corrigiendo archivo de paquetes 21
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Tue, 21 Jun 2011 11:32:33 -0430
 
-asistente-actualizacion2 (0.18) unstable; urgency=low
+asistente-actualizacion (0.18) unstable; urgency=low
 
   * [1b39e09] incluyendp update-manager en verificacion
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Mon, 20 Jun 2011 13:50:58 -0430
 
-asistente-actualizacion2 (0.17) unstable; urgency=low
+asistente-actualizacion (0.17) unstable; urgency=low
 
   * [085fcac] poniendo xterm, corrigiendo zenity y generacion de archivo
     actualizar (diff)
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Mon, 20 Jun 2011 13:31:14 -0430
 
-asistente-actualizacion2 (0.16) unstable; urgency=low
+asistente-actualizacion (0.16) unstable; urgency=low
 
   * [8bfb55f] poniendo xterm, corrigiendo zenity y generacion de archivo
     actualizar (diff)
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Mon, 20 Jun 2011 13:11:45 -0430
 
-asistente-actualizacion2 (0.15) unstable; urgency=low
+asistente-actualizacion (0.15) unstable; urgency=low
 
   * [15b48a1] Corrigiendo nombre de ejecutable
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Mon, 20 Jun 2011 12:29:38 -0430
 
-asistente-actualizacion2 (0.14) unstable; urgency=low
+asistente-actualizacion (0.14) unstable; urgency=low
 
   * [3f46747] Corrigiendo nombre de ejecutable
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Fri, 17 Jun 2011 08:54:27 -0430
 
-asistente-actualizacion2 (0.13) unstable; urgency=low
+asistente-actualizacion (0.13) unstable; urgency=low
 
   * [a155aa4] Corrigiendo nombre de carpeta de autoarranque en el
     .desktop
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Fri, 17 Jun 2011 08:47:49 -0430
 
-asistente-actualizacion2 (0.12) unstable; urgency=low
+asistente-actualizacion (0.12) unstable; urgency=low
 
   * [80c8433] No puede salir porque se esta ejecutando como root
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Fri, 17 Jun 2011 02:53:27 -0430
 
-asistente-actualizacion2 (0.11) unstable; urgency=low
+asistente-actualizacion (0.11) unstable; urgency=low
 
   * [6a5d9a2] Mensaje sale tan pronto se instala la actualizacion
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Fri, 17 Jun 2011 02:52:30 -0430
 
-asistente-actualizacion2 (0.10) unstable; urgency=low
+asistente-actualizacion (0.10) unstable; urgency=low
 
   * [3181603] detalle de transcripcion
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Fri, 17 Jun 2011 02:51:02 -0430
 
-asistente-actualizacion2 (0.9) unstable; urgency=low
+asistente-actualizacion (0.9) unstable; urgency=low
 
   * [49ba51a] Problemas con variables de bash
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Fri, 17 Jun 2011 02:47:50 -0430
 
-asistente-actualizacion2 (0.8) unstable; urgency=low
+asistente-actualizacion (0.8) unstable; urgency=low
 
   * [6b44112] Corrigiendo sintaxis4
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Fri, 17 Jun 2011 02:44:40 -0430
 
-asistente-actualizacion2 (0.7) unstable; urgency=low
+asistente-actualizacion (0.7) unstable; urgency=low
 
   * [c20bbda] Corrigiendo sintaxis3
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Fri, 17 Jun 2011 02:42:09 -0430
 
-asistente-actualizacion2 (0.6) unstable; urgency=low
+asistente-actualizacion (0.6) unstable; urgency=low
 
   * [28fe3b2] Corrigiendo sintaxis3
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Fri, 17 Jun 2011 02:40:12 -0430
 
-asistente-actualizacion2 (0.5) unstable; urgency=low
+asistente-actualizacion (0.5) unstable; urgency=low
 
   * [f333310] Corrigiendo sintaxis2
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Fri, 17 Jun 2011 02:38:40 -0430
 
-asistente-actualizacion2 (0.4) unstable; urgency=low
+asistente-actualizacion (0.4) unstable; urgency=low
 
   * [4e7dd68] Corrigiendo sintaxis
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Fri, 17 Jun 2011 02:36:36 -0430
 
-asistente-actualizacion2 (0.3) unstable; urgency=low
+asistente-actualizacion (0.3) unstable; urgency=low
 
   * [2edb29b] variables bash
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Fri, 17 Jun 2011 02:33:48 -0430
 
-asistente-actualizacion2 (0.2) unstable; urgency=low
+asistente-actualizacion (0.2) unstable; urgency=low
 
   * [054a956] preinst y postinst
 
  -- Carlos Guerrero <guerrerocarlos@gmail.com>  Fri, 17 Jun 2011 02:31:31 -0430
 
-asistente-actualizacion2 (0.1) unstable; urgency=low
+asistente-actualizacion (0.1) unstable; urgency=low
 
   [ Carlos Guerrero ]
   * Primera versión para prueba

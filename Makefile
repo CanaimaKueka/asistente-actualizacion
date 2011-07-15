@@ -26,14 +26,21 @@ install:
 
 	mkdir -p $(DESTDIR)/usr/share/asistente-actualizacion/
 	mkdir -p $(DESTDIR)/usr/bin/
-	cp -rf asistente/* $(DESTDIR)/usr/share/asistente-actualizacion/
-	cp -rf gui/ $(DESTDIR)/usr/share/asistente-actualizacion/
-	cp gui/actualizador $(DESTDIR)/usr/bin/
+	mkdir -p $(DESTDIR)/etc/xdg/autostart/
 
+	cp -rf gui log conf listas imagenes $(DESTDIR)/usr/share/asistente-actualizacion/
+	cp -rf scripts/aa-fin.sh $(DESTDIR)/usr/bin/aa-fin
+	cp -rf scripts/aa-inicio.sh $(DESTDIR)/usr/bin/aa-inicio
+	cp -rf scripts/aa-kernel.sh $(DESTDIR)/usr/bin/aa-kernel
+	cp -rf scripts/aa-principal.sh $(DESTDIR)/usr/bin/aa-principal
+	cp -rf desktop/asistente-actualizacion.desktop $(DESTDIR)/etc/xdg/autostart/
 uninstall:
 
 	rm -rf $(DESTDIR)/usr/share/asistente-actualizacion/
-	rm $(DESTDIR)/usr/bin/actualizador
+	rm $(DESTDIR)/usr/bin/aa-fin
+	rm $(DESTDIR)/usr/bin/aa-inicio
+	rm $(DESTDIR)/usr/bin/aa-kernel
+	rm $(DESTDIR)/usr/bin/aa-principal
 
 clean:
 
