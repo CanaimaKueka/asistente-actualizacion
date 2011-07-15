@@ -11,9 +11,9 @@ MOSTRAR=os.environ['HOME']+"/.config/asistente-actualizacion/mostrar.conf"
 PASO="/usr/share/asistente-actualizacion/conf/paso.conf"
 
 def reiniciar(n,action):
-subprocess.Popen(["gksu","reboot"])
-n.close()
-loop.quit()
+    subprocess.Popen(["gksu","reboot"])
+    n.close()
+    loop.quit()
 
 if __name__=='__main__':
 
@@ -43,7 +43,6 @@ if __name__=='__main__':
         log_file=open(LOG,"a")
         log_file.write('[PYTHON:aa-finalizar.py] No se encontró PASO')
         log_file.close()
-                
         pynotify.init("Asistente para la Actualización de Canaima 2.1")
         loop=gobject.MainLoop()
         n=pynotify.Notification("Fin de la Actualización","Debe reiniciar para finalizar la actualización")
