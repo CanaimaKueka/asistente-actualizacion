@@ -1,54 +1,49 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 #-*-coding:utf-8-*-
 
-importos
-importgobject
-importpynotify
-importsubprocess
+import os
+import gobject
+import pynotify
+import subprocess
 
-deffoo_cb(n,action):
-print"INICIARACTUALIZACION"
-subprocess.Popen(["gksu","asistente-actualizacion"])
-n.close()
-loop.quit()
+LOG="/usr/share/asistente-actualizacion/log/principal.log"
+MOSTRAR=os.environ['HOME']+"/.config/asistente-actualizacion/mostrar.conf"
+PASO="/usr/share/asistente-actualizacion/conf/paso.conf"
 
-defreboot_cb(n,action):
-print"REINICIAR"
+def reiniciar(n,action):
 subprocess.Popen(["gksu","reboot"])
-n.close()
-loop.quit()
-
-
-defdefault_cb(n,action):
-print"NOPASANADA"
-n.close()
-loop.quit()
-
-defdefault_cb2(n,action):
-check_cb_conf=open(os.environ['HOME']+"/.config/asistente.conf","w")
-check_cb_conf.write("MOSTRAR=0")
-check_cb_conf.close()
 n.close()
 loop.quit()
 
 if __name__=='__main__':
 
     try:
-        check_cb_conf=open(os.environ['HOME']+"/.config/asistente.conf","r")
+        check_cb_conf=open(MOSTRAR,"r")
         mostrar=check_cb_conf.readline()
         check_cb_conf.close()
-
+        log_file=open(LOG,"a")
+        log_file.write('[PYTHON:aa-finalizar.py] La configuración encontrada en MOSTRAR es ['+mostrar+']')
+        log_file.close()
     except:
         mostrar=""
+        log_file=open(LOG,"a")
+        log_file.write('[PYTHON:aa-finalizar.py] No se encontró MOSTRAR')
+        log_file.close()
+
 
     try:
-        check_cb_conf=open("/usr/share/asistente-actualizacion/paso.conf","r")
+        check_cb_conf=open(PASO,"r")
         paso=check_cb_conf.readline()
         check_cb_conf.close()
-
+        log_file=open(LOG,"a")
+        log_file.write('[PYTHON:aa-finalizar.py] La configuración encontrada en PASO es ['+paso+']')
+        log_file.close()
     except:
         paso=""
-        print paso
+        log_file=open(LOG,"a")
+        log_file.write('[PYTHON:aa-finalizar.py] No se encontró PASO')
+        log_file.close()
+                
         pynotify.init("Asistente para la Actualización de Canaima 2.1")
         loop=gobject.MainLoop()
         n=pynotify.Notification("Fin de la Actualización","Debe reiniciar para finalizar la actualización")

@@ -13,8 +13,7 @@ PASO="/usr/share/asistente-actualizacion/conf/paso.conf"
 def actualizar(n,action):
 
     log_file=open(LOG,"a")
-    log_file.write('[PYTHON:notificar.py] [EJECUCIÓN] Función "actualizar", ejecuta
-            aa-principal y luego aa-fin')
+    log_file.write('[PYTHON:aa-notificar.py] [EJECUCIÓN] Función "actualizar", ejecuta aa-principal y luego aa-fin')
     log_file.close()
 
     os.system("gksu aa-principal")
@@ -25,8 +24,7 @@ def actualizar(n,action):
 def ignorar(n,action):
 
     log_file=open(LOG,"a")
-    log_file.write('[PYTHON:notificar.py] [EJECUCIÓN] Función "ignorar", se sale
-            de la notificación')
+    log_file.write('[PYTHON:aa-notificar.py] [EJECUCIÓN] Función "ignorar", se sale de la notificación')
     log_file.close()
 
     n.close()
@@ -35,8 +33,7 @@ def ignorar(n,action):
 def no_mostrar(n,action):
 
     log_file=open(LOG,"a")
-    log_file.write('[PYTHON:notificar.py] [EJECUCIÓN] Función "no_mostrar",
-            escribe "MOSTRAR=0" en '+MOSTRAR)
+    log_file.write('[PYTHON:aa-notificar.py] [EJECUCIÓN] Función "no_mostrar", escribe "MOSTRAR=0" en '+MOSTRAR)
     log_file.close()
 
     check_cb_conf=open(MOSTRAR,"w")
@@ -52,13 +49,12 @@ if __name__ == '__main__':
         mostrar=check_cb_conf.readline()
         check_cb_conf.close()
         log_file=open(LOG,"a")
-        log_file.write('[PYTHON:notificar.py] La configuración encontrada en
-                MOSTRAR es ['+mostrar+']')
+        log_file.write('[PYTHON:aa-aa-notificar.py] La configuración encontrada en MOSTRAR es ['+mostrar+']')
         log_file.close()
     except:
         mostrar=""
         log_file=open(LOG,"a")
-        log_file.write('[PYTHON:notificar.py] No se encontró MOSTRAR')
+        log_file.write('[PYTHON:aa-aa-notificar.py] No se encontró MOSTRAR')
         log_file.close()
 
 
@@ -67,13 +63,12 @@ if __name__ == '__main__':
         paso=check_cb_conf.readline()
         check_cb_conf.close()
         log_file=open(LOG,"a")
-        log_file.write('[PYTHON:notificar.py] La configuración encontrada en
-                PASO es ['+paso+']')
+        log_file.write('[PYTHON:aa-aa-notificar.py] La configuración encontrada en PASO es ['+paso+']')
         log_file.close()
     except:
         paso=""
         log_file=open(LOG,"a")
-        log_file.write('[PYTHON:notificar.py] No se encontró PASO')
+        log_file.write('[PYTHON:aa-aa-notificar.py] No se encontró PASO')
         log_file.close()
 
 
@@ -82,7 +77,7 @@ if __name__ == '__main__':
         if paso.find("1") > 0:
 
             log_file=open(LOG,"a")
-            log_file.write('[PYTHON:notificar.py] Iniciada la notificación')
+            log_file.write('[PYTHON:aa-notificar.py] Iniciada la notificación')
             log_file.close()
 
             pynotify.init("Asistente para la Actualización de Canaima 2.1")
@@ -99,8 +94,7 @@ if __name__ == '__main__':
         if paso.find("70") > 0:
 
             log_file=open(LOG,"a")
-            log_file.write('[PYTHON:notificar.py] Iniciando remoción de kernels
-                    obsoletos')
+            log_file.write('[PYTHON:aa-notificar.py] Iniciando remoción de kernels obsoletos')
             log_file.close()
 
             subprocess.Popen(["gksu","aa-kernel"])
