@@ -12,7 +12,7 @@ Vcs-Browser: http://gitorious.org/canaima-gnu-linux/asistente-actualizacion/tree
 
 Package: asistente-actualizacion
 Architecture: all
-Depends: python, python-support (>= 1.0.10), aptitude, apt, diffutils, ${shlibs:Depends}, ${misc:Depends}
+Depends: python, python-support (>= 1.0.10), aptitude, apt, ${shlibs:Depends}, ${misc:Depends}
 Description: Asistente para migrar de Canaima 2.0 o 2.1 a 3.0 
  Asistente se encargado de proveer una forma facil e intuitiva
  para actualizar el sistema a Canaima 3.0
