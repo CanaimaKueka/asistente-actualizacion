@@ -82,22 +82,22 @@ class ProgressThread(threading.Thread):
     def run(self):
         while not self.stopthread.isSet():
             gtk.gdk.threads_enter()
-            uno=open(BASE+"log/msj_progreso.log","r")
+            uno=open(BASE+"log/ventana_4.log","r")
             lineasuno=uno.readlines()
             self.pb.set_text(lineasuno[len(lineasuno)-1][:-1])
             uno.close()
 
-            uno=open(BASE+"log/progreso.log","r")
+            uno=open(BASE+"log/ventana_3.log","r")
             lineasuno=uno.readlines()
             self.pb.set_fraction(float(lineasuno[len(lineasuno)-1])/100)
             uno.close()
 
-            uno=open(BASE+"log/primero.log","r")
+            uno=open(BASE+"log/ventana_1.log","r")
             lineasuno=uno.readlines()
             self.tb.set_text(lineasuno[len(lineasuno)-1][:-1])
             uno.close()
 
-            uno=open(BASE+"log/segundo.log","r")
+            uno=open(BASE+"log/ventana_2.log","r")
             lineasuno=uno.readlines()
             self.tb0.set_text(lineasuno[len(lineasuno)-1][:-1])
             uno.close()

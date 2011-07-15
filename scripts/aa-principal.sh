@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "[BASH:aa-principal.sh] Iniciando actualización" > ${LOG}
+echo "[BASH:aa-principal.sh] Iniciando actualización" >> ${LOG}
 
 VARIABLES="/usr/share/asistente-actualizacion/conf/variables.conf"
 
@@ -14,7 +14,7 @@ VARIABLES="/usr/share/asistente-actualizacion/conf/variables.conf"
 PARTS=$( /sbin/fdisk -l | awk '/^\/dev\// {if ($2 == "*") {if ($6 == "83") { print $1 };}}' | sed 's/+//g' )
 DISCO=${PARTS:0:8}
 RESULT=$( echo ${DISCO} | sed -e 's/\//\\\//g' )
-echo "[BASH:aa-principal.sh] Se determinó que el dispositivo en donde se instalará BURG es ${RESULT}" > ${LOG}
+echo "[BASH:aa-principal.sh] Se determinó que el dispositivo en donde se instalará BURG es ${RESULT}" >> ${LOG}
 sed -i "s/\/dev\/xxx/${RESULT}/g" ${DEBCONF_SEL}
 
 # Organiza los paquetes diferentes entre 2.1 oficial y el del usuario
@@ -27,7 +27,7 @@ while [ ${PASO} -lt 60 ]; do
 # Verificar si existe un gestor de paquetes
 [ $( ps -A | grep -cw update-manager ) == 1 ] || [ $( ps -A | grep -cw apt-get ) == 1 ] || [ $( ps -A | grep -cw aptitude ) == 1 ] &&  zenity --title="Asistente de Actualización a Canaima 3.0" --text="¡Existe un gestor de paquetes trabajando! No podemos continuar." --error --width=600 && exit 1 && pkill aa-principal
 
-echo "[BASH:aa-principal.sh] PASO ${PASO_FILE}" > ${LOG}
+echo "[BASH:aa-principal.sh] PASO ${PASO_FILE}" >> ${LOG}
 
 . ${PASO_FILE}
 

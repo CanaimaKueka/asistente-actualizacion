@@ -27,6 +27,7 @@ case ${1} in
 
 		dpkg-query -W -f='${Package}\t${Status}\n' | grep "install ok installed" | awk '{ print $1 }' > ${LOCAL}
 		diff ${ORIGINAL} ${LOCAL} | grep ">" | awk '{ print $2 }' > ${DIFERENCIA}
+		chmod 777 /usr/share/asistente-actualizacion/log/principal.log
 	;;
 
         abort-upgrade|abort-remove|abort-deconfigure)

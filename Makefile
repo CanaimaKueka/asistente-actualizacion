@@ -33,7 +33,9 @@ install:
 	cp -rf scripts/aa-inicio.sh $(DESTDIR)/usr/bin/aa-inicio
 	cp -rf scripts/aa-kernel.sh $(DESTDIR)/usr/bin/aa-kernel
 	cp -rf scripts/aa-principal.sh $(DESTDIR)/usr/bin/aa-principal
+	cp -rf scripts/aa-ventana.sh $(DESTDIR)/usr/bin/aa-ventana
 	cp -rf desktop/asistente-actualizacion.desktop $(DESTDIR)/etc/xdg/autostart/
+
 uninstall:
 
 	rm -rf $(DESTDIR)/usr/share/asistente-actualizacion/
