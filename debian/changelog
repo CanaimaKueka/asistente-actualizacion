@@ -1,8 +1,11 @@
 asistente-actualizacion (1.0+0) unstable; urgency=low
 
+  [ Carlos Guerrero ]
   * [538c4c4] corrigiendo errores encontrados en script
 
- -- Carlos Guerrero <guerrerocarlos@gmail.com>  Thu, 30 Jun 2011 15:27:37 -0430
+  [ Luis Alejandro Martínez Faneyth ]
+
+ -- Luis Alejandro Martínez Faneyth <martinez.faneyth@gmail.com>  Fri, 15 Jul 2011 01:15:32 -0430
 
 asistente-actualizacion (0.31) unstable; urgency=low
 
