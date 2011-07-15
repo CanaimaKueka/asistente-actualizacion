@@ -1,3 +1,9 @@
+asistente-actualizacion (1.0+3) unstable; urgency=low
+
+  * [3a9f575] Modificando Dependencias
+
+ -- Luis Alejandro Martínez Faneyth <martinez.faneyth@gmail.com>  Fri, 15 Jul 2011 13:38:27 -0430
+
 asistente-actualizacion (1.0+2) unstable; urgency=low
 
   * [8d55232] Corrigiendo algunas ubicaciones de archivo, errores de
