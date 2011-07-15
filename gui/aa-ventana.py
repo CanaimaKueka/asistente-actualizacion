@@ -5,9 +5,9 @@ import threading
 import gtk
 import random
 import time
-
 import gtk, gtk.glade
 import os
+import sys
 
 BASE="/usr/share/asistente-actualizacion/"
 
@@ -19,8 +19,15 @@ class PyApp(gtk.Window):
     def __init__(self, threads=None):
         super(PyApp, self).__init__()
         
-        self.glade = gtk.glade.XML(base+"aa-ventana.glade")
-        self.glade.signal_autoconnect(self)
+        self.glade = gtk.glade.XML(BASE+"gui/aa-ventana.glade")
+        
+        dic = { "destroy" : self.cerrar,
+                "cancelar" : self.cerrar,
+                "on_cancelar_clicked" : self.cerrar,
+                "on_MainWindow_destroy" : self.cerrar }
+        
+        self.glade.signal_autoconnect(dic)
+
         self.dialogo=self.glade.get_widget("window1")
         self.trabajando=self.glade.get_widget("trabajando")
         self.trabajando0=self.glade.get_widget("trabajando0")
@@ -29,45 +36,12 @@ class PyApp(gtk.Window):
         self.trabajando0.set_text("Hola1")
         self.progreso.set_text("Hola1")
         self.dialogo.show_all()
-        self.__create_trayicon()
-        self.showed = True
 
         self.t=ProgressThread(self.trabajando,self.trabajando0,self.progreso)
 
-
-    def load_image(self, path, pixbuf=False):
-        img_path = os.path.realpath(os.path.join(os.path.dirname(__file__),
-            path))
-        pix = gtk.gdk.pixbuf_new_from_file(img_path)
-        if pixbuf: return pix
-        avatar = gtk.Image()
-        avatar.set_from_pixbuf(pix)
-        del pix
-        return avatar
- 
-    def __create_trayicon(self):
-        if gtk.check_version(2, 10, 0) is not None:
-            log.debug("Disabled Tray Icon. It needs PyGTK >= 2.10.0")
-            return
-        self.tray = gtk.StatusIcon()
-        self.tray.set_from_pixbuf(self.load_image(BASE+'imagenes/icono.svg', True))
-        self.tray.set_tooltip('Asistente Actualizacion')
-        self.tray.connect("activate", self.__on_trayicon_click)
-
-    def __on_trayicon_click(self, widget):
-        if self.showed:
-            self.showed = False
-            self.dialogo.hide()
-        else:
-            self.showed = True
-            self.dialogo.show()
-         
-
-    def on_window1_delete_event(self, widget, event):
+    def cerrar(self, widget,event=None):
+        self.glade.get_widget("window1").hide()
         gtk.main_quit()
- 
-    def on_button1_clicked(self, widget):
-        gtk.main_quit()        
 
 class ProgressThread(threading.Thread):
     def __init__(self,trabajando,trabajando0,progressbar):
