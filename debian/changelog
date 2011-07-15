@@ -1,3 +1,9 @@
+asistente-actualizacion (1.0+6) unstable; urgency=low
+
+  * [b4ac03e] Corrigiendo ventana de progreso
+
+ -- Luis Alejandro Martínez Faneyth <martinez.faneyth@gmail.com>  Fri, 15 Jul 2011 17:10:02 -0430
+
 asistente-actualizacion (1.0+5) unstable; urgency=low
 
   * [f35c333] Removiendo diffutils como dependencia
