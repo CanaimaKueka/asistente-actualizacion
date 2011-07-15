@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 import threading
 import gtk
 import random
@@ -8,7 +9,7 @@ import time
 import gtk, gtk.glade
 import os
 
-base="/usr/share/asistente-actualizacion2/"
+BASE="/usr/share/asistente-actualizacion/"
 
 gtk.gdk.threads_init()
 
@@ -18,7 +19,7 @@ class PyApp(gtk.Window):
     def __init__(self, threads=None):
         super(PyApp, self).__init__()
         
-        self.glade = gtk.glade.XML(base+"dialogo1.glade")
+        self.glade = gtk.glade.XML(base+"aa-ventana.glade")
         self.glade.signal_autoconnect(self)
         self.dialogo=self.glade.get_widget("window1")
         self.trabajando=self.glade.get_widget("trabajando")
@@ -26,7 +27,7 @@ class PyApp(gtk.Window):
         self.progreso=self.glade.get_widget("progreso")
         self.trabajando.set_text("Hola1")
         self.trabajando0.set_text("Hola1")
-        self.progreso.set_text("Hola1")        
+        self.progreso.set_text("Hola1")
         self.dialogo.show_all()
         self.__create_trayicon()
         self.showed = True
@@ -49,7 +50,7 @@ class PyApp(gtk.Window):
             log.debug("Disabled Tray Icon. It needs PyGTK >= 2.10.0")
             return
         self.tray = gtk.StatusIcon()
-        self.tray.set_from_pixbuf(self.load_image(base+'icono.png', True))
+        self.tray.set_from_pixbuf(self.load_image(BASE+'imagenes/icono.svg', True))
         self.tray.set_tooltip('Asistente Actualizacion')
         self.tray.connect("activate", self.__on_trayicon_click)
 
@@ -81,26 +82,25 @@ class ProgressThread(threading.Thread):
     def run(self):
         while not self.stopthread.isSet():
             gtk.gdk.threads_enter()
-            uno=open(base+"msjprogreso","r")
+            uno=open(BASE+"log/msj_progreso.log","r")
             lineasuno=uno.readlines()
             self.pb.set_text(lineasuno[len(lineasuno)-1][:-1])
             uno.close()
 
-            uno=open(base+"progreso","r")
+            uno=open(BASE+"log/progreso.log","r")
             lineasuno=uno.readlines()
             self.pb.set_fraction(float(lineasuno[len(lineasuno)-1])/100)
             uno.close()
 
-            uno=open(base+"uno","r")
+            uno=open(BASE+"log/primero.log","r")
             lineasuno=uno.readlines()
             self.tb.set_text(lineasuno[len(lineasuno)-1][:-1])
             uno.close()
 
-            uno=open(base+"dos","r")
+            uno=open(BASE+"log/segundo.log","r")
             lineasuno=uno.readlines()
             self.tb0.set_text(lineasuno[len(lineasuno)-1][:-1])
             uno.close()
-
 
             gtk.gdk.threads_leave()
             

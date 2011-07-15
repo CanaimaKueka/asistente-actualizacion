@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
-ORIGDIR="/usr/share/asistente-actualizacion"
+
+BASE="/usr/share/asistente-actualizacion/"
+ORIGINAL=${BASE}"listas/canaima-original-paquetes.list"
+LOCAL=${BASE}"listas/canaima-local-paquetes.list"
+DIFERENCIA=${BASE}"listas/canaima-diferencia-paquetes.list"
 
     mkdir -p /etc/skel/Escritorio/
     mkdir -p /etc/skel/.config/autostart/
@@ -39,7 +43,6 @@ ORIGDIR="/usr/share/asistente-actualizacion"
     chmod +x /usr/share/asistente-actualizacion2/finasist
     chmod +x /usr/bin/actualizador
 
-    BASE="/usr/share/asistente-actualizacion2/"
-    dpkg-query -W -f='${Package}\t${Status}\n' | grep "install ok installed" | awk '{ print $1 }' > $BASE/este
-    diff $BASE/21 $BASE/este | grep ">" | awk '{ print $2 }' > $BASE/actualizar
+dpkg-query -W -f='${Package}\t${Status}\n' | grep "install ok installed" | awk '{ print $1 }' > ${LOCAL}
+diff ${ORIGINAL} ${LOCAL} | grep ">" | awk '{ print $2 }' > ${DIFERENCIA}
 
