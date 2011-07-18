@@ -74,7 +74,7 @@ if __name__ == '__main__':
 
     if mostrar.find("0") is -1:
 
-        if paso.find("1") > 0:
+        if paso[5:] == 1:
 
             log_file=open(LOG,"a")
             log_file.write('[PYTHON:aa-notificar.py] Iniciada la notificación')
@@ -91,7 +91,24 @@ if __name__ == '__main__':
             n.show()
             loop.run()
 
-        if paso.find("70") > 0:
+        if paso[5:] > 1 or paso[5:] < 70:
+
+            log_file=open(LOG,"a")
+            log_file.write('[PYTHON:aa-notificar.py] Iniciada la notificación')
+            log_file.close()
+
+            pynotify.init("Asistente para la Actualización de Canaima 2.1")
+            loop=gobject.MainLoop()
+            n=pynotify.Notification("Oops!", "Parece que la Actualización se interrumpió")
+            n.set_urgency(pynotify.URGENCY_CRITICAL)
+            n.set_timeout(pynotify.EXPIRES_NEVER)
+            n.add_action("actualizar", "Continuar", actualizar)
+            n.add_action("ignorar", "Ignorar", ignorar)
+            n.add_action("no_mostrar", "No volver a mostrar", no_mostrar)
+            n.show()
+            loop.run()
+
+        if paso[5:] == 70:
 
             log_file=open(LOG,"a")
             log_file.write('[PYTHON:aa-notificar.py] Iniciando remoción de kernels obsoletos')
