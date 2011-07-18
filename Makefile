@@ -36,7 +36,7 @@ install:
 	cp -rf scripts/aa-principal.sh $(DESTDIR)/usr/bin/aa-principal
 	cp -rf scripts/aa-ventana.sh $(DESTDIR)/usr/bin/aa-ventana
 	cp -rf desktop/asistente-actualizacion.desktop $(DESTDIR)/etc/xdg/autostart/
-	cp -rf conf/mostrar.conf $(DESTDIR)/etc/skel/asistente-actualizacion/
+	cp -rf conf/mostrar.conf $(DESTDIR)/etc/skel/.config/asistente-actualizacion/
 
 uninstall:
 
