@@ -10,13 +10,6 @@ VARIABLES="/usr/share/asistente-actualizacion/conf/variables.conf"
 # Cargando paso actual del asistente
 . ${PASO_FILE}
 
-# Determina el Disco Duro al cual instalar y actualizar el burg
-PARTS=$( /sbin/fdisk -l | awk '/^\/dev\// {if ($2 == "*") {if ($6 == "83") { print $1 };}}' | sed 's/+//g' )
-DISCO=${PARTS:0:8}
-RESULT=$( echo ${DISCO} | sed -e 's/\//\\\//g' )
-echo "[BASH:aa-principal.sh] Se determinó que el dispositivo en donde se instalará BURG es ${RESULT}" >> ${LOG}
-sed -i "s/\/dev\/xxx/${RESULT}/g" ${DEBCONF_SEL}
-
 # Organiza los paquetes diferentes entre 2.1 oficial y el del usuario
 DIFERENCIA_NICE=$( cat ${DIFERENCIA} | awk 'BEGIN {OFS = "\n"; ORS = " " }; {print $1}' )
 LOCAL_NICE=$( cat ${LOCAL} | awk 'BEGIN {OFS = "\n"; ORS = " " }; {print $1}' )
@@ -27,7 +20,7 @@ while [ ${PASO} -lt 60 ]; do
 # Verificar si existe un gestor de paquetes
 [ $( ps -A | grep -cw update-manager ) == 1 ] || [ $( ps -A | grep -cw apt-get ) == 1 ] || [ $( ps -A | grep -cw aptitude ) == 1 ] &&  zenity --title="Asistente de Actualización a Canaima 3.0" --text="¡Existe un gestor de paquetes trabajando! No podemos continuar." --error --width=600 && exit 1 && pkill aa-principal
 
-echo "[BASH:aa-principal.sh] PASO ${PASO_FILE}" >> ${LOG}
+echo "[BASH:aa-principal.sh] PASO ${PASO} ============================================" >> ${LOG}
 
 . ${PASO_FILE}
 
@@ -47,7 +40,8 @@ echo 'PASO=2' > ${PASO_FILE}
 2)
 
 # Iniciamos ventana de progreso
-aa-ventana
+aa-ventana &
+xterm -e "tail -f /usr/share/asistente-actualizacion/log/principal.log" &
 
 echo "Descargando paquetes" | tee -a ${VENTANA_1} ${LOG}
 echo "Se descargarán una serie de paquetes necesarios para la actualización del sistema (1.5G aprox.)" | tee -a ${VENTANA_2} ${LOG}
@@ -61,7 +55,7 @@ cp ${PREFERENCES_DEBIAN} ${PREFERENCES}
 aptitude update | tee -a ${LOG} && sleep 2
 
 # Predescarga de todos los paquetes requeridos para la instalación
-for PAQUETE in $( cat ${LOCAL_NICE} ); do
+for PAQUETE in ${LOCAL_NICE}; do
 ${CONTAR}=$[${CONTAR}+1]
 aptitude download ${PAQUETE} | tee -a ${LOG}
 echo "scale=6;${CONTAR}/1440*40" | bc | tee -a ${VENTANA_3} ${LOG}
@@ -343,6 +337,14 @@ echo "69" | tee -a ${VENTANA_3} ${LOG}
 debconf-set-selections ${DEBCONF_SEL}
 ls ${CACHE_APT} | wc -l | tee -a ${LOG}
 DEBIAN_FRONTEND=noninteractive aptitude --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" full-upgrade | tee -a ${LOG} && sleep 2
+
+# Determina el Disco Duro al cual instalar y actualizar el burg
+PARTS=$( /sbin/fdisk -l | awk '/^\/dev\// {if ($2 == "*") {if ($6 == "83") { print $1 };}}' | sed 's/+//g' )
+DISCO=${PARTS:0:8}
+RESULT=$( echo ${DISCO} | sed -e 's/\//\\\//g' )
+echo "[BASH:aa-principal.sh] Se determinó que el dispositivo en donde se instalará BURG es ${RESULT}" >> ${LOG}
+sed -i "s/\/dev\/xxx/${RESULT}/g" ${DEBCONF_SEL}
+
 echo "PASO=31" > ${PASO_FILE}
 ;;
 
@@ -468,7 +470,14 @@ DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -
 echo "PASO=46" > ${PASO_FILE}
 ;;
 
-46) 
+46)
+# Determina el Disco Duro al cual instalar y actualizar el burg
+PARTS=$( /sbin/fdisk -l | awk '/^\/dev\// {if ($2 == "*") {if ($6 == "83") { print $1 };}}' | sed 's/+//g' )
+DISCO=${PARTS:0:8}
+RESULT=$( echo ${DISCO} | sed -e 's/\//\\\//g' )
+echo "[BASH:aa-principal.sh] Se determinó que el dispositivo en donde se instalará BURG es ${RESULT}" >> ${LOG}
+sed -i "s/\/dev\/xxx/${RESULT}/g" ${DEBCONF_SEL}
+
 # Actualizando a BURG
 echo "Actualizando a BURG" | tee -a ${VENTANA_2} ${LOG}
 echo "83" | tee -a ${VENTANA_3} ${LOG}

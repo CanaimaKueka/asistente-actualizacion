@@ -40,6 +40,11 @@ class PyApp(gtk.Window):
         self.t=ProgressThread(self.trabajando,self.trabajando0,self.progreso)
 
     def cerrar(self, widget,event=None):
+        os.system("pkill aptitude")
+        os.system("pkill aa-principal")
+        os.system("pkill apt")
+        os.system("pkill apt-get")
+        os.system("pkill dpkg")
         self.glade.get_widget("window1").hide()
         gtk.main_quit()
 
