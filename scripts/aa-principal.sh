@@ -56,7 +56,7 @@ aptitude update | tee -a ${LOG} && sleep 2
 
 # Predescarga de todos los paquetes requeridos para la instalación
 for PAQUETE in ${LOCAL_NICE}; do
-${CONTAR}=$[${CONTAR}+1]
+CONTAR=$[${CONTAR}+1]
 aptitude download ${PAQUETE} | tee -a ${LOG}
 echo "scale=6;${CONTAR}/1440*40" | bc | tee -a ${VENTANA_3} ${LOG}
 echo "Descargando: ${PAQUETE}" | tee -a ${VENTANA_4} ${LOG}

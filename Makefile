@@ -27,6 +27,7 @@ install:
 	mkdir -p $(DESTDIR)/usr/share/asistente-actualizacion/
 	mkdir -p $(DESTDIR)/usr/bin/
 	mkdir -p $(DESTDIR)/etc/xdg/autostart/
+	mkdir -p $(DESTDIR)/etc/skel/.config/asistente-actualizacion/
 
 	cp -rf gui log conf listas imagenes $(DESTDIR)/usr/share/asistente-actualizacion/
 	cp -rf scripts/aa-fin.sh $(DESTDIR)/usr/bin/aa-fin
@@ -35,6 +36,7 @@ install:
 	cp -rf scripts/aa-principal.sh $(DESTDIR)/usr/bin/aa-principal
 	cp -rf scripts/aa-ventana.sh $(DESTDIR)/usr/bin/aa-ventana
 	cp -rf desktop/asistente-actualizacion.desktop $(DESTDIR)/etc/xdg/autostart/
+	cp -rf conf/mostrar.conf $(DESTDIR)/etc/skel/asistente-actualizacion/
 
 uninstall:
 

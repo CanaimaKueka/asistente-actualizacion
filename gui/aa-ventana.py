@@ -45,6 +45,9 @@ class PyApp(gtk.Window):
         os.system("pkill apt")
         os.system("pkill apt-get")
         os.system("pkill dpkg")
+        os.system("pkill gksu")
+        os.system("pkill gnome-terminal")
+        os.system("pkill xterm")
         self.glade.get_widget("window1").hide()
         gtk.main_quit()
 

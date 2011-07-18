@@ -17,9 +17,9 @@
 
 PKG="asistente-actualizacion"
 BASE="/usr/share/asistente-actualizacion/"
-ORIGINAL=${BASE}"listas/canaima-original-paquetes.list"
-LOCAL=${BASE}"listas/canaima-local-paquetes.list"
-DIFERENCIA=${BASE}"listas/canaima-diferencia-paquetes.list"
+ORIGINAL="/usr/share/asistente-actualizacion/listas/canaima-original-paquetes.list"
+LOCAL="/usr/share/asistente-actualizacion/listas/canaima-local-paquetes.list"
+DIFERENCIA="/usr/share/asistente-actualizacion/listas/canaima-diferencia-paquetes.list"
 
 case ${1} in
 
@@ -28,6 +28,36 @@ case ${1} in
 		dpkg-query -W -f='${Package}\t${Status}\n' | grep "install ok installed" | awk '{ print $1 }' > ${LOCAL}
 		diff ${ORIGINAL} ${LOCAL} | grep ">" | awk '{ print $2 }' > ${DIFERENCIA}
 		chmod 777 /usr/share/asistente-actualizacion/log/principal.log
+		
+        # Para cada usuario en /home/ ...
+        for usuario in /home/*? ; do
+
+                # Obteniendo sólo el nombre del usuario
+                usuario_min=$(basename ${usuario})
+
+                # Y en caso de que el usuario sea un usuario activo (existente en /etc/shadow) ...
+                case  $( grep "${usuario_min}:.*:.*:.*:.*:.*:::" /etc/shadow ) in
+
+                        '')
+                        # No hace nada si no se encuentra en /etc/shadow
+                        ;;
+
+                        *)
+                                # Asegurando que el directorio .config/asistente-actualizacion/ esté creado
+                                mkdir -p /home/${usuario_min}/.config/asistente-actualizacion/
+                                
+                                # con permisos apropiados
+                                chown ${usuario_min}:${usuario_min} /home/${usuario_min}/.config/asistente-actualizacion/
+
+                                # Copia del archivo de configuración que determina si debe ejecutarse asistente-actualizacion al inicio o no
+                                cp /etc/skel/.config/asistente-actualizacion/mostrar.conf /home/${usuario_min}/.config/asistente-actualizacion/
+                                
+                                # con permisos apropiados
+                                chown ${usuario_min}:${usuario_min} /home/${usuario_min}/.config/asistente-actualizacion/mostrar.conf
+                        ;;
+                esac
+        done
+
 	;;
 
         abort-upgrade|abort-remove|abort-deconfigure)
@@ -35,8 +65,8 @@ case ${1} in
 
         *)
 
-		ERROR "postinst no reconoce el argumento '"${1}"'" >&2
-                exit 1
+		echo "postinst no reconoce el argumento '"${1}"'" >&2
+		exit 1
 
         ;;
 
