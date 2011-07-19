@@ -1,3 +1,10 @@
+asistente-actualizacion (1.0+13) unstable; urgency=low
+
+  * [0487457] Mejorando la forma en que se copia el cache de los
+    paquetes
+
+ -- Luis Alejandro Martínez Faneyth <martinez.faneyth@gmail.com>  Tue, 19 Jul 2011 17:25:26 -0430
+
 asistente-actualizacion (1.0+12) unstable; urgency=low
 
   * [9ac35d8] Impidiendo la desinstalación de canaima-base
