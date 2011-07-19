@@ -16,6 +16,7 @@ LOCAL_NICE=$( cat ${LOCAL} | awk 'BEGIN {OFS = "\n"; ORS = " " }; {print $1}' )
 
 # Iniciamos ventana de progreso
 aa-ventana &
+xterm -e "tail -f ${LOG}" &
 
 # Iteramos por los pasos
 while [ ${PASO} -lt 60 ]; do
@@ -58,10 +59,9 @@ for PAQUETE in ${LOCAL_NICE}; do
 CONTAR=$[${CONTAR}+1]
 echo "Descargando: ${PAQUETE}" | tee -a ${VENTANA_4} ${LOG}
 aptitude download ${PAQUETE} | tee -a ${LOG}
+mv *.deb ${CACHE}
 echo "scale=6;${CONTAR}/1440*40" | bc | tee -a ${VENTANA_3} ${LOG}
 done
-
-mv *.deb ${CACHE}
 
 echo "PASO=3" > ${PASO_FILE}
 ;;
@@ -126,7 +126,7 @@ echo "Limpiando Canaima 2.1 de aplicaciones no utilizadas en 3.0" | tee -a ${VEN
 echo "46" | tee -a ${VENTANA_3} ${LOG}
 debconf-set-selections ${DEBCONF_SEL}
 echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-DEBIAN_FRONTEND=noninteractive apt-get purge --force-yes -y openoffice* firefox* thunderbird* canaima-accesibilidad canaima-instalador-vivo canaima-particionador | tee -a ${LOG} && sleep 2
+DEBIAN_FRONTEND=noninteractive apt-get purge --force-yes -y openoffice* firefox* thunderbird* canaima-instalador-vivo canaima-particionador | tee -a ${LOG} && sleep 2
 echo "PASO=9" > ${PASO_FILE}
 ;;
 
@@ -240,6 +240,7 @@ echo "PASO=20" > ${PASO_FILE}
 echo "Actualizando gestor de dispositivos UDEV" | tee -a ${VENTANA_2} ${LOG}
 echo "59" | tee -a ${VENTANA_3} ${LOG}
 debconf-set-selections ${DEBCONF_SEL}
+cp "${CACHE}*.deb" ${CACHE_APT}
 echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
 DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" udev | tee -a ${LOG} && sleep 2
 echo "PASO=21" > ${PASO_FILE}
@@ -302,10 +303,8 @@ echo "PASO=27" > ${PASO_FILE}
 # Actualización de componentes adicionales instalados por el usuario (no incluidos en canaima 2.1)
 echo "Actualización de componentes adicionales instalados por el usuario" | tee -a ${VENTANA_2} ${LOG}
 echo "66" | tee -a ${VENTANA_3} ${LOG}
-debconf-set-selections ${DEBCONF_SEL}
 cp "${CACHE}*.deb" ${CACHE_APT}
 echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-xterm -e "aptitude --assume-yes --allow-untrusted -o DPkg::Options::='--force-confmiss' install ${DIFERENCIA_NICE}"
 echo "PASO=28" > ${PASO_FILE}
 ;;
 
@@ -315,6 +314,7 @@ echo "Actualización parcial de la base" | tee -a ${VENTANA_2} ${LOG}
 echo "67" | tee -a ${VENTANA_3} ${LOG}
 debconf-set-selections ${DEBCONF_SEL}
 echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
+cp "${CACHE}*.deb" ${CACHE_APT}
 DEBIAN_FRONTEND=noninteractive apt-get --force-yes -y upgrade | tee -a ${LOG} && sleep 2
 echo "PASO=29" > ${PASO_FILE}
 ;;
@@ -325,6 +325,7 @@ echo "Actualización total de la base" | tee -a ${VENTANA_2} ${LOG}
 echo "68" | tee -a ${VENTANA_3} ${LOG}
 debconf-set-selections ${DEBCONF_SEL}
 echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
+cp "${CACHE}*.deb" ${CACHE_APT}
 DEBIAN_FRONTEND=noninteractive apt-get --force-yes -y dist-upgrade | tee -a ${LOG} && sleep 2
 echo "PASO=30" > ${PASO_FILE}
 ;;
@@ -335,15 +336,8 @@ echo "Actualización completa de la base" | tee -a ${VENTANA_2} ${LOG}
 echo "69" | tee -a ${VENTANA_3} ${LOG}
 debconf-set-selections ${DEBCONF_SEL}
 echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
+cp "${CACHE}*.deb" ${CACHE_APT}
 DEBIAN_FRONTEND=noninteractive aptitude --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" full-upgrade | tee -a ${LOG} && sleep 2
-
-# Determina el Disco Duro al cual instalar y actualizar el burg
-PARTS=$( /sbin/fdisk -l | awk '/^\/dev\// {if ($2 == "*") {if ($6 == "83") { print $1 };}}' | sed 's/+//g' )
-DISCO=${PARTS:0:8}
-RESULT=$( echo ${DISCO} | sed -e 's/\//\\\//g' )
-echo "[BASH:aa-principal.sh] Se determinó que el dispositivo en donde se instalará BURG es ${RESULT}" >> ${LOG}
-sed -i "s/\/dev\/xxx/${RESULT}/g" ${DEBCONF_SEL}
-
 echo "PASO=31" > ${PASO_FILE}
 ;;
 
@@ -405,7 +399,7 @@ echo "Removiendo paquetes innecesarios" | tee -a ${VENTANA_2} ${LOG}
 echo "76" | tee -a ${VENTANA_3} ${LOG}
 debconf-set-selections ${DEBCONF_SEL}
 echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" epiphany-browser epiphany-browser-data libgraphviz4 libslab0 gtkhtml3.14 busybox-syslogd dsyslog inetutils-syslogd rsyslog socklog-run sysklogd syslog-ng libfam0c102 | tee -a ${LOG} && sleep 2
+DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" epiphany-browser epiphany-browser-data libgraphviz4 libslab0 gtkhtml3.14 busybox-syslogd dsyslog inetutils-syslogd rsyslog socklog-run sysklogd syslog-ng libfam0c102 canaima-accesibilidad | tee -a ${LOG} && sleep 2
 echo "PASO=39" > ${PASO_FILE}
 ;;
 
@@ -492,6 +486,7 @@ echo "Reinstalando Base de Canaima" | tee -a ${VENTANA_2} ${LOG}
 echo "84" | tee -a ${VENTANA_3} ${LOG}
 debconf-set-selections ${DEBCONF_SEL}
 echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
+DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" canaima-base | tee -a ${LOG} && sleep 2
 DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" canaima-base | tee -a ${LOG} && sleep 2
 echo "PASO=48" > ${PASO_FILE}
 ;;
@@ -503,6 +498,7 @@ echo "Reinstalando Estilo Visual" | tee -a ${VENTANA_2} ${LOG}
 echo "85" | tee -a ${VENTANA_3} ${LOG}
 debconf-set-selections ${DEBCONF_SEL}
 echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
+DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" canaima-estilo-visual | tee -a ${LOG} && sleep 2
 DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" canaima-estilo-visual | tee -a ${LOG} && sleep 2
 echo "PASO=49" > ${PASO_FILE}
 ;;
@@ -513,6 +509,7 @@ echo "Reinstalando Escritorio" | tee -a ${VENTANA_2} ${LOG}
 echo "86" | tee -a ${VENTANA_3} ${LOG}
 debconf-set-selections ${DEBCONF_SEL}
 echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
+DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" canaima-escritorio-gnome | tee -a ${LOG} && sleep 2
 DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" canaima-escritorio-gnome | tee -a ${LOG} && sleep 2
 echo "PASO=50" > ${PASO_FILE}
 ;;
