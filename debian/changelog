@@ -1,3 +1,9 @@
+asistente-actualizacion (1.0+12) unstable; urgency=low
+
+  * [9ac35d8] Impidiendo la desinstalación de canaima-base
+
+ -- Luis Alejandro Martínez Faneyth <martinez.faneyth@gmail.com>  Tue, 19 Jul 2011 15:19:47 -0430
+
 asistente-actualizacion (1.0+11) unstable; urgency=low
 
   * [4a0045e] Arreglando la ventana de progreso cuando se interrumpe la
