@@ -29,7 +29,7 @@ install:
 	mkdir -p $(DESTDIR)/etc/xdg/autostart/
 	mkdir -p $(DESTDIR)/etc/skel/.config/asistente-actualizacion/
 
-	cp -rf gui log conf listas imagenes $(DESTDIR)/usr/share/asistente-actualizacion/
+	cp -rf cache gui log conf listas imagenes $(DESTDIR)/usr/share/asistente-actualizacion/
 	cp -rf scripts/aa-fin.sh $(DESTDIR)/usr/bin/aa-fin
 	cp -rf scripts/aa-inicio.sh $(DESTDIR)/usr/bin/aa-inicio
 	cp -rf scripts/aa-kernel.sh $(DESTDIR)/usr/bin/aa-kernel
