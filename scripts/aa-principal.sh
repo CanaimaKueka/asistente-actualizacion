@@ -15,8 +15,8 @@ DIFERENCIA_NICE=$( cat ${DIFERENCIA} | awk 'BEGIN {OFS = "\n"; ORS = " " }; {pri
 LOCAL_NICE=$( cat ${LOCAL} | awk 'BEGIN {OFS = "\n"; ORS = " " }; {print $1}' )
 
 # Iniciamos ventana de progreso
-aa-ventana &
 xterm -e "tail -f ${LOG}" &
+aa-ventana &
 
 # Iteramos por los pasos
 while [ ${PASO} -lt 60 ]; do
@@ -62,7 +62,7 @@ aptitude download ${PAQUETE} | tee -a ${LOG}
 mv *.deb ${CACHE}
 echo "scale=6;${CONTAR}/1440*40" | bc | tee -a ${VENTANA_3} ${LOG}
 done
-
+cp /usr/share/asistente-actualizacion/cache/*.deb /var/cache/apt/archives/
 echo "PASO=3" > ${PASO_FILE}
 ;;
 
