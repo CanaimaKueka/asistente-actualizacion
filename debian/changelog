@@ -1,3 +1,10 @@
+asistente-actualizacion (1.0+10) unstable; urgency=low
+
+  * [b7c3efd] Incluyendo la carpeta de cache, y diferenciando la línea
+    de debug para los paquetes en caché
+
+ -- Luis Alejandro Martínez Faneyth <martinez.faneyth@gmail.com>  Mon, 18 Jul 2011 23:13:46 -0430
+
 asistente-actualizacion (1.0+9) unstable; urgency=low
 
   * [1b39574] Corrigiendo error de sintaxis en aa-principal
