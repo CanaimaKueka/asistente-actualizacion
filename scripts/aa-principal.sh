@@ -10,9 +10,11 @@ VARIABLES="/usr/share/asistente-actualizacion/conf/variables.conf"
 # Cargando paso actual del asistente
 . ${PASO_FILE}
 
-# Organiza los paquetes diferentes entre 2.1 oficial y el del usuario
-DIFERENCIA_NICE=$( cat ${DIFERENCIA} | awk 'BEGIN {OFS = "\n"; ORS = " " }; {print $1}' )
+# Organiza los paquetes
+TOTAL_NICE=$( cat ${TOTAL} | awk 'BEGIN {OFS = "\n"; ORS = " " }; {print $1}' )
 LOCAL_NICE=$( cat ${LOCAL} | awk 'BEGIN {OFS = "\n"; ORS = " " }; {print $1}' )
+TOTAL_FINAL=${TOTAL_NICE}" "${LOCAL_NICE}
+TOTAL_NUM=$( echo $TOTAL_FINAL | wc -w )
 
 # Iniciamos ventana de progreso
 xterm -e "tail -f ${LOG}" &
@@ -55,12 +57,12 @@ cp ${PREFERENCES_DEBIAN} ${PREFERENCES}
 aptitude update | tee -a ${LOG} && sleep 2
 
 # Predescarga de todos los paquetes requeridos para la instalación
-for PAQUETE in ${LOCAL_NICE}; do
+for PAQUETE in ${TOTAL_FINAL}; do
 CONTAR=$[${CONTAR}+1]
 echo "Descargando: ${PAQUETE}" | tee -a ${VENTANA_4} ${LOG}
 aptitude download ${PAQUETE} | tee -a ${LOG}
 mv *.deb ${CACHE}
-echo "scale=6;${CONTAR}/1440*40" | bc | tee -a ${VENTANA_3} ${LOG}
+echo "scale=6;${CONTAR}/${TOTAL_NUM}*40" | bc | tee -a ${VENTANA_3} ${LOG}
 done
 cp /usr/share/asistente-actualizacion/cache/*.deb /var/cache/apt/archives/
 echo "PASO=3" > ${PASO_FILE}
@@ -477,6 +479,7 @@ echo "83" | tee -a ${VENTANA_3} ${LOG}
 debconf-set-selections ${DEBCONF_SEL}
 echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
 DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" burg | tee -a ${LOG} && sleep 2
+burg-install --force ${DISCO}
 echo "PASO=47" > ${PASO_FILE}
 ;;
 
