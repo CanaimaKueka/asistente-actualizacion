@@ -1,3 +1,10 @@
+asistente-actualizacion (1.0+14) unstable; urgency=low
+
+  * [94b9ba9] Corrigiendo momento en que se desinstala canaima-
+    accesibilidad
+
+ -- Luis Alejandro Martínez Faneyth <martinez.faneyth@gmail.com>  Tue, 19 Jul 2011 19:51:03 -0430
+
 asistente-actualizacion (1.0+13) unstable; urgency=low
 
   * [0487457] Mejorando la forma en que se copia el cache de los
