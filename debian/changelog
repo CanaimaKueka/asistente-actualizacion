@@ -1,3 +1,10 @@
+asistente-actualizacion (1.0+16) unstable; urgency=low
+
+  * [35e0b73] Corrigiendo tipo de elemento en algunos condicionales de
+    aa-notificar.py
+
+ -- Luis Alejandro Martínez Faneyth <martinez.faneyth@gmail.com>  Tue, 26 Jul 2011 07:41:08 -0430
+
 asistente-actualizacion (1.0+15) unstable; urgency=low
 
   * [1989dfa] Corrigiendo base de datos de paquetes que se utiliza para
