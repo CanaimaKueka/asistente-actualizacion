@@ -74,7 +74,7 @@ if __name__ == '__main__':
 
     if mostrar.find("0") is -1:
 
-        if paso[5:] == 1:
+        if int(paso[5:]) == 1:
 
             log_file=open(LOG,"a")
             log_file.write('[PYTHON:aa-notificar.py] Iniciada la notificación')
@@ -91,7 +91,7 @@ if __name__ == '__main__':
             n.show()
             loop.run()
 
-        if paso[5:] > 1 or paso[5:] < 70:
+        if int(paso[5:]) > 1 and int(paso[5:]) < 70:
 
             log_file=open(LOG,"a")
             log_file.write('[PYTHON:aa-notificar.py] Iniciada la notificación')
@@ -108,7 +108,7 @@ if __name__ == '__main__':
             n.show()
             loop.run()
 
-        if paso[5:] == 70:
+        if int(paso[5:]) == 70:
 
             log_file=open(LOG,"a")
             log_file.write('[PYTHON:aa-notificar.py] Iniciando remoción de kernels obsoletos')
