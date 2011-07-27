@@ -34,7 +34,7 @@ case ${PASO} in
 
 1)
 # Ventana de bienvenida
-zenity --title="Asistente de Actualización a Canaima 3.0" --text="Este asistente se encargará de hacer los cambios necesarios\npara actualizar el sistema a la versión 3.0 de Canaima.\n\nSe realizará la actualizacion de gran cantidad de paquetes\nLas aplicaciones que ud haya instalado en 2.X que requieran\nconfiguración durante la instalacion ameritaran de su intervención para ser configuradas, \nel resto de la actualización se realizará de forma transparente.\n\n\nSe recomienda conectar el equipo a una fuente de alimentación continua, al finalizar la actualizacion el sistema se reiniciará automaticamente, no apague el equipo hasta haber recibido el mensaje de \"Actualizacion Completada\".\nSe descargarán aprox: 1200MB.\n\n¿Desea continuar con la actualización?" --question --width=600
+zenity --title="Asistente de Actualización a Canaima 3.0" --text="Este asistente se encargará de hacer los cambios necesarios para actualizar el sistema a la versión 3.0 de Canaima.\n\nAsegúrese que:\n\n* Dispone de conexión a internet.\n\n* Su PC está conectada a una fuente de energía estable.\n\n* Tiene al menos 4GB de espacio libre en disco.\n\n* No está ejecutando un gestor o instalador de paquetes\n\n* Usted dispone de 2 horas libres de su tiempo.\n\n¿Desea continuar con la actualización?" --question --width=600
 [ $? == 1 ] && exit 1
 echo "Inicializando el Asistente" | tee -a ${VENTANA_1} ${LOG}
 echo "Ejecutando procesos iniciales ..." | tee -a ${VENTANA_2} ${LOG}
