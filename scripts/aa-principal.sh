@@ -34,7 +34,7 @@ case ${PASO} in
 
 1)
 # Ventana de bienvenida
-zenity --title="Asistente de Actualización a Canaima 3.0" --text="Este asistente se encargará de hacer los cambios necesarios para actualizar el sistema a la versión 3.0 de Canaima.\n\nAsegúrese que:\n\n* Dispone de conexión a internet.\n\n* Su PC está conectada a una fuente de energía estable.\n\n* Tiene al menos 4GB de espacio libre en disco.\n\n* No está ejecutando un gestor o instalador de paquetes\n\n* Usted dispone de 2 horas libres de su tiempo.\n\n¿Desea continuar con la actualización?" --question --width=600
+zenity --title="Asistente de Actualización a Canaima 3.0" --text="Este asistente se encargará de hacer los cambios necesarios para actualizar el sistema a la versión 3.0 de Canaima.\n\nAsegúrese que:\n\n* Dispone de conexión a internet.\n\n* Su PC está conectada a una fuente de energía estable.\n\n* Tiene al menos 6GB de espacio libre en disco.\n\n* No está ejecutando un gestor o instalador de paquetes.\n\n* No tiene ningún documento importante abierto.\n\n* Usted dispone de 2 horas libres de su tiempo.\n\n¿Desea continuar con la actualización?" --question --width=600
 [ $? == 1 ] && exit 1
 echo "Inicializando el Asistente" | tee -a ${VENTANA_1} ${LOG}
 echo "Ejecutando procesos iniciales ..." | tee -a ${VENTANA_2} ${LOG}
