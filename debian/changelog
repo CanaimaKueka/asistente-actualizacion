@@ -1,3 +1,10 @@
+asistente-actualizacion (1.0+18) unstable; urgency=low
+
+  * [9524264] Mejorando ventana de remoción de kernels, activando
+    ventana de finalización de actualización
+
+ -- Luis Alejandro Martínez Faneyth <martinez.faneyth@gmail.com>  Wed, 27 Jul 2011 15:02:50 -0430
+
 asistente-actualizacion (1.0+17) unstable; urgency=low
 
   * [013acb5] Mejorando mensaje de información al usuario
