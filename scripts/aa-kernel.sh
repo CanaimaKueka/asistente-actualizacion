@@ -28,6 +28,8 @@ echo 'aptitude purge --assume-yes --allow-untrusted -o DPkg::Options::="--force-
 echo 'pkill aa-ventana | tee -a ${LOG}' >> /usr/bin/limpiar-asistente
 echo 'pkill xterm | tee -a ${LOG}' >> /usr/bin/limpiar-asistente
 
+chmod +x /usr/bin/limpiar-asistente
+
 limpiar-asistente
 
 exit 0
