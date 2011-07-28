@@ -185,7 +185,7 @@ echo "Arreglando paquetes en mal estado" | tee -a ${VENTANA_2} ${LOG}
 echo "52" | tee -a ${VENTANA_3} ${LOG}
 debconf-set-selections ${DEBCONF_SEL}
 echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -f install | tee -a ${LOG} && sleep 2
+DEBIAN_FRONTEND=noninteractive apt-get --allow-unauthenticated -o DPkg::Options::="--force-confmiss" -y --force-yes -f install | tee -a ${LOG} && sleep 2
 echo "PASO=15" > ${PASO_FILE}
 ;;
 
@@ -233,7 +233,7 @@ echo "58" | tee -a ${VENTANA_3} ${LOG}
 debconf-set-selections ${DEBCONF_SEL}
 cp "${CACHE}*.deb" ${CACHE_APT}
 echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -f install | tee -a ${LOG} && sleep 2
+DEBIAN_FRONTEND=noninteractive apt-get --allow-unauthenticated -o DPkg::Options::="--force-confmiss" -y --force-yes -f install | tee -a ${LOG} && sleep 2
 echo "PASO=20" > ${PASO_FILE}
 ;;
 
@@ -287,7 +287,7 @@ echo "64" | tee -a ${VENTANA_3} ${LOG}
 debconf-set-selections ${DEBCONF_SEL}
 cp "${CACHE}*.deb" ${CACHE_APT}
 echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -f install | tee -a ${LOG} && sleep 2
+DEBIAN_FRONTEND=noninteractive apt-get --allow-unauthenticated -o DPkg::Options::="--force-confmiss" -y --force-yes -f install | tee -a ${LOG} && sleep 2
 echo "PASO=26" > ${PASO_FILE}
 ;;
 
@@ -317,7 +317,7 @@ echo "67" | tee -a ${VENTANA_3} ${LOG}
 debconf-set-selections ${DEBCONF_SEL}
 echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
 cp "${CACHE}*.deb" ${CACHE_APT}
-DEBIAN_FRONTEND=noninteractive apt-get --force-yes -y upgrade | tee -a ${LOG} && sleep 2
+DEBIAN_FRONTEND=noninteractive apt-get --allow-unauthenticated -o DPkg::Options::="--force-confmiss" --force-yes -y upgrade | tee -a ${LOG} && sleep 2
 echo "PASO=29" > ${PASO_FILE}
 ;;
 
@@ -328,7 +328,7 @@ echo "68" | tee -a ${VENTANA_3} ${LOG}
 debconf-set-selections ${DEBCONF_SEL}
 echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
 cp "${CACHE}*.deb" ${CACHE_APT}
-DEBIAN_FRONTEND=noninteractive apt-get --force-yes -y dist-upgrade | tee -a ${LOG} && sleep 2
+DEBIAN_FRONTEND=noninteractive apt-get --allow-unauthenticated -o DPkg::Options::="--force-confmiss" --force-yes -y dist-upgrade | tee -a ${LOG} && sleep 2
 echo "PASO=30" > ${PASO_FILE}
 ;;
 
@@ -381,7 +381,7 @@ echo "Arreglando paquetes en mal estado" | tee -a ${VENTANA_2} ${LOG}
 echo "74" | tee -a ${VENTANA_3} ${LOG}
 debconf-set-selections ${DEBCONF_SEL}
 echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-DEBIAN_FRONTEND=noninteractive apt-get -y --force-yes -f install | tee -a ${LOG} && sleep 2
+DEBIAN_FRONTEND=noninteractive apt-get --allow-unauthenticated -o DPkg::Options::="--force-confmiss" -y --force-yes -f install | tee -a ${LOG} && sleep 2
 echo "PASO=37" > ${PASO_FILE}
 ;;
 
