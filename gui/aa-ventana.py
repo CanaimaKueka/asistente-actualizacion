@@ -18,7 +18,7 @@ NUM_THREADS = 5
 class PyApp(gtk.Window):
     def __init__(self, threads=None):
         super(PyApp, self).__init__()
-        
+       
         self.glade = gtk.glade.XML(BASE+"gui/aa-ventana.glade")
         
         dic = { "destroy" : self.cerrar,
