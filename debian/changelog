@@ -1,3 +1,11 @@
+asistente-actualizacion (1.0+24) unstable; urgency=low
+
+  * [b5394f2] Aumentando el tiempo de espera del wget en aa-principal
+    para conexiones lentas. Moviendo los logs a /var/log/ después de que
+    el asistente de actualización se desinstala.
+
+ -- Luis Alejandro Martínez Faneyth <martinez.faneyth@gmail.com>  Wed, 03 Aug 2011 18:10:25 -0430
+
 asistente-actualizacion (1.0+23) unstable; urgency=low
 
   * [d862c8b] Asegurando que existe una conexión de red.
