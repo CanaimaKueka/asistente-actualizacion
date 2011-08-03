@@ -26,12 +26,17 @@ while [ ${PASO} -lt 60 ]; do
 # Verificar si existe un gestor de paquetes
 [ $( ps -A | grep -cw update-manager ) == 1 ] || [ $( ps -A | grep -cw apt-get ) == 1 ] || [ $( ps -A | grep -cw aptitude ) == 1 ] &&  zenity --title="Asistente de Actualización a Canaima 3.0" --text="¡Existe un gestor de paquetes trabajando! No podemos continuar." --error --width=600 && pkill aa-principal && pkill xterm && pkill aa-ventana && exit 1
 
+dhclient
+
 (wget -q --tries=10 --timeout=5 http://www.google.com -O /tmp/index.google) | zenity --progress --pulsate --width=600 --height=80 --title="Instalación de Aplicaciones Extendidas" --text "Verificando conexión a Internet ..." --auto-close
 
 if [ ! -s /tmp/index.google ];then
        zenity --text="¡Ooops! Parece que no tienes conexión a internet." --title="ERROR" --error --width=600 && pkill aa-principal && pkill xterm && pkill aa-ventana && exit 1
 fi
 
+rm /tmp/index.google
+
+apt-get --allow-unauthenticated -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -y --force-yes -f install 
 
 echo "[BASH:aa-principal.sh] PASO ${PASO} ============================================" >> ${LOG}
 
@@ -202,7 +207,7 @@ echo "Instalando nuevo Kernel y librerías Perl" | tee -a ${VENTANA_2} ${LOG}
 echo "53" | tee -a ${VENTANA_3} ${LOG}
 debconf-set-selections ${DEBCONF_SEL}
 echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" linux-image-2.6.32-5-686 perl libperl5.10 | tee -a ${LOG} && sleep 2
+DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" linux-image-2.6.32-5-$(uname -r | awk -F - '{print $3}') perl libperl5.10 | tee -a ${LOG} && sleep 2
 echo "PASO=16" > ${PASO_FILE}
 ;;
 
