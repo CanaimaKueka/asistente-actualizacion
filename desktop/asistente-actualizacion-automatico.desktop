@@ -1,0 +1,18 @@
+#!/usr/bin/env xdg-open
+
+[Desktop Entry]
+Name=Asistente de Actualización para Canaima 2.1
+Name[es_VE]=Asistente de Actualización para Canaima 2.1
+GenericName=Asistente de Actualización para Canaima 2.1
+GenericName[es_VE]=Asistente de Actualización para Canaima 2.1
+Comment=Aplicación de inicio para el Asistente de Actualización
+Comment[es_VE]=Aplicación de inicio para el Asistente de Actualización
+Exec=aa-inicio
+Terminal=false
+Type=Application
+StartupNotify=true
+Icon=/usr/share/asistente-actualizacion/imagenes/logo.svg
+Categories=GNOME;GTK;Utility;
+X-GNOME-FullName=Asistente de Actualización para Canaima 2.1
+X-GNOME-FullName[es]=Asistente de Actualización para Canaima 2.1
+
