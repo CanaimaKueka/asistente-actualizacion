@@ -17,7 +17,6 @@ def actualizar(n,action):
     log_file.close()
 
     os.system("gksu aa-principal")
-    os.system("gksu aa-fin")
     n.close()
     loop.quit()
 
@@ -49,12 +48,12 @@ if __name__ == '__main__':
         mostrar=check_cb_conf.readline()
         check_cb_conf.close()
         log_file=open(LOG,"a")
-        log_file.write('[PYTHON:aa-aa-notificar.py] La configuración encontrada en MOSTRAR es ['+mostrar+']')
+        log_file.write('[PYTHON:aa-notificar.py] La configuración encontrada en MOSTRAR es ['+mostrar+']')
         log_file.close()
     except:
         mostrar=""
         log_file=open(LOG,"a")
-        log_file.write('[PYTHON:aa-aa-notificar.py] No se encontró MOSTRAR')
+        log_file.write('[PYTHON:aa-notificar.py] No se encontró MOSTRAR')
         log_file.close()
 
 
@@ -63,12 +62,12 @@ if __name__ == '__main__':
         paso=check_cb_conf.readline()
         check_cb_conf.close()
         log_file=open(LOG,"a")
-        log_file.write('[PYTHON:aa-aa-notificar.py] La configuración encontrada en PASO es ['+paso+']')
+        log_file.write('[PYTHON:aa-notificar.py] La configuración encontrada en PASO es ['+paso+']')
         log_file.close()
     except:
         paso=""
         log_file=open(LOG,"a")
-        log_file.write('[PYTHON:aa-aa-notificar.py] No se encontró PASO')
+        log_file.write('[PYTHON:aa-notificar.py] No se encontró PASO')
         log_file.close()
 
 
@@ -80,7 +79,7 @@ if __name__ == '__main__':
             log_file.write('[PYTHON:aa-notificar.py] Iniciada la notificación')
             log_file.close()
 
-            pynotify.init("Asistente para la Actualización de Canaima 2.1")
+            pynotify.init("Asistente de Actualización")
             loop=gobject.MainLoop()
             n=pynotify.Notification("Nueva actualización disponible", "Ya puede actualizar a Canaima 3.0")
             n.set_urgency(pynotify.URGENCY_CRITICAL)
@@ -97,7 +96,7 @@ if __name__ == '__main__':
             log_file.write('[PYTHON:aa-notificar.py] Iniciada la notificación')
             log_file.close()
 
-            pynotify.init("Asistente para la Actualización de Canaima 2.1")
+            pynotify.init("Asistente de Actualización")
             loop=gobject.MainLoop()
             n=pynotify.Notification("Oops!", "Parece que la Actualización se interrumpió")
             n.set_urgency(pynotify.URGENCY_CRITICAL)
@@ -118,7 +117,7 @@ if __name__ == '__main__':
             check_cb_conf=open(MOSTRAR,"w")
             check_cb_conf.write("MOSTRAR=0")
             check_cb_conf.close()
-            pynotify.init("Asistente para la Actualización de Canaima 2.1")
+            pynotify.init("Asistente de Actualización")
             loop=gobject.MainLoop()
             n=pynotify.Notification("Bienvenido a Canaima GNU/Linux 3.0","Ya puede usar su sistema.")
             n.set_timeout(pynotify.EXPIRES_NEVER)

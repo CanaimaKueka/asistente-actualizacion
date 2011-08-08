@@ -44,9 +44,9 @@ if __name__=='__main__':
         log_file.write('[PYTHON:aa-finalizar.py] No se encontró PASO')
         log_file.close()
 
-    pynotify.init("Asistente para la Actualización de Canaima 2.1")
+    pynotify.init("Asistente de Actualización")
     loop=gobject.MainLoop()
-    n=pynotify.Notification("Fin de la Actualización","Debe reiniciar para finalizar la actualización")
+    n=pynotify.Notification("Fin de la Actualización","Reinicie para utilizar Canaima 3.0")
     n.set_timeout(pynotify.EXPIRES_NEVER)
     n.add_action("reiniciar", "Reiniciar", reiniciar)
     n.show()

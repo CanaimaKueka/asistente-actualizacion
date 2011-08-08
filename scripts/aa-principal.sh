@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "[BASH:aa-principal.sh] Iniciando actualización" >> ${LOG}
+echo "Iniciando actualización" | tee -a ${LOG}
 
 VARIABLES="/usr/share/asistente-actualizacion/conf/variables.conf"
 
@@ -10,18 +10,27 @@ VARIABLES="/usr/share/asistente-actualizacion/conf/variables.conf"
 # Cargando paso actual del asistente
 . ${PASO_FILE}
 
+# Cargando funciones
+. ${FUNCIONES}
+
 # Organiza los paquetes
 cat ${ORIGINAL} > ${TOTAL}
 cat ${LOCAL} >> ${TOTAL}
 TOTAL_REP=$( cat ${TOTAL} | sort -u )
 TOTAL_FINAL=$( echo ${TOTAL_REP} | awk 'BEGIN {OFS = "\n"; ORS = " " }; {print $1}' )
 TOTAL_NUM=$( echo $TOTAL_FINAL | wc -w )
+DESCARGA_OFFSET="0"
 
 # Iniciamos ventana de progreso
 xterm -e "tail -f ${LOG}" &
 aa-ventana &
 
-# Si estamos en una canaimita, desinstalamos en control parental que ralentiza el proceso
+echo "" | tee -a ${VENTANA_1} ${LOG}
+echo "" | tee -a ${VENTANA_2} ${LOG}
+echo "0" | tee -a ${VENTANA_3} ${LOG}
+echo "" | tee -a ${VENTANA_4} ${LOG}
+
+# Si estamos en una canaimita, desinstalamos el control parental que ralentiza el proceso
 if [ $( dpkg-query -W -f='${Package}\t${Status}\n' canaima-control-parental | grep -c "install ok installed" ) == 1 ]; then
 	aptitude purge ${APTITUDE_OPTIONS} canaima-control-parental
 fi
@@ -34,68 +43,50 @@ fi
 # Iteramos por los pasos
 while [ ${PASO} -lt 60 ]; do
 
-# Verificar si existe un gestor de paquetes
-if [ $( ps -A | grep -cw update-manager ) == 1 ] || [ $( ps -A | grep -cw apt-get ) == 1 ] || [ $( ps -A | grep -cw aptitude ) == 1 ];then
-	zenity --text="¡Existe un gestor de paquetes trabajando!\n\nReinicia tu computador o ejecuta manualmente el actualizador desde el menú Aplicaciones > Herramientas del Sistema > Actualizador a Canaima 3.0, cuando el gestor de paquetes termine de ejecutarse." --title="ERROR" --error --width=600
-	pkill xterm
-	pkill aa-ventana
-	pkill python
-	pkill aa-principal
-	exit 1
-fi
+# Verificar si existe un gestor de paquetes trabajando
+if [ $( ps -A | grep -cw update-manager ) == 1 ] || [ $( ps -A | grep -cw apt-get ) == 1 ] || [ $( ps -A | grep -cw aptitude ) == 1 ] && ERROR_APT
 
-echo "Obteniendo dirección IP (dhclient)" | tee -a ${VENTANA_2} ${LOG}
+# Obteniendo dirección IP
+echo "Obteniendo dirección IP (dhclient)" | tee -a ${VENTANA_4} ${LOG}
 /etc/init.d/networking restart | tee -a ${LOG}
 dhclient | tee -a ${LOG}
 
-echo "Comprobando conexión a internet" | tee -a ${VENTANA_2} ${LOG}
+# Hacemos wget de google.com para comprobar que tenemos salida a internet
+echo "Comprobando conexión a internet" | tee -a ${VENTANA_4} ${LOG}
 wget --timeout=10 http://www.google.com -O /tmp/index.google | tee -a ${LOG}
+[ ! -s /tmp/index.google ] && ERROR_INTERNET
+[ -e /tmp/index.google ] && rm /tmp/index.google
 
-if [ ! -s /tmp/index.google ];then
-	zenity --text="¡Ooops! Parece que no tienes conexión a internet.\n\nReinicia tu computador o ejecuta manualmente el actualizador desde el menú Aplicaciones > Herramientas del Sistema > Actualizador a Canaima 3.0, cuando compruebes que tienes conexión a internet." --title="ERROR" --error --width=600
-	pkill xterm
-	pkill aa-ventana
-	pkill python
-	pkill aa-principal
-	rm /tmp/index.google
-	exit 1
-fi
-
-rm /tmp/index.google
-
-echo "Arreglando posibles paquetes rotos" | tee -a ${VENTANA_2} ${LOG}
-apt-get ${APT_GET_OPTIONS} -f install | tee -a ${LOG}
-dpkg --configure -a | tee -a ${LOG}
+echo "Arreglando posibles paquetes rotos" | tee -a ${VENTANA_4} ${LOG}
 debconf-set-selections ${DEBCONF_SEL}
+${NON_I} apt-get ${APT_GET_OPTIONS} -f install | tee -a ${LOG}
+${NON_I} dpkg --configure -a | tee -a ${LOG}
 
-echo "[BASH:aa-principal.sh] PASO ${PASO} ============================================" >> ${LOG}
+echo "== PASO ${PASO} ============================================" | tee -a ${LOG}
+echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
 
 . ${PASO_FILE}
+
+echo "$[${PASO}+${DESCARGA_OFFSET}]" | tee -a ${VENTANA_3} ${LOG}
 
 case ${PASO} in
 
 1)
+	echo "Inicializando el asistente" | tee -a ${VENTANA_1} ${LOG}
+	echo "Ejecutando procesos iniciales" | tee -a ${VENTANA_2} ${LOG}
+	echo "Bienvenido" | tee -a ${VENTANA_4} ${LOG}
+
 	# Ventana de bienvenida
-	zenity --title="Asistente de Actualización a Canaima 3.0" --text="Este asistente se encargará de hacer los cambios necesarios para actualizar el sistema a la versión 3.0 de Canaima.\n\nAsegúrese que:\n\n* Dispone de una conexión a internet.\n\n* Su PC está conectada a una fuente de energía estable.\n\n* Tiene al menos 6GB de espacio libre en disco.\n\n* No está ejecutando un gestor o instalador de paquetes.\n\n* No tiene ningún documento importante abierto.\n\n* Dispone de al menos 2 horas libres de su tiempo.\n\nSi por alguna razón el proceso se detiene, puede reiniciarlo desde el punto en quese interrumpió haciendo click en Aplicaciones > Herramientas del Sistema > Actualizador a Canaima 3.0.\n\n¿Desea continuar con la actualización?" --question --width=600
+	zenity --title="Asistente de Actualización a Canaima 3.0" --text="Este asistente se encargará de hacer los cambios necesarios para actualizar el sistema a la versión 3.0 de Canaima.\n\nAsegúrese que:\n\n* Dispone de una conexión a internet.\n\n* Su PC está conectada a una fuente de energía estable.\n\n* Tiene al menos 6GB de espacio libre en disco.\n\n* No está ejecutando un gestor o instalador de paquetes.\n\n* No tiene ningún documento importante abierto.\n\n* Dispone de al menos 2 horas libres de su tiempo.\n\nSi por alguna razón el proceso se detiene, puede reanudarlo desde el punto en que se interrumpió haciendo click en Aplicaciones > Herramientas del Sistema > Actualizador a Canaima 3.0.\n\n¿Desea continuar con la actualización?" --question --width=600
+	[ $? == 1 ] && ERROR_CRITICO
 
-	if [ $? == 1 ];then
-		pkill xterm
-		pkill aa-ventana
-		pkill python
-		pkill aa-principal
-		exit 1
-	fi
-
-	echo "Inicializando el Asistente" | tee -a ${VENTANA_1} ${LOG}
-	echo "Ejecutando procesos iniciales ..." | tee -a ${VENTANA_2} ${LOG}
-	echo "1" | tee -a ${VENTANA_3} ${LOG}
-	echo "--" | tee -a ${VENTANA_4} ${LOG}
-	echo 'PASO=2' > ${PASO_FILE}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
 
 2)
-	echo "Descargando Paquetes" | tee -a ${VENTANA_1} ${LOG}
-	echo "Se descargarán una serie de paquetes necesarios (1,5GB aprox.)" | tee -a ${VENTANA_2} ${LOG}
+	echo "Actualizando repositorios para Canaima 3.0" | tee -a ${VENTANA_2} ${LOG}
+	echo "" | tee -a ${VENTANA_4} ${LOG}
 
 	# Aseguramos que tenemos los repositorios correctos
 	cp ${SOURCES_CANAIMA_3} ${SOURCES}
@@ -103,85 +94,95 @@ case ${PASO} in
 	cp ${PREFERENCES_CANAIMA_3} ${PREFERENCES}
 
 	# Actualizamos la lista de paquetes
-	aptitude update | tee -a ${LOG} && sleep 2
+	aptitude update | tee -a ${LOG}
+
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
+;;
+
+3)
+	echo "Se descargarán una serie de paquetes necesarios (1,5GB aprox.)" | tee -a ${VENTANA_2} ${LOG}
+	echo "" | tee -a ${VENTANA_4} ${LOG}
+	DESCARGA_OFFSET="58"
 
 	# Predescarga de todos los paquetes requeridos para la instalación
 	for PAQUETE in ${TOTAL_FINAL}; do
 		CONTAR=$[${CONTAR}+1]
 		echo "Descargando: ${PAQUETE}" | tee -a ${VENTANA_4} ${LOG}
+		cd ${CACHE}
 		aptitude download ${PAQUETE} | tee -a ${LOG}
-		mv *.deb ${CACHE}
-		echo "scale=6;${CONTAR}/${TOTAL_NUM}*40" | bc | tee -a ${VENTANA_3} ${LOG}
+		echo "scale=6;${CONTAR}/${TOTAL_NUM}*${DESCARGA_OFFSET}+${PASO}" | bc | tee -a ${VENTANA_3} ${LOG}
 	done
 
-	echo "Introduciendo paquetes en caché (tardará un poco) ..." | tee -a ${VENTANA_4} ${LOG}
-	cp /usr/share/asistente-actualizacion/cache/*.deb /var/cache/apt/archives/
-	echo "PASO=3" > ${PASO_FILE}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
 
-3)
+4)
+	echo "Introduciendo paquetes en caché (tardará un poco) ..." | tee -a ${VENTANA_4} ${LOG}
+	cp /usr/share/asistente-actualizacion/cache/*.deb /var/cache/apt/archives/
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
+;;
+
+5)
 	# ------- ACTUALIZANDO CANAIMA 2.1 ------------------------------------------------------------------#
 	#==================================================================================================#
 
 	echo "Actualizando Canaima 2.1" | tee -a ${VENTANA_1} ${LOG}
-	echo "Actualizando lista de paquetes ..." | tee -a ${VENTANA_2} ${LOG}
-	echo "41" | tee -a ${VENTANA_3} ${LOG}
+	echo "Actualizando lista de paquetes" | tee -a ${VENTANA_2} ${LOG}
 	echo "" | tee -a ${VENTANA_4} ${LOG}
-	echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
 
 	# Aseguramos que tenemos los repositorios correctos
-        cp ${SOURCES_CANAIMA_2} ${SOURCES}
-        # Estableciendo prioridades superiores para paquetes provenientes de Debian
-        cp ${PREFERENCES_CANAIMA_2} ${PREFERENCES}
+	cp ${SOURCES_CANAIMA_2} ${SOURCES}
+	# Estableciendo prioridades superiores para paquetes provenientes de Debian
+	cp ${PREFERENCES_CANAIMA_2} ${PREFERENCES}
 
 	# Actualizamos la lista de paquetes
-	aptitude update | tee -a ${LOG} && sleep 2
+	aptitude update | tee -a ${LOG}
 
-	echo "PASO=4" > ${PASO_FILE}
-;;
-
-4)
-	# Actualizamos Canaima 2.1
-	echo "Descargando último software disponible para Canaima 2.1" | tee -a ${VENTANA_2} ${LOG}
-	echo "42" | tee -a ${VENTANA_3} ${LOG}
-	echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude ${APTITUDE_OPTIONS} full-upgrade | tee -a ${LOG} && sleep 2
-	echo "PASO=5" > ${PASO_FILE}
-;;
-
-5)
-	# Instalamos otro proveedor de gnome-www-browser
-	echo "Instalando otro proveedor de gnome-www-browser" | tee -a ${VENTANA_2} ${LOG}
-	echo "43" | tee -a ${VENTANA_3} ${LOG}
-	echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude install ${APTITUDE_OPTIONS} galeon | tee -a ${LOG} && sleep 2
-	echo "PASO=6" > ${PASO_FILE}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
 
 6)
-	# Removemos la configuración vieja del GRUB
-	echo "Eliminando configuración anterior del GRUB" | tee -a ${VENTANA_2} ${LOG}
-	echo "44" | tee -a ${VENTANA_3} ${LOG}
-	rm /etc/default/grub && sleep 2
-	echo "PASO=7" > ${PASO_FILE}
+	# Actualizamos Canaima 2.1
+	echo "Descargando último software disponible para Canaima 2.1" | tee -a ${VENTANA_2} ${LOG}
+	${NON_I} aptitude ${APTITUDE_OPTIONS} full-upgrade | tee -a ${LOG}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
 
 7)
-	# Limpiando Canaima 2.1 de aplicaciones no utilizadas en 3.0
-	echo "Limpiando Canaima 2.1 de aplicaciones no utilizadas en 3.0" | tee -a ${VENTANA_2} ${LOG}
-	echo "45" | tee -a ${VENTANA_3} ${LOG}
-	echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-	DEBIAN_FRONTEND=noninteractive apt-get purge ${APT_GET_OPTIONS} openoffice* firefox* thunderbird* canaima-instalador-vivo canaima-particionador | tee -a ${LOG} && sleep 2
-	echo "PASO=8" > ${PASO_FILE}
+	# Instalamos otro proveedor de gnome-www-browser
+	echo "Instalando otro proveedor de gnome-www-browser" | tee -a ${VENTANA_2} ${LOG}
+	${NON_I} aptitude install ${APTITUDE_OPTIONS} galeon | tee -a ${LOG}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
 
-8) 
+8)
+	# Removemos la configuración vieja del GRUB
+	echo "Eliminando configuración anterior del GRUB" | tee -a ${VENTANA_2} ${LOG}
+	[ -e /etc/default/grub ] && rm /etc/default/grub
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
+;;
+
+9)
+	# Limpiando Canaima 2.1 de aplicaciones no utilizadas en 3.0
+	echo "Limpiando Canaima 2.1 de aplicaciones no utilizadas en 3.0" | tee -a ${VENTANA_2} ${LOG}
+	${NON_I} apt-get purge ${APT_GET_OPTIONS} openoffice* firefox* thunderbird* canaima-instalador-vivo canaima-particionador | tee -a ${LOG}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
+;;
+
+10) 
 	# ------- ACTUALIZANDO COMPONENTES DE INSTALACIÓN DE LA BASE (DEBIAN SQUEEZE) ---------------------#
 	#==================================================================================================#
 
-	echo "Actualizando componentes de la instalacion de la base (squeeze)" | tee -a ${VENTANA_2} ${LOG}
-	echo "46" | tee -a ${VENTANA_3} ${LOG}
-        echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
+	echo "Actualizando componentes de la base (Debian Squeeze)" | tee -a ${VENTANA_1} ${LOG}
+	echo "Estableciendo repositorios para el sistema base" | tee -a ${VENTANA_2} ${LOG}
 
 	# Aseguramos que tenemos los repositorios correctos
 	cp ${SOURCES_DEBIAN} ${SOURCES}
@@ -189,52 +190,23 @@ case ${PASO} in
 	cp ${PREFERENCES_DEBIAN} ${PREFERENCES}
 
 	# Actualizamos la lista de paquetes
-	aptitude update | tee -a ${LOG} && sleep 2
+	aptitude update | tee -a ${LOG}
 
-	echo "PASO=9" > ${PASO_FILE}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
 
-9) 
+11) 
 	# Actualizando componentes fundamentales de instalación
 	echo "Actualizando componentes fundamentales de instalación" | tee -a ${VENTANA_2} ${LOG}
-	echo "47" | tee -a ${VENTANA_3} ${LOG}
-	echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude install ${APTITUDE_OPTIONS} aptitude apt dpkg debian-keyring locales --without-recommends | tee -a ${LOG} && sleep 2 
-	echo "PASO=10" > ${PASO_FILE}
-;;
-
-10)
-	# Estableciendo repositorios sólo para el sistema base
-	echo "Estableciendo repositorios para el sistema base" | tee -a ${VENTANA_2} ${LOG}
-	echo "48" | tee -a ${VENTANA_3} ${LOG}
-        echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-
-	# Aseguramos que tenemos los repositorios correctos
-	cp ${SOURCES_DEBIAN} ${SOURCES}
-	# Estableciendo prioridades superiores para paquetes provenientes de Debian
-	cp ${PREFERENCES_DEBIAN} ${PREFERENCES}
-
-	# Actualizamos la lista de paquetes
-	aptitude update | tee -a ${LOG} && sleep 2
-
-	echo "PASO=11" > ${PASO_FILE}
-;;
-
-
-11)
-	# Instalando nuevo Kernel y librerías Perl
-	echo "Instalando nuevo Kernel y librerías Perl" | tee -a ${VENTANA_2} ${LOG}
-	echo "49" | tee -a ${VENTANA_3} ${LOG}
-	echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude install ${APTITUDE_OPTIONS} linux-image-2.6.32-5-$(uname -r | awk -F - '{print $3}') perl libperl5.10 | tee -a ${LOG} && sleep 2
-	echo "PASO=12" > ${PASO_FILE}
+	${NON_I} aptitude install ${APTITUDE_OPTIONS} aptitude apt dpkg debian-keyring locales --without-recommends | tee -a ${LOG} 
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
 
 12)
 	# Estableciendo repositorios sólo para el sistema base
-	echo "Estableciendo repositorios sólo para el sistema base" | tee -a ${VENTANA_2} ${LOG}
-	echo "50" | tee -a ${VENTANA_3} ${LOG}
-        echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
+	echo "Estableciendo repositorios para el sistema base" | tee -a ${VENTANA_2} ${LOG}
 
 	# Aseguramos que tenemos los repositorios correctos
 	cp ${SOURCES_DEBIAN} ${SOURCES}
@@ -242,51 +214,48 @@ case ${PASO} in
 	cp ${PREFERENCES_DEBIAN} ${PREFERENCES}
 
 	# Actualizamos la lista de paquetes
-	aptitude update | tee -a ${LOG} && sleep 2
+	aptitude update | tee -a ${LOG}
 
-	echo "PASO=13" > ${PASO_FILE}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
 
+
 13)
-	# Actualizando gestor de dispositivos UDEV
-	echo "Actualizando gestor de dispositivos UDEV" | tee -a ${VENTANA_2} ${LOG}
-	echo "51" | tee -a ${VENTANA_3} ${LOG}
-	echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude install ${APTITUDE_OPTIONS} udev | tee -a ${LOG} && sleep 2
-	echo "PASO=14" > ${PASO_FILE}
+	# Instalando nuevo Kernel y librerías Perl
+	echo "Instalando nuevo Núcleo y librerías Perl" | tee -a ${VENTANA_2} ${LOG}
+	${NON_I} aptitude install ${APTITUDE_OPTIONS} linux-image-2.6.32-5-$(uname -r | awk -F - '{print $3}') perl libperl5.10 | tee -a ${LOG}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
 
 14)
 	# Estableciendo repositorios sólo para el sistema base
-	echo "Estableciendo repositorios sólo para el sistema base" | tee -a ${VENTANA_2} ${LOG}
-	echo "52" | tee -a ${VENTANA_3} ${LOG}
-        echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
+	echo "Estableciendo repositorios para el sistema base" | tee -a ${VENTANA_2} ${LOG}
 
 	# Aseguramos que tenemos los repositorios correctos
 	cp ${SOURCES_DEBIAN} ${SOURCES}
 	# Estableciendo prioridades superiores para paquetes provenientes de Debian
 	cp ${PREFERENCES_DEBIAN} ${PREFERENCES}
 
-        # Actualizamos la lista de paquetes
-	aptitude update | tee -a ${LOG} && sleep 2
+	# Actualizamos la lista de paquetes
+	aptitude update | tee -a ${LOG}
 
-	echo "PASO=15" > ${PASO_FILE}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
 
 15)
-	# Actualizando gconf2
-	echo "Actualizando gconf2" | tee -a ${VENTANA_2} ${LOG}
-	echo "53" | tee -a ${VENTANA_3} ${LOG}
-	echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude ${APTITUDE_OPTIONS} install gconf2=2.28.1-6 libgconf2-4=2.28.1-6 gconf2-common=2.28.1-6 | tee -a ${LOG} && sleep 2
-	echo "PASO=16" > ${PASO_FILE}
+	# Actualizando gestor de dispositivos UDEV
+	echo "Actualizando gestor de dispositivos udev" | tee -a ${VENTANA_2} ${LOG}
+	${NON_I} aptitude install ${APTITUDE_OPTIONS} udev | tee -a ${LOG}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
 
 16)
-        # Estableciendo repositorios para el sistema base
-        echo "Estableciendo repositorios para el sistema base" | tee -a ${VENTANA_2} ${LOG}
-        echo "52" | tee -a ${VENTANA_3} ${LOG}
-        echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
+	# Estableciendo repositorios sólo para el sistema base
+	echo "Estableciendo repositorios para el sistema base" | tee -a ${VENTANA_2} ${LOG}
 
 	# Aseguramos que tenemos los repositorios correctos
 	cp ${SOURCES_DEBIAN} ${SOURCES}
@@ -294,26 +263,23 @@ case ${PASO} in
 	cp ${PREFERENCES_DEBIAN} ${PREFERENCES}
 
 	# Actualizamos la lista de paquetes
-	aptitude update | tee -a ${LOG} && sleep 2
+	aptitude update | tee -a ${LOG}
 
-	echo "PASO=17" > ${PASO_FILE}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
-
 
 17)
-	# Actualización parcial de la base
-	echo "Actualización parcial de la base" | tee -a ${VENTANA_2} ${LOG}
-	echo "56" | tee -a ${VENTANA_3} ${LOG}
-	echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-	DEBIAN_FRONTEND=noninteractive apt-get ${APT_GET_OPTIONS} upgrade | tee -a ${LOG} && sleep 2
-	echo "PASO=18" > ${PASO_FILE}
+	# Actualizando gconf2
+	echo "Actualizando gconf2" | tee -a ${VENTANA_2} ${LOG}
+	${NON_I} aptitude ${APTITUDE_OPTIONS} install gconf2=2.28.1-6 libgconf2-4=2.28.1-6 gconf2-common=2.28.1-6 | tee -a ${LOG}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
 
 18)
-        # Estableciendo repositorios para el sistema base
-        echo "Estableciendo repositorios para el sistema base" | tee -a ${VENTANA_2} ${LOG}
-        echo "52" | tee -a ${VENTANA_3} ${LOG}
-        echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
+	# Estableciendo repositorios para el sistema base
+	echo "Estableciendo repositorios para el sistema base" | tee -a ${VENTANA_2} ${LOG}
 
 	# Aseguramos que tenemos los repositorios correctos
 	cp ${SOURCES_DEBIAN} ${SOURCES}
@@ -321,51 +287,84 @@ case ${PASO} in
 	cp ${PREFERENCES_DEBIAN} ${PREFERENCES}
 
 	# Actualizamos la lista de paquetes
-	aptitude update | tee -a ${LOG} && sleep 2
+	aptitude update | tee -a ${LOG}
 
-	echo "PASO=19" > ${PASO_FILE}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
+
 
 19)
-	# Actualización total de la base
-	echo "Actualización total de la base" | tee -a ${VENTANA_2} ${LOG}
-	echo "57" | tee -a ${VENTANA_3} ${LOG}
-	echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-	DEBIAN_FRONTEND=noninteractive apt-get ${APT_GET_OPTIONS} dist-upgrade | tee -a ${LOG} && sleep 2
-	echo "PASO=18" > ${PASO_FILE}
-;;
-
-16)
-        # Estableciendo repositorios para el sistema base
-        echo "Estableciendo repositorios para el sistema base" | tee -a ${VENTANA_2} ${LOG}
-        echo "52" | tee -a ${VENTANA_3} ${LOG}
-        echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-
-	# Aseguramos que tenemos los repositorios correctos
-	cp ${SOURCES_DEBIAN} ${SOURCES}
-	# Estableciendo prioridades superiores para paquetes provenientes de Debian
-	cp ${PREFERENCES_DEBIAN} ${PREFERENCES}
-
-	# Actualizamos la lista de paquetes
-	aptitude update | tee -a ${LOG} && sleep 2
-
-	echo "PASO=17" > ${PASO_FILE}
-;;
-
-18)
-	# Actualización completa de la base
-	echo "Actualización completa de la base" | tee -a ${VENTANA_2} ${LOG}
-	echo "58" | tee -a ${VENTANA_3} ${LOG}
-	echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude ${APTITUDE_OPTIONS} full-upgrade | tee -a ${LOG} && sleep 2
-	echo "PASO=19" > ${PASO_FILE}
+	# Copia del caché
+	echo "Regenerando el caché de paquetes" | tee -a ${VENTANA_2} ${LOG}
+	cp /usr/share/asistente-actualizacion/cache/*.deb /var/cache/apt/archives/
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
 
 20)
-	# Estableciendo repositorios sólo para el sistema base
+	# Actualización parcial de la base
+	echo "Primera fase de actualización de todas las aplicaciones" | tee -a ${VENTANA_2} ${LOG}
+	${NON_I} apt-get ${APT_GET_OPTIONS} upgrade | tee -a ${LOG}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
+;;
+
+21)
+	# Estableciendo repositorios para el sistema base
+	echo "Estableciendo repositorios para el sistema base" | tee -a ${VENTANA_2} ${LOG}
+
+	# Aseguramos que tenemos los repositorios correctos
+	cp ${SOURCES_DEBIAN} ${SOURCES}
+	# Estableciendo prioridades superiores para paquetes provenientes de Debian
+	cp ${PREFERENCES_DEBIAN} ${PREFERENCES}
+
+	# Actualizamos la lista de paquetes
+	aptitude update | tee -a ${LOG}
+
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
+;;
+
+22)
+	# Actualización total de la base
+	echo "Segunda fase de actualización de todas las aplicaciones" | tee -a ${VENTANA_2} ${LOG}
+	${NON_I} apt-get ${APT_GET_OPTIONS} dist-upgrade | tee -a ${LOG}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
+;;
+
+23)
+	# Estableciendo repositorios para el sistema base
+	echo "Estableciendo repositorios para el sistema base" | tee -a ${VENTANA_2} ${LOG}
+
+	# Aseguramos que tenemos los repositorios correctos
+	cp ${SOURCES_DEBIAN} ${SOURCES}
+	# Estableciendo prioridades superiores para paquetes provenientes de Debian
+	cp ${PREFERENCES_DEBIAN} ${PREFERENCES}
+
+	# Actualizamos la lista de paquetes
+	aptitude update | tee -a ${LOG}
+
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
+;;
+
+24)
+	# Actualización completa de la base
+	echo "Tercera fase de actualización de todas las aplicaciones" | tee -a ${VENTANA_2} ${LOG}
+	${NON_I} aptitude ${APTITUDE_OPTIONS} full-upgrade | tee -a ${LOG}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
+;;
+
+25)
+	# ------- ACTUALIZANDO COMPONENTES DE CANAIMA 3.0 -------------------------------------------------#
+	#==================================================================================================#
+
+	# Estableciendo repositorios para Canaima 3.0
+	echo "Actualizando a Canaima 3.0" | tee -a ${VENTANA_1} ${LOG}
 	echo "Estableciendo repositorios para Canaima 3.0" | tee -a ${VENTANA_2} ${LOG}
-	echo "59" | tee -a ${VENTANA_3} ${LOG}
-        echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
 
 	# Aseguramos que tenemos los repositorios correctos
 	cp ${SOURCES_CANAIMA_3} ${SOURCES}
@@ -373,179 +372,179 @@ case ${PASO} in
 	cp ${PREFERENCES_CANAIMA_3} ${PREFERENCES}
 
 	# Actualizamos la lista de paquetes	
-	aptitude update | tee -a ${LOG} && sleep 2
+	aptitude update | tee -a ${LOG}
 
-	echo "PASO=22" > ${PASO_FILE}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
 
-37) 
+26) 
 	# Instalando llaves del repositorio Canaima
-	echo "Instalando llaves del repositorio Canaima" | tee -a ${VENTANA_2} ${LOG}
-	echo "75" | tee -a ${VENTANA_3} ${LOG}
-	echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude install ${APTITUDE_OPTIONS} canaima-llaves | tee -a ${LOG} && sleep 2
-	echo "PASO=38" > ${PASO_FILE}
+	echo "Instalando llaves del repositorio de Canaima 3.0" | tee -a ${VENTANA_2} ${LOG}
+	${NON_I} aptitude install ${APTITUDE_OPTIONS} canaima-llaves | tee -a ${LOG}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
 
-38) 
+27) 
 	# Removiendo paquetes innecesarios
 	echo "Removiendo paquetes innecesarios" | tee -a ${VENTANA_2} ${LOG}
-	echo "76" | tee -a ${VENTANA_3} ${LOG}
-	echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude purge ${APTITUDE_OPTIONS} epiphany-browser epiphany-browser-data libgraphviz4 libslab0 gtkhtml3.14 busybox-syslogd dsyslog inetutils-syslogd rsyslog socklog-run sysklogd syslog-ng libfam0c102 | tee -a ${LOG} && sleep 2
-	echo "PASO=39" > ${PASO_FILE}
+	${NON_I} aptitude purge ${APTITUDE_OPTIONS} epiphany-browser epiphany-browser-data libgraphviz4 libslab0 gtkhtml3.14 busybox-syslogd dsyslog inetutils-syslogd rsyslog socklog-run sysklogd syslog-ng libfam0c102 | tee -a ${LOG}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
 
-39) 
+28) 
 	# Removemos configuraciones obsoletas
-	echo "Removemos configuraciones obsoletas" | tee -a ${VENTANA_2} ${LOG}
-	echo "77" | tee -a ${VENTANA_3} ${LOG}
+	echo "Removiendo configuraciones obsoletas" | tee -a ${VENTANA_2} ${LOG}
 	rm -rf /etc/skel/.purple/ 
 	rm /etc/canaima_version 
 	rm /usr/share/applications/openoffice.org-*
-	echo "PASO=40" > ${PASO_FILE}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
 
-40) 
+29) 
 	# Instalando escritorio de Canaima 3.0
 	echo "Instalando escritorio de Canaima 3.0" | tee -a ${VENTANA_2} ${LOG}
-	echo "78" | tee -a ${VENTANA_3} ${LOG}
-	echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude install ${APTITUDE_OPTIONS} canaima-escritorio-gnome | tee -a ${LOG} && sleep 2
-	echo "PASO=41" > ${PASO_FILE}
+	${NON_I} aptitude install ${APTITUDE_OPTIONS} canaima-escritorio-gnome | tee -a ${LOG}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
 
-41) 
+30) 
 	# Removiendo Navegador web de transición
-	echo "Removiendo Navegador web de transición" | tee -a ${VENTANA_2} ${LOG}
-	echo "79" | tee -a ${VENTANA_3} ${LOG}
-	echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude purge ${APTITUDE_OPTIONS} galeon | tee -a ${LOG} && sleep 2
-	echo "PASO=42" > ${PASO_FILE}
+	echo "Removiendo proveedor de gnome-www-browser galeon" | tee -a ${VENTANA_2} ${LOG}
+	${NON_I} aptitude purge ${APTITUDE_OPTIONS} galeon | tee -a ${LOG}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
 
-42) 
+31) 
 	# Actualización final a Canaima 3.0
-	echo "Actualización final a Canaima 3.0" | tee -a ${VENTANA_2} ${LOG}
-	echo "80" | tee -a ${VENTANA_3} ${LOG}
-	echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude ${APTITUDE_OPTIONS} full-upgrade | tee -a ${LOG} && sleep 2
-	echo "PASO=43" > ${PASO_FILE}
+	echo "Sincronizando aplicaciones con el Repositorio de Canaima 3.0" | tee -a ${VENTANA_2} ${LOG}
+	${NON_I} aptitude ${APTITUDE_OPTIONS} full-upgrade | tee -a ${LOG}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
 
-43) 
+32)
 	# Removiendo paquetes innecesarios
 	echo "Removiendo paquetes innecesarios" | tee -a ${VENTANA_2} ${LOG}
-	echo "81" | tee -a ${VENTANA_3} ${LOG}
-	echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude purge ${APTITUDE_OPTIONS} gstreamer0.10-gnomevfs splashy canaima-accesibilidad | tee -a ${LOG} && sleep 2
-	echo "PASO=44" > ${PASO_FILE}
+	${NON_I} aptitude purge ${APTITUDE_OPTIONS} gstreamer0.10-gnomevfs splashy canaima-accesibilidad | tee -a ${LOG}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
 
-44) 
+33)
 	# Actualizando a GDM3
-	echo "Actualizando a GDM3" | tee -a ${VENTANA_2} ${LOG}
-	echo "82" | tee -a ${VENTANA_3} ${LOG}
-	echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude install ${APTITUDE_OPTIONS} gdm3 | tee -a ${LOG} && sleep 2
-	echo "PASO=46" > ${PASO_FILE}
+	echo "Actualizando el gestor de escritorios (gdm -> gdm3)" | tee -a ${VENTANA_2} ${LOG}
+	${NON_I} aptitude install ${APTITUDE_OPTIONS} gdm3 | tee -a ${LOG}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
 
-46)
+34)
 	# Determina el Disco Duro al cual instalar y actualizar el burg
 	PARTS=$( /sbin/fdisk -l | awk '/^\/dev\// {if ($2 == "*") {if ($6 == "83") { print $1 };}}' | sed 's/+//g' )
 	DISCO=${PARTS:0:8}
 	RESULT=$( echo ${DISCO} | sed -e 's/\//\\\//g' )
-	echo "[BASH:aa-principal.sh] Se determinó que el dispositivo en donde se instalará BURG es ${RESULT}" >> ${LOG}
+	echo "[BASH:aa-principal.sh] Se determinó que el dispositivo en donde se instalará BURG es ${RESULT}" | tee -a ${LOG}
 	sed -i "s/\/dev\/xxx/${RESULT}/g" ${DEBCONF_SEL}
+	debconf-set-selections ${DEBCONF_SEL}
 
 	# Actualizando a BURG
-	echo "Actualizando a BURG" | tee -a ${VENTANA_2} ${LOG}
-	echo "83" | tee -a ${VENTANA_3} ${LOG}
-	echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude install ${APTITUDE_OPTIONS} burg | tee -a ${LOG} && sleep 2
+	echo "Actualizando el gestor de arranque (grub -> burg)" | tee -a ${VENTANA_2} ${LOG}
+	${NON_I} aptitude install ${APTITUDE_OPTIONS} burg | tee -a ${LOG}
 	burg-install --force ${DISCO}
-	echo "PASO=47" > ${PASO_FILE}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
 
-47) 
-	# Reinstalando Base de Canaima
-	echo "Reinstalando Base de Canaima" | tee -a ${VENTANA_2} ${LOG}
-	echo "84" | tee -a ${VENTANA_3} ${LOG}
-	echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude install ${APTITUDE_OPTIONS} canaima-base | tee -a ${LOG} && sleep 2
-	DEBIAN_FRONTEND=noninteractive aptitude reinstall ${APTITUDE_OPTIONS} canaima-base | tee -a ${LOG} && sleep 2
-	echo "PASO=48" > ${PASO_FILE}
+35)
+	# Instalando Base de Canaima
+	echo "Fase final de la actualizacion" | tee -a ${VENTANA_2} ${LOG}
+	echo "Verificando la instalación de canaima-base" | tee -a ${VENTANA_2} ${LOG}
+	${NON_I} aptitude install ${APTITUDE_OPTIONS} canaima-base | tee -a ${LOG}
+	${NON_I} aptitude reinstall ${APTITUDE_OPTIONS} canaima-base | tee -a ${LOG}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
 
-48) 
+36)
 	# Reinstalando Estilo Visual
-	echo "Finalizando rutina de actualización" | tee -a ${VENTANA_1} ${LOG}
-	echo "Reinstalando Estilo Visual" | tee -a ${VENTANA_2} ${LOG}
-	echo "85" | tee -a ${VENTANA_3} ${LOG}
-	echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude install ${APTITUDE_OPTIONS} canaima-estilo-visual | tee -a ${LOG} && sleep 2
-	DEBIAN_FRONTEND=noninteractive aptitude reinstall ${APTITUDE_OPTIONS} canaima-estilo-visual | tee -a ${LOG} && sleep 2
-	echo "PASO=49" > ${PASO_FILE}
+	echo "Verificando la instalación de canaima-estilo-visual" | tee -a ${VENTANA_2} ${LOG}
+	${NON_I} aptitude install ${APTITUDE_OPTIONS} canaima-estilo-visual | tee -a ${LOG}
+	${NON_I} aptitude reinstall ${APTITUDE_OPTIONS} canaima-estilo-visual | tee -a ${LOG}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
 
-49) 
+37)
 	# Reinstalando Escritorio
-	echo "Reinstalando Escritorio" | tee -a ${VENTANA_2} ${LOG}
-	echo "86" | tee -a ${VENTANA_3} ${LOG}
-	echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude install ${APTITUDE_OPTIONS} canaima-escritorio-gnome | tee -a ${LOG} && sleep 2
-	DEBIAN_FRONTEND=noninteractive aptitude reinstall ${APTITUDE_OPTIONS} canaima-escritorio-gnome | tee -a ${LOG} && sleep 2
-	echo "PASO=50" > ${PASO_FILE}
+	echo "Verificando la instalación de canaima-escritorio-gnome" | tee -a ${VENTANA_2} ${LOG}
+	${NON_I} aptitude install ${APTITUDE_OPTIONS} canaima-escritorio-gnome | tee -a ${LOG}
+	${NON_I} aptitude reinstall ${APTITUDE_OPTIONS} canaima-escritorio-gnome | tee -a ${LOG}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
 
-50) 
+38)
 	# Actualizando entradas del BURG
-	echo "Actualizando entradas del BURG" | tee -a ${VENTANA_2} ${LOG}
-	echo "87" | tee -a ${VENTANA_3} ${LOG}
-	update-burg | tee -a ${LOG} && sleep 2
-	echo "PASO=51" > ${PASO_FILE}
+	echo "Actualizando sistemas operativos en el gestor de arranque" | tee -a ${VENTANA_2} ${LOG}
+	update-burg | tee -a ${LOG}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
 
-51) 
+39)
 	# Estableciendo GDM3 como Manejador de Pantalla por defecto
-	echo "Estableciendo GDM3 como Manejador de Pantalla por defecto" | tee -a ${VENTANA_2} ${LOG}
-	echo "88" | tee -a ${VENTANA_3} ${LOG}
-	echo "/usr/sbin/gdm3" > /etc/X11/default-display-manager && sleep 2
-	echo "PASO=52" > ${PASO_FILE}
+	echo "Estableciendo gdm3 como gestor de escritorios por defecto" | tee -a ${VENTANA_2} ${LOG}
+	echo "/usr/sbin/gdm3" > /etc/X11/default-display-manager
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
 
-52) 
+40)
 	# Reconfigurando el Estilo Visual
-	echo "Fin de la actualización" | tee -a ${VENTANA_1} ${LOG}
-	echo "Reconfigurando el Estilo Visual" | tee -a ${VENTANA_2} ${LOG}
-	echo "90" | tee -a ${VENTANA_3} ${LOG}
-	echo "PAQUETES EN CACHÉ: $( ls ${CACHE} | wc -l )" | tee -a ${LOG}
-	dpkg-reconfigure canaima-estilo-visual | tee -a ${LOG} && sleep 2
-	echo "PASO=53" > ${PASO_FILE}
+	echo "Verificando la instalación de canaima-estilo-visual" | tee -a ${VENTANA_2} ${LOG}
+	${NON_I} dpkg-reconfigure canaima-estilo-visual | tee -a ${LOG}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
 ;;
 
-53) 
-	echo "" | tee -a ${VENTANA_2} ${LOG}
-	echo "95" | tee -a ${VENTANA_3} ${LOG}
-	update-burg | tee -a ${LOG} && sleep 2
+41)
+	# Actualizando entradas del BURG
+	echo "Actualizando sistemas operativos en el gestor de arranque" | tee -a ${VENTANA_2} ${LOG}
+	update-burg | tee -a ${LOG}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
+;;
+
+42) 
+	echo "Aplicando configuraciones por defecto para Canaima 3.0" | tee -a ${VENTANA_2} ${LOG}
 
 	# Para cada usuario en /home/ ...
-	for usuario in /home/*? ; do
-
-		#Obteniendo sólo el nombre del usuario
-		usuario_min=$(basename ${usuario})
-
-		#Y en caso de que el usuario sea un usuario activo (existente en /etc/shadow) ...
-                if [ $( grep "${usuario_min}:.*:.*:.*:.*:.*:::" /etc/shadow ) == 1 ] && [ $( grep "${usuario_min}:.*:.*:.*:.*:.*:/bin/.*sh" /etc/passwd  ) == 1 ]; then
-			rm -rf ${usuario}/.gconf/
+	for HOME_U in /home/*?; do
+		# Obteniendo sólo el nombre del usuario
+		USUARIO=$( basename ${HOME_U} )
+		# Y en caso de que el usuario sea un usuario activo (existente en /etc/shadow) ...
+		if [ $( grep -c "${USUARIO}:.*:.*:.*:.*:.*:::" /etc/shadow ) == 1 ] \
+		&& [ $( grep -c "${USUARIO}:.*:.*:.*:.*:.*:/bin/.*sh" /etc/passwd ) == 1 ] \
+		&& [ -d ${HOME_U} ] \
+		&& [ -d ${HOME_U}/.gconf ]; then
+			rm -rf ${usuario}/.gconf
 		fi
 	done
 
-	echo "¡LISTO!" | tee -a ${VENTANA_2} ${LOG}
-	echo "99" | tee -a ${VENTANA_3} ${LOG}
-	sleep 20
-	echo 'PASO=70' > ${PASO_FILE}
+	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ $? != 0 ] && ERROR_INESPERADO
+;;
+
+43) 
+	echo "Finalizando" | tee -a ${VENTANA_2} ${LOG}
+	aa-fin &
+	echo "PASO=70" > ${PASO_FILE}
 	exit 0
 ;;
 
