@@ -1,3 +1,10 @@
+asistente-actualizacion (1.0+27) unstable; urgency=low
+
+  * [c70cf53] Incluyendo funciones-actualizador.sh en el Makefile.
+    Corrigiendo errores de sintaxis.
+
+ -- Luis Alejandro Martínez Faneyth <martinez.faneyth@gmail.com>  Thu, 11 Aug 2011 02:12:54 -0430
+
 asistente-actualizacion (1.0+26) unstable; urgency=low
 
   * [aa432f5] * Removiendo cache/ejemplo (basura) * Insertando .desktop
