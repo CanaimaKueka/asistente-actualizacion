@@ -16,9 +16,8 @@ VARIABLES="/usr/share/asistente-actualizacion/conf/variables.conf"
 # Organiza los paquetes
 cat ${ORIGINAL} > ${TOTAL}
 cat ${LOCAL} >> ${TOTAL}
-TOTAL_REP=$( cat ${TOTAL} | sort -u )
-TOTAL_FINAL=$( echo ${TOTAL_REP} | awk 'BEGIN {OFS = "\n"; ORS = " " }; {print $1}' )
-TOTAL_NUM=$( echo $TOTAL_FINAL | wc -w )
+TOTAL_FINAL=$( cat ${TOTAL} | sort -u )
+TOTAL_NUM=$( echo ${TOTAL_FINAL} | wc -w )
 DESCARGA_OFFSET="0"
 
 # Iniciamos ventana de progreso
@@ -78,10 +77,11 @@ case ${PASO} in
 
 	# Ventana de bienvenida
 	zenity --title="Asistente de Actualización a Canaima 3.0" --text="Este asistente se encargará de hacer los cambios necesarios para actualizar el sistema a la versión 3.0 de Canaima.\n\nAsegúrese que:\n\n* Dispone de una conexión a internet.\n\n* Su PC está conectada a una fuente de energía estable.\n\n* Tiene al menos 6GB de espacio libre en disco.\n\n* No está ejecutando un gestor o instalador de paquetes.\n\n* No tiene ningún documento importante abierto.\n\n* Dispone de al menos 2 horas libres de su tiempo.\n\nSi por alguna razón el proceso se detiene, puede reanudarlo desde el punto en que se interrumpió haciendo click en Aplicaciones > Herramientas del Sistema > Actualizador a Canaima 3.0.\n\n¿Desea continuar con la actualización?" --question --width=600
-	[ $? == 1 ] && ERROR_CRITICO
+	ESTADO=$?
+	[ ${ESTADO} == 1 ] && ERROR_CRITICO
 
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 2)
@@ -95,9 +95,10 @@ case ${PASO} in
 
 	# Actualizamos la lista de paquetes
 	aptitude update | tee -a ${LOG}
+        ESTADO=$?
 
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 3)
@@ -113,16 +114,18 @@ case ${PASO} in
 		aptitude download ${PAQUETE} | tee -a ${LOG}
 		echo "scale=6;${CONTAR}/${TOTAL_NUM}*${DESCARGA_OFFSET}+${PASO}" | bc | tee -a ${VENTANA_3} ${LOG}
 	done
+        ESTADO=$?
 
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 4)
 	echo "Introduciendo paquetes en caché (tardará un poco) ..." | tee -a ${VENTANA_4} ${LOG}
 	cp /usr/share/asistente-actualizacion/cache/*.deb /var/cache/apt/archives/
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+        ESTADO=$?
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 5)
@@ -140,41 +143,46 @@ case ${PASO} in
 
 	# Actualizamos la lista de paquetes
 	aptitude update | tee -a ${LOG}
+        ESTADO=$?
 
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 6)
 	# Actualizamos Canaima 2.1
 	echo "Descargando último software disponible para Canaima 2.1" | tee -a ${VENTANA_2} ${LOG}
 	DEBIAN_FRONTEND=noninteractive aptitude ${APTITUDE_OPTIONS} full-upgrade | tee -a ${LOG}
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+        ESTADO=$?
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 7)
 	# Instalamos otro proveedor de gnome-www-browser
 	echo "Instalando otro proveedor de gnome-www-browser" | tee -a ${VENTANA_2} ${LOG}
 	DEBIAN_FRONTEND=noninteractive aptitude install ${APTITUDE_OPTIONS} galeon | tee -a ${LOG}
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+        ESTADO=$?
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 8)
 	# Removemos la configuración vieja del GRUB
 	echo "Eliminando configuración anterior del GRUB" | tee -a ${VENTANA_2} ${LOG}
 	[ -e /etc/default/grub ] && rm /etc/default/grub
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+        ESTADO=$?
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 9)
 	# Limpiando Canaima 2.1 de aplicaciones no utilizadas en 3.0
 	echo "Limpiando Canaima 2.1 de aplicaciones no utilizadas en 3.0" | tee -a ${VENTANA_2} ${LOG}
 	DEBIAN_FRONTEND=noninteractive apt-get purge ${APT_GET_OPTIONS} openoffice* firefox* thunderbird* canaima-instalador-vivo canaima-particionador | tee -a ${LOG}
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+        ESTADO=$?
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 10) 
@@ -191,17 +199,19 @@ case ${PASO} in
 
 	# Actualizamos la lista de paquetes
 	aptitude update | tee -a ${LOG}
+        ESTADO=$?
 
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 11) 
 	# Actualizando componentes fundamentales de instalación
 	echo "Actualizando componentes fundamentales de instalación" | tee -a ${VENTANA_2} ${LOG}
 	DEBIAN_FRONTEND=noninteractive aptitude install ${APTITUDE_OPTIONS} aptitude apt dpkg debian-keyring locales --without-recommends | tee -a ${LOG} 
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+        ESTADO=$?
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 12)
@@ -215,9 +225,10 @@ case ${PASO} in
 
 	# Actualizamos la lista de paquetes
 	aptitude update | tee -a ${LOG}
+        ESTADO=$?
 
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 
@@ -225,8 +236,9 @@ case ${PASO} in
 	# Instalando nuevo Kernel y librerías Perl
 	echo "Instalando nuevo Núcleo y librerías Perl" | tee -a ${VENTANA_2} ${LOG}
 	DEBIAN_FRONTEND=noninteractive aptitude install ${APTITUDE_OPTIONS} linux-image-2.6.32-5-$(uname -r | awk -F - '{print $3}') perl libperl5.10 | tee -a ${LOG}
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+        ESTADO=$?
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 14)
@@ -240,17 +252,19 @@ case ${PASO} in
 
 	# Actualizamos la lista de paquetes
 	aptitude update | tee -a ${LOG}
+        ESTADO=$?
 
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 15)
 	# Actualizando gestor de dispositivos UDEV
 	echo "Actualizando gestor de dispositivos udev" | tee -a ${VENTANA_2} ${LOG}
 	DEBIAN_FRONTEND=noninteractive aptitude install ${APTITUDE_OPTIONS} udev | tee -a ${LOG}
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+        ESTADO=$?
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 16)
@@ -264,17 +278,19 @@ case ${PASO} in
 
 	# Actualizamos la lista de paquetes
 	aptitude update | tee -a ${LOG}
+        ESTADO=$?
 
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 17)
 	# Actualizando gconf2
 	echo "Actualizando gconf2" | tee -a ${VENTANA_2} ${LOG}
 	DEBIAN_FRONTEND=noninteractive aptitude ${APTITUDE_OPTIONS} install gconf2=2.28.1-6 libgconf2-4=2.28.1-6 gconf2-common=2.28.1-6 | tee -a ${LOG}
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+        ESTADO=$?
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 18)
@@ -288,9 +304,10 @@ case ${PASO} in
 
 	# Actualizamos la lista de paquetes
 	aptitude update | tee -a ${LOG}
+        ESTADO=$?
 
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 
@@ -298,16 +315,18 @@ case ${PASO} in
 	# Copia del caché
 	echo "Regenerando el caché de paquetes" | tee -a ${VENTANA_2} ${LOG}
 	cp /usr/share/asistente-actualizacion/cache/*.deb /var/cache/apt/archives/
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+        ESTADO=$?
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 20)
 	# Actualización parcial de la base
 	echo "Primera fase de actualización de todas las aplicaciones" | tee -a ${VENTANA_2} ${LOG}
 	DEBIAN_FRONTEND=noninteractive apt-get ${APT_GET_OPTIONS} upgrade | tee -a ${LOG}
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+        ESTADO=$?
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 21)
@@ -321,17 +340,19 @@ case ${PASO} in
 
 	# Actualizamos la lista de paquetes
 	aptitude update | tee -a ${LOG}
+        ESTADO=$?
 
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 22)
 	# Actualización total de la base
 	echo "Segunda fase de actualización de todas las aplicaciones" | tee -a ${VENTANA_2} ${LOG}
 	DEBIAN_FRONTEND=noninteractive apt-get ${APT_GET_OPTIONS} dist-upgrade | tee -a ${LOG}
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+        ESTADO=$?
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 23)
@@ -345,17 +366,19 @@ case ${PASO} in
 
 	# Actualizamos la lista de paquetes
 	aptitude update | tee -a ${LOG}
+        ESTADO=$?
 
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 24)
 	# Actualización completa de la base
 	echo "Tercera fase de actualización de todas las aplicaciones" | tee -a ${VENTANA_2} ${LOG}
 	DEBIAN_FRONTEND=noninteractive aptitude ${APTITUDE_OPTIONS} full-upgrade | tee -a ${LOG}
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+        ESTADO=$?
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 25)
@@ -373,25 +396,28 @@ case ${PASO} in
 
 	# Actualizamos la lista de paquetes	
 	aptitude update | tee -a ${LOG}
+        ESTADO=$?
 
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 26) 
 	# Instalando llaves del repositorio Canaima
 	echo "Instalando llaves del repositorio de Canaima 3.0" | tee -a ${VENTANA_2} ${LOG}
 	DEBIAN_FRONTEND=noninteractive aptitude install ${APTITUDE_OPTIONS} canaima-llaves | tee -a ${LOG}
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+        ESTADO=$?
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 27) 
 	# Removiendo paquetes innecesarios
 	echo "Removiendo paquetes innecesarios" | tee -a ${VENTANA_2} ${LOG}
 	DEBIAN_FRONTEND=noninteractive aptitude purge ${APTITUDE_OPTIONS} epiphany-browser epiphany-browser-data libgraphviz4 libslab0 gtkhtml3.14 busybox-syslogd dsyslog inetutils-syslogd rsyslog socklog-run sysklogd syslog-ng libfam0c102 | tee -a ${LOG}
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+        ESTADO=$?
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 28) 
@@ -400,48 +426,54 @@ case ${PASO} in
 	rm -rf /etc/skel/.purple/ 
 	rm /etc/canaima_version 
 	rm /usr/share/applications/openoffice.org-*
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+        ESTADO=$?
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 29) 
 	# Instalando escritorio de Canaima 3.0
 	echo "Instalando escritorio de Canaima 3.0" | tee -a ${VENTANA_2} ${LOG}
 	DEBIAN_FRONTEND=noninteractive aptitude install ${APTITUDE_OPTIONS} canaima-escritorio-gnome | tee -a ${LOG}
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+        ESTADO=$?
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 30) 
 	# Removiendo Navegador web de transición
 	echo "Removiendo proveedor de gnome-www-browser galeon" | tee -a ${VENTANA_2} ${LOG}
 	DEBIAN_FRONTEND=noninteractive aptitude purge ${APTITUDE_OPTIONS} galeon | tee -a ${LOG}
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+        ESTADO=$?
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 31) 
 	# Actualización final a Canaima 3.0
 	echo "Sincronizando aplicaciones con el Repositorio de Canaima 3.0" | tee -a ${VENTANA_2} ${LOG}
 	DEBIAN_FRONTEND=noninteractive aptitude ${APTITUDE_OPTIONS} full-upgrade | tee -a ${LOG}
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+        ESTADO=$?
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 32)
 	# Removiendo paquetes innecesarios
 	echo "Removiendo paquetes innecesarios" | tee -a ${VENTANA_2} ${LOG}
 	DEBIAN_FRONTEND=noninteractive aptitude purge ${APTITUDE_OPTIONS} gstreamer0.10-gnomevfs splashy canaima-accesibilidad | tee -a ${LOG}
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+        ESTADO=$?
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 33)
 	# Actualizando a GDM3
 	echo "Actualizando el gestor de escritorios (gdm -> gdm3)" | tee -a ${VENTANA_2} ${LOG}
 	DEBIAN_FRONTEND=noninteractive aptitude install ${APTITUDE_OPTIONS} gdm3 | tee -a ${LOG}
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+        ESTADO=$?
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 34)
@@ -457,8 +489,9 @@ case ${PASO} in
 	echo "Actualizando el gestor de arranque (grub -> burg)" | tee -a ${VENTANA_2} ${LOG}
 	DEBIAN_FRONTEND=noninteractive aptitude install ${APTITUDE_OPTIONS} burg | tee -a ${LOG}
 	burg-install --force ${DISCO}
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+        ESTADO=$?
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 35)
@@ -467,8 +500,9 @@ case ${PASO} in
 	echo "Verificando la instalación de canaima-base" | tee -a ${VENTANA_2} ${LOG}
 	DEBIAN_FRONTEND=noninteractive aptitude install ${APTITUDE_OPTIONS} canaima-base | tee -a ${LOG}
 	DEBIAN_FRONTEND=noninteractive aptitude reinstall ${APTITUDE_OPTIONS} canaima-base | tee -a ${LOG}
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+        ESTADO=$?
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 36)
@@ -476,8 +510,9 @@ case ${PASO} in
 	echo "Verificando la instalación de canaima-estilo-visual" | tee -a ${VENTANA_2} ${LOG}
 	DEBIAN_FRONTEND=noninteractive aptitude install ${APTITUDE_OPTIONS} canaima-estilo-visual | tee -a ${LOG}
 	DEBIAN_FRONTEND=noninteractive aptitude reinstall ${APTITUDE_OPTIONS} canaima-estilo-visual | tee -a ${LOG}
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+        ESTADO=$?
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 37)
@@ -485,40 +520,45 @@ case ${PASO} in
 	echo "Verificando la instalación de canaima-escritorio-gnome" | tee -a ${VENTANA_2} ${LOG}
 	DEBIAN_FRONTEND=noninteractive aptitude install ${APTITUDE_OPTIONS} canaima-escritorio-gnome | tee -a ${LOG}
 	DEBIAN_FRONTEND=noninteractive aptitude reinstall ${APTITUDE_OPTIONS} canaima-escritorio-gnome | tee -a ${LOG}
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+        ESTADO=$?
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 38)
 	# Actualizando entradas del BURG
 	echo "Actualizando sistemas operativos en el gestor de arranque" | tee -a ${VENTANA_2} ${LOG}
 	update-burg | tee -a ${LOG}
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+        ESTADO=$?
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 39)
 	# Estableciendo GDM3 como Manejador de Pantalla por defecto
 	echo "Estableciendo gdm3 como gestor de escritorios por defecto" | tee -a ${VENTANA_2} ${LOG}
 	echo "/usr/sbin/gdm3" > /etc/X11/default-display-manager
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+        ESTADO=$?
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 40)
 	# Reconfigurando el Estilo Visual
 	echo "Verificando la instalación de canaima-estilo-visual" | tee -a ${VENTANA_2} ${LOG}
 	DEBIAN_FRONTEND=noninteractive dpkg-reconfigure canaima-estilo-visual | tee -a ${LOG}
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+        ESTADO=$?
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 41)
 	# Actualizando entradas del BURG
 	echo "Actualizando sistemas operativos en el gestor de arranque" | tee -a ${VENTANA_2} ${LOG}
 	update-burg | tee -a ${LOG}
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+        ESTADO=$?
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 42) 
@@ -536,9 +576,10 @@ case ${PASO} in
 			rm -rf ${usuario}/.gconf
 		fi
 	done
+        ESTADO=$?
 
-	[ $? == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
-	[ $? != 0 ] && ERROR_INESPERADO
+	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
+	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 43) 
