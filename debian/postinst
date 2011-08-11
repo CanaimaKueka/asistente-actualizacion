@@ -18,7 +18,7 @@
 PKG="asistente-actualizacion"
 BASE="/usr/share/asistente-actualizacion/"
 LOCAL="/usr/share/asistente-actualizacion/listas/canaima-local-paquetes.list"
-
+DESKTOP_FILE="/usr/share/applications/asistente-actualizacion.desktop"
 
 case ${1} in
 
@@ -29,15 +29,18 @@ case ${1} in
 	
 	# Permitiendo lectura/escritura para todos los usuarios
 	chmod 777 /usr/share/asistente-actualizacion/log/principal.log
-		
+
         # Para cada usuario en /home/ ...
-        for usuario in /home/*? ; do
+	for HOME_U in /home/*?; do
 
-                # Obteniendo sólo el nombre del usuario
-                usuario_min=$(basename ${usuario})
+		# Obteniendo sólo el nombre del usuario
+		USUARIO=$( basename ${HOME_U} )
 
-		# Y en caso de que el usuario sea un usuario activo (existente en /etc/shadow) y tenga consola en /etc/passwd ...
-		if [ $( grep "${usuario_min}:.*:.*:.*:.*:.*:::" /etc/shadow ) == 1 ] && [ $( grep "${usuario_min}:.*:.*:.*:.*:.*:/bin/.*sh" /etc/passwd  ) == 1 ]; then
+		# Y en caso de que el usuario sea un usuario activo (existente en /etc/shadow) ...
+		if [ $( grep -c "${USUARIO}:.*:.*:.*:.*:.*:::" /etc/shadow ) == 1 ] \
+		&& [ $( grep -c "${USUARIO}:.*:.*:.*:.*:.*:/bin/.*sh" /etc/passwd ) == 1 ] \
+		&& [ -d ${HOME_U}/.config ] \
+		&& [ -d ${HOME_U} ]; then
 
 			# Asegurando que el directorio .config/asistente-actualizacion/ esté creado
 			mkdir -p /home/${usuario_min}/.config/asistente-actualizacion/
@@ -50,9 +53,42 @@ case ${1} in
 			
 			# con permisos apropiados
 			chown ${usuario_min}:${usuario_min} /home/${usuario_min}/.config/asistente-actualizacion/mostrar.conf
-
 		fi
-        done
+	done
+
+	flag_270=1
+	flag_450=1
+	flag_455=1
+	flag_pc=0
+	CONTROL_PARENTAL=0
+
+	dmitypes=( "bios-vendor" "system-manufacturer" "system-product-name" "system-version" "baseboard-manufacturer" "baseboard-product-name" "chassis-manufacturer" "chassis-type" "processor-manufacturer" "processor-version" "processor-frequency" "baseboard-asset-tag" )
+
+	dmitypes_270=( "AmericanMegatrendsInc." "J.P.SaCouto" "IntelpoweredclassmatePC" "MagII" "J.P.SaCouto" "IntelpoweredclassmatePC" "J.P.SaCouto" "Notebook" "Intel" "Intel(R)Atom(TM)CPUN270@1.60GHz" "1600MHz" "0" )
+
+	dmitypes_450=( "Phoenix" "IntelCorporation" "IntelpoweredclassmatePC" "MPPV" "IntelCorporation" "IntelpoweredclassmatePC" "Intel" "Other" "Intel" "C1" "1600MHz" "PTLNanjing" )
+
+	dmitypes_455=( "Phoenix" "IntelCorporation" "IntelpoweredclassmatePC" "BPPV" "IntelCorporation" "IntelpoweredclassmatePC" "Intel" "Notebook" "Intel" "C1" "1600MHz" "PTLNanjing" )
+
+	dmitypesnum=${#dmitypes[@]}
+	dmitypes_local[${dmitypesnum}]=""
+
+	echo $dmitypesnum
+	for ((i=0;i<$dmitypesnum;i++)); do
+		dmitypes_local[${i}]=$( dmidecode --string $( echo ${dmitypes[${i}]} ) | sed -e "s/[ ]*//g" )
+	done    
+
+	for ((i=0;i<$dmitypesnum;i++)); do
+		[ "${dmitypes_local[${i}]}" != "${dmitypes_270[${i}]}" ] && flag_270=0
+		[ "${dmitypes_local[${i}]}" != "${dmitypes_450[${i}]}" ] && flag_450=0
+		[ "${dmitypes_local[${i}]}" != "${dmitypes_455[${i}]}" ] && flag_455=0
+	done
+
+	[ $( dpkg-query -W -f='${Package}\t${Status}\n' canaima-control-parental | grep -c "install ok installed" ) == 1 ] && CONTROL_PARENTAL=1
+
+	[ $flag_270 == 0 ] && [ $flag_450 == 0 ] && [ $flag_455 == 0 ] && flag_pc=1
+
+	[ ${flag_pc} == 0 ] && [ ${CONTROL_PARENTAL} == 1 ] && [ -e ${DESKTOP_FILE} ] && rm -rf ${DESKTOP_FILE}
 
 	;;
 
