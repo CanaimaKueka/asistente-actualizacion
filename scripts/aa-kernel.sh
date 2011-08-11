@@ -17,10 +17,14 @@ aa-ventana &
 
 echo "Limpieza Final del Sistema" | tee -a ${VENTANA_1} ${LOG}
 echo "Removiendo Kernels Obsoletos ..." | tee -a ${VENTANA_2} ${LOG}
-echo "50" | tee -a ${VENTANA_3} ${LOG}
-echo "--" | tee -a ${VENTANA_4} ${LOG}
+echo "33" | tee -a ${VENTANA_3} ${LOG}
+echo "" | tee -a ${VENTANA_4} ${LOG}
 
 aptitude purge --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" ${PARA_DESINSTALAR} | tee -a ${LOG}
+
+echo "Desinstalando Asistente ..." | tee -a ${VENTANA_2} ${LOG}
+echo "66" | tee -a ${VENTANA_3} ${LOG}
+
 
 echo "#!/bin/bash" > /usr/bin/limpiar-asistente
 echo 'rm -rf /usr/share/asistente-actualizacion/cache/* | tee -a ${LOG}' >> /usr/bin/limpiar-asistente

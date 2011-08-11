@@ -24,13 +24,14 @@ build:
 
 install:
 
-	mkdir -p $(DESTDIR)/usr/share/asistente-actualizacion/
+	mkdir -p $(DESTDIR)/usr/share/asistente-actualizacion/scripts/
 	mkdir -p $(DESTDIR)/usr/bin/
 	mkdir -p $(DESTDIR)/etc/xdg/autostart/
 	mkdir -p $(DESTDIR)/etc/skel/.config/asistente-actualizacion/
 	mkdir -p $(DESTDIR)/usr/share/applications/
 
 	cp -rf cache gui log conf listas imagenes $(DESTDIR)/usr/share/asistente-actualizacion/
+	cp -rf scripts/funciones-actualizador.sh $(DESTDIR)/usr/share/asistente-actualizacion/scripts/
 	cp -rf scripts/aa-fin.sh $(DESTDIR)/usr/bin/aa-fin
 	cp -rf scripts/aa-inicio.sh $(DESTDIR)/usr/bin/aa-inicio
 	cp -rf scripts/aa-kernel.sh $(DESTDIR)/usr/bin/aa-kernel
