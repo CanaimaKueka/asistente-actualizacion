@@ -1,6 +1,6 @@
 Source: asistente-actualizacion
 Section: misc
-Priority: optional
+Priority: important
 Maintainer: Equipo de Desarrollo de Canaima GNU/Linux <desarrolladores@canaima.softwarelibre.gob.ve>
 Uploaders: Equipo de Desarrollo de Canaima GNU/Linux <desarrolladores@canaima.softwarelibre.gob.ve>
 Build-Depends: debhelper (>= 7.0.50~), cdbs
@@ -9,10 +9,9 @@ Homepage: http://canaima.softwarelibre.gob.ve/
 Vcs-Git: git://gitorious.org/canaima-gnu-linux/asistente-actualizacion.git
 Vcs-Browser: http://gitorious.org/canaima-gnu-linux/asistente-actualizacion/trees/master
 
-
 Package: asistente-actualizacion
 Architecture: all
-Depends: python, python-support (>= 1.0.10), aptitude, apt, ${shlibs:Depends}, ${misc:Depends}
+Depends: python, python-support (>= 1.0.10), aptitude, apt, python-notify, dmidecode, isc-dhcp-client, netbase, dpkg, zenity, util-linux, ${shlibs:Depends}, ${misc:Depends}
 Description: Asistente para migrar de Canaima 2.0 o 2.1 a 3.0 
  Asistente se encargado de proveer una forma facil e intuitiva
  para actualizar el sistema a Canaima 3.0

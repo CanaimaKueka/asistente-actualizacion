@@ -35,5 +35,5 @@ done
 
 [ $flag_270 == 0 ] && [ $flag_450 == 0 ] && [ $flag_455 == 0 ] && flag_pc=1
 
-echo "[BASH:aa-inicio.sh] ejecutando aa-notificar.py, localizado en "$( pwd ) > ${LOG}
+echo "[BASH:aa-inicio.sh] ejecutando aa-notificar.py, localizado en "$( pwd ) | tee -a ${LOG}
 [ ${flag_pc} == 1 ] && [ ${CONTROL_PARENTAL} == 0 ] && python /usr/share/asistente-actualizacion/gui/aa-notificar.py
