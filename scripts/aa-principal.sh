@@ -170,7 +170,7 @@ case ${PASO} in
 8)
 	# Removemos la configuración vieja del GRUB
 	echo "Eliminando configuración anterior del GRUB" | tee -a ${VENTANA_2} ${LOG}
-	[ -e /etc/default/grub ] && rm /etc/default/grub
+	rm /etc/default/grub
         ESTADO=$?
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
@@ -179,7 +179,7 @@ case ${PASO} in
 9)
 	# Limpiando Canaima 2.1 de aplicaciones no utilizadas en 3.0
 	echo "Limpiando Canaima 2.1 de aplicaciones no utilizadas en 3.0" | tee -a ${VENTANA_2} ${LOG}
-	DEBIAN_FRONTEND=noninteractive apt-get purge --allow-unauthenticated -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" -y --force-yes openoffice* firefox* thunderbird* canaima-instalador-vivo canaima-particionador | tee -a ${LOG}
+	DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes ~nopenoffice ~nfirefox ~nthunderbird ~ncanaima-instalador-vivo ~ncanaima-particionador | tee -a ${LOG}
         ESTADO=$?
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
