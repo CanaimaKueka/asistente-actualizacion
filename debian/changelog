@@ -1,3 +1,9 @@
+asistente-actualizacion (1.0+30) unstable; urgency=low
+
+  * [1e09c1e] Eliminando script de finalización de la actualización
+
+ -- Luis Alejandro Martínez Faneyth <martinez.faneyth@gmail.com>  Thu, 18 Aug 2011 01:03:37 -0430
+
 asistente-actualizacion (1.0+29) unstable; urgency=low
 
   * [d2fb852] Corrigiendo bug de sustitución de variable
