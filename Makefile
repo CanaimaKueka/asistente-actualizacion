@@ -32,7 +32,6 @@ install:
 
 	cp -rf cache gui log conf listas imagenes $(DESTDIR)/usr/share/asistente-actualizacion/
 	cp -rf scripts/funciones-actualizador.sh $(DESTDIR)/usr/share/asistente-actualizacion/scripts/
-	cp -rf scripts/aa-fin.sh $(DESTDIR)/usr/bin/aa-fin
 	cp -rf scripts/aa-inicio.sh $(DESTDIR)/usr/bin/aa-inicio
 	cp -rf scripts/aa-kernel.sh $(DESTDIR)/usr/bin/aa-kernel
 	cp -rf scripts/aa-principal.sh $(DESTDIR)/usr/bin/aa-principal
@@ -44,7 +43,6 @@ install:
 uninstall:
 
 	rm -rf $(DESTDIR)/usr/share/asistente-actualizacion/
-	rm $(DESTDIR)/usr/bin/aa-fin
 	rm $(DESTDIR)/usr/bin/aa-inicio
 	rm $(DESTDIR)/usr/bin/aa-kernel
 	rm $(DESTDIR)/usr/bin/aa-principal

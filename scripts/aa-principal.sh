@@ -573,7 +573,7 @@ case ${PASO} in
 		&& [ $( grep -c "${USUARIO}:.*:.*:.*:.*:.*:/bin/.*sh" /etc/passwd ) == 1 ] \
 		&& [ -d ${HOME_U} ] \
 		&& [ -d ${HOME_U}/.gconf ]; then
-			rm -rf ${usuario}/.gconf
+			rm -rf ${HOME_U}/.gconf
 		fi
 	done
         ESTADO=$?
@@ -584,8 +584,10 @@ case ${PASO} in
 
 43) 
 	echo "Finalizando" | tee -a ${VENTANA_2} ${LOG}
-	aa-fin &
+	echo "Reiniciando automáticamente en 20 segundos" | tee -a ${VENTANA_4} ${LOG}
 	echo "PASO=70" > ${PASO_FILE}
+	sleep 20
+	reboot
 	exit 0
 ;;
 

@@ -13,7 +13,7 @@ PASO="/usr/share/asistente-actualizacion/conf/paso.conf"
 def actualizar(n,action):
 
     log_file=open(LOG,"a")
-    log_file.write('[PYTHON:aa-notificar.py] [EJECUCIÓN] Función "actualizar", ejecuta aa-principal y luego aa-fin')
+    log_file.write('[PYTHON:aa-notificar.py] [EJECUCIÓN] Función "actualizar", ejecuta aa-principal')
     log_file.close()
 
     os.system("gksu aa-principal")
