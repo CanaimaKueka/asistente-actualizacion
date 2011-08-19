@@ -170,7 +170,9 @@ case ${PASO} in
 8)
 	# Removemos la configuración vieja del GRUB
 	echo "Eliminando configuración anterior del GRUB" | tee -a ${VENTANA_2} ${LOG}
-	rm /etc/default/grub
+	if [ -e /etc/default/grub ]; then
+		rm /etc/default/grub
+	fi
         ESTADO=$?
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
@@ -287,7 +289,7 @@ case ${PASO} in
 17)
 	# Actualizando gconf2
 	echo "Actualizando gconf2" | tee -a ${VENTANA_2} ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" install gconf2=2.28.1-6 libgconf2-4=2.28.1-6 gconf2-common=2.28.1-6 | tee -a ${LOG}
+	DEBIAN_FRONTEND=noninteractive aptitude --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" install gconf2=2.28.1-6 libgconf2-4=2.28.1-6 gconf2-common=2.28.1-6 libbonobo2-0=2.24.3-1 | tee -a ${LOG}
         ESTADO=$?
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
@@ -423,10 +425,22 @@ case ${PASO} in
 28) 
 	# Removemos configuraciones obsoletas
 	echo "Removiendo configuraciones obsoletas" | tee -a ${VENTANA_2} ${LOG}
-	rm -rf /etc/skel/.purple/ 
-	rm /etc/canaima_version 
-	rm /usr/share/applications/openoffice.org-*
-        ESTADO=$?
+	if [ -d /etc/skel/.purple/ ]; then
+		rm -rf /etc/skel/.purple/
+	        ESTADO=$?
+	        [ ${ESTADO} != 0 ] && ERROR_INESPERADO
+	fi
+	if [ -e /etc/canaima_version ]; then
+		rm /etc/canaima_version
+		ESTADO=$?
+                [ ${ESTADO} != 0 ] && ERROR_INESPERADO
+	fi
+        if [ -e /usr/share/applications/openoffice.org-writer.desktop ]; then
+		rm /usr/share/applications/openoffice.org-*
+		ESTADO=$?
+		[ ${ESTADO} != 0 ] && ERROR_INESPERADO
+	fi
+
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;

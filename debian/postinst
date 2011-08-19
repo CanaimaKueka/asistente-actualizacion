@@ -43,16 +43,16 @@ case ${1} in
 		&& [ -d ${HOME_U} ]; then
 
 			# Asegurando que el directorio .config/asistente-actualizacion/ esté creado
-			mkdir -p /home/${usuario_min}/.config/asistente-actualizacion/
+			mkdir -p /home/${USUARIO}/.config/asistente-actualizacion/
 
 			# con permisos apropiados
-			chown ${usuario_min}:${usuario_min} /home/${usuario_min}/.config/asistente-actualizacion/
+			chown ${USUARIO}:${USUARIO} /home/${USUARIO}/.config/asistente-actualizacion/
 			
 			# Copia del archivo de configuración que determina si debe ejecutarse asistente-actualizacion al inicio o no
-			cp /etc/skel/.config/asistente-actualizacion/mostrar.conf /home/${usuario_min}/.config/asistente-actualizacion/
+			cp /etc/skel/.config/asistente-actualizacion/mostrar.conf /home/${USUARIO}/.config/asistente-actualizacion/
 			
 			# con permisos apropiados
-			chown ${usuario_min}:${usuario_min} /home/${usuario_min}/.config/asistente-actualizacion/mostrar.conf
+			chown ${USUARIO}:${USUARIO} /home/${USUARIO}/.config/asistente-actualizacion/mostrar.conf
 		fi
 	done
 
