@@ -1,3 +1,9 @@
+asistente-actualizacion (2.0+1) unstable; urgency=low
+
+  * [7fcfe4e] Corrigiendo error en el postinstall
+
+ -- Luis Alejandro Martínez Faneyth <martinez.faneyth@gmail.com>  Tue, 06 Sep 2011 14:59:15 -0430
+
 asistente-actualizacion (2.0+0) unstable; urgency=low
 
   * [6c94906] Mejorando script de detección de las canaimitas
