@@ -19,7 +19,7 @@ PKG="asistente-actualizacion"
 BASE="/usr/share/asistente-actualizacion/"
 LOCAL="/usr/share/asistente-actualizacion/listas/canaima-local-paquetes.list"
 DESKTOP_FILE="/etc/xdg/autostart/asistente-actualizacion-automatico.desktop"
-AUTO_DESKTOP_FILE="/usr/share/applications/asistente-actualizacion-automatico.desktop"
+AUTO_DESKTOP_FILE="/usr/share/applications/asistente-actualizacion.desktop"
 
 case ${1} in
 
