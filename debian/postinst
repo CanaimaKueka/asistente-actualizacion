@@ -18,7 +18,8 @@
 PKG="asistente-actualizacion"
 BASE="/usr/share/asistente-actualizacion/"
 LOCAL="/usr/share/asistente-actualizacion/listas/canaima-local-paquetes.list"
-DESKTOP_FILE="/usr/share/applications/asistente-actualizacion.desktop"
+DESKTOP_FILE="/etc/xdg/autostart/asistente-actualizacion-automatico.desktop"
+AUTO_DESKTOP_FILE="/usr/share/applications/asistente-actualizacion-automatico.desktop"
 
 case ${1} in
 
@@ -104,7 +105,7 @@ case ${1} in
 
 	[ $FLAG_270 == 0 ] && [ $FLAG_450 == 0 ] && [ $FLAG_455 == 0 ] && [ $FLAG_270_1G == 0 ] && [ $FLAG_D2100 == 0 ] && [ $FLAG_M2400 == 0 ] && FLAG_PC=1 && echo "PC"
 
-	[ ${FLAG_PC} == 1 ] && [ -e ${DESKTOP_FILE} ] && rm -rf ${DESKTOP_FILE}
+	[ ${FLAG_PC} == 0 ] && [ -e ${DESKTOP_FILE} ] && [ -e ${AUTO_DESKTOP_FILE} ] && rm -rf ${AUTO_DESKTOP_FILE} && rm -rf ${DESKTOP_FILE}
 
 	;;
 
