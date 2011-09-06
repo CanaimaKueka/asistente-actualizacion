@@ -42,8 +42,10 @@ fi
 # Iteramos por los pasos
 while [ ${PASO} -lt 60 ]; do
 
+fuser -k /var/lib/dpkg/lock
+
 # Verificar si existe un gestor de paquetes trabajando
-[ $( ps -A | grep -cw update-manager ) == 1 ] || [ $( ps -A | grep -cw apt-get ) == 1 ] || [ $( ps -A | grep -cw aptitude ) == 1 ] && ERROR_APT
+[ $( ps -A | grep -cw update-manager ) == 1 ] || [ $( ps -A | grep -cw apt-get ) == 1 ] || [ $( ps -A | grep -cw aptitude ) == 1 ] || [ $( ps -A | grep -cw synaptic ) == 1 ] && ERROR_APT
 
 # Obteniendo dirección IP
 echo "Obteniendo dirección IP (dhclient)" | tee -a ${VENTANA_4} ${LOG}
