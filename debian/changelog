@@ -1,3 +1,9 @@
+asistente-actualizacion (2.0+2) unstable; urgency=low
+
+  * [cba65d6] Adaptando asistente para la actualización de Canaima 3.0 a Canaima 3.1.
+
+ -- Luis Alejandro Martínez Faneyth <luis@huntingbears.com.ve>  Fri, 30 Nov 2012 10:34:49 -0430
+
 asistente-actualizacion (2.0+1) unstable; urgency=low
 
   * [7fcfe4e] Corrigiendo error en el postinstall
