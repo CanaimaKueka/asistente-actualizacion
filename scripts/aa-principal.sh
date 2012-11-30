@@ -29,16 +29,6 @@ echo "" | tee -a ${VENTANA_2} ${LOG}
 echo "0" | tee -a ${VENTANA_3} ${LOG}
 echo "" | tee -a ${VENTANA_4} ${LOG}
 
-# Si estamos en una canaimita, desinstalamos el control parental que ralentiza el proceso
-if [ $( dpkg-query -W -f='${Package}\t${Status}\n' canaima-control-parental | grep -c "install ok installed" ) == 1 ]; then
-	aptitude purge --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" canaima-control-parental
-fi
-
-# Si estamos en una canaimita, desactivamos el filtrado de hosts que ralentiza el proceso
-if [ -e "/etc/hosts.canaima-control-parental.backup" ]; then
-	cp /etc/hosts.canaima-control-parental.backup /etc/hosts
-fi
-
 # Iteramos por los pasos
 while [ ${PASO} -lt 60 ]; do
 
@@ -49,6 +39,7 @@ fuser -k /var/lib/dpkg/lock
 
 # Obteniendo dirección IP
 echo "Obteniendo dirección IP (dhclient)" | tee -a ${VENTANA_4} ${LOG}
+/etc/init.d/network-manager restart | tee -a ${LOG}
 /etc/init.d/networking restart | tee -a ${LOG}
 dhclient | tee -a ${LOG}
 
@@ -78,7 +69,7 @@ case ${PASO} in
 	echo "Bienvenido" | tee -a ${VENTANA_4} ${LOG}
 
 	# Ventana de bienvenida
-	zenity --title="Asistente de Actualización a Canaima 3.0" --text="Este asistente se encargará de hacer los cambios necesarios para actualizar el sistema a la versión 3.0 de Canaima.\n\nAsegúrese que:\n\n* Dispone de una conexión a internet.\n\n* Su PC está conectada a una fuente de energía estable.\n\n* Tiene al menos 6GB de espacio libre en disco.\n\n* No está ejecutando un gestor o instalador de paquetes.\n\n* No tiene ningún documento importante abierto.\n\n* Dispone de al menos 2 horas libres de su tiempo.\n\nSi por alguna razón el proceso se detiene, puede reanudarlo desde el punto en que se interrumpió haciendo click en Aplicaciones > Herramientas del Sistema > Actualizador a Canaima 3.0.\n\n¿Desea continuar con la actualización?" --question --width=600
+	zenity --title="Asistente de Actualización a Canaima 3.1" --text="Este asistente se encargará de hacer los cambios necesarios para actualizar el sistema a la versión 3.1 de Canaima.\n\nAsegúrese que:\n\n* Dispone de una conexión a internet.\n\n* Su PC está conectada a una fuente de energía estable.\n\n* Tiene al menos 6GB de espacio libre en disco.\n\n* No está ejecutando un gestor o instalador de paquetes.\n\n* No tiene ningún documento importante abierto.\n\n* Dispone de al menos 2 horas libres de su tiempo.\n\nSi por alguna razón el proceso se detiene, puede reanudarlo desde el punto en que se interrumpió haciendo click en Aplicaciones > Herramientas del Sistema > Actualizador a Canaima 3.1.\n\n¿Desea continuar con la actualización?" --question --width=600
 	ESTADO=$?
 	[ ${ESTADO} == 1 ] && ERROR_CRITICO
 
@@ -87,13 +78,13 @@ case ${PASO} in
 ;;
 
 2)
-	echo "Actualizando repositorios para Canaima 3.0" | tee -a ${VENTANA_2} ${LOG}
+	echo "Actualizando repositorios para Canaima 3.1" | tee -a ${VENTANA_2} ${LOG}
 	echo "" | tee -a ${VENTANA_4} ${LOG}
 
 	# Aseguramos que tenemos los repositorios correctos
-	cp ${SOURCES_CANAIMA_3} ${SOURCES}
+	cp ${SOURCES_CANAIMA_31} ${SOURCES}
 	# Estableciendo prioridades superiores para paquetes provenientes de Debian
-	cp ${PREFERENCES_CANAIMA_3} ${PREFERENCES}
+	cp ${PREFERENCES_CANAIMA_31} ${PREFERENCES}
 
 	# Actualizamos la lista de paquetes
 	aptitude update | tee -a ${LOG}
@@ -104,7 +95,7 @@ case ${PASO} in
 ;;
 
 3)
-	echo "Se descargarán una serie de paquetes necesarios (1,5GB aprox.)" | tee -a ${VENTANA_2} ${LOG}
+	echo "Se descargarán una serie de paquetes necesarios (1GB aprox.)" | tee -a ${VENTANA_2} ${LOG}
 	echo "" | tee -a ${VENTANA_4} ${LOG}
 	DESCARGA_OFFSET="58"
 
@@ -131,17 +122,17 @@ case ${PASO} in
 ;;
 
 5)
-	# ------- ACTUALIZANDO CANAIMA 2.1 ------------------------------------------------------------------#
+	# ------- ACTUALIZANDO CANAIMA 3.0 ------------------------------------------------------------------#
 	#==================================================================================================#
 
-	echo "Actualizando Canaima 2.1" | tee -a ${VENTANA_1} ${LOG}
+	echo "Actualizando Canaima 3.0" | tee -a ${VENTANA_1} ${LOG}
 	echo "Actualizando lista de paquetes" | tee -a ${VENTANA_2} ${LOG}
 	echo "" | tee -a ${VENTANA_4} ${LOG}
 
 	# Aseguramos que tenemos los repositorios correctos
-	cp ${SOURCES_CANAIMA_2} ${SOURCES}
+	cp ${SOURCES_CANAIMA_30} ${SOURCES}
 	# Estableciendo prioridades superiores para paquetes provenientes de Debian
-	cp ${PREFERENCES_CANAIMA_2} ${PREFERENCES}
+	cp ${PREFERENCES_CANAIMA_30} ${PREFERENCES}
 
 	# Actualizamos la lista de paquetes
 	aptitude update | tee -a ${LOG}
@@ -152,8 +143,8 @@ case ${PASO} in
 ;;
 
 6)
-	# Actualizamos Canaima 2.1
-	echo "Descargando último software disponible para Canaima 2.1" | tee -a ${VENTANA_2} ${LOG}
+	# Actualizamos Canaima 3.0
+	echo "Descargando último software disponible para Canaima 3.0" | tee -a ${VENTANA_2} ${LOG}
 	DEBIAN_FRONTEND=noninteractive aptitude --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" full-upgrade | tee -a ${LOG}
         ESTADO=$?
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
@@ -162,29 +153,32 @@ case ${PASO} in
 
 7)
 	# Instalamos otro proveedor de gnome-www-browser
-	echo "Instalando otro proveedor de gnome-www-browser" | tee -a ${VENTANA_2} ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" galeon | tee -a ${LOG}
-        ESTADO=$?
+	#echo "Instalando otro proveedor de gnome-www-browser" | tee -a ${VENTANA_2} ${LOG}
+	#DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" galeon | tee -a ${LOG}
+        #ESTADO=$?
+	ESTADO=0
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 8)
 	# Removemos la configuración vieja del GRUB
-	echo "Eliminando configuración anterior del GRUB" | tee -a ${VENTANA_2} ${LOG}
-	if [ -e /etc/default/grub ]; then
-		rm /etc/default/grub
-	fi
-        ESTADO=$?
+	#echo "Eliminando configuración anterior del GRUB" | tee -a ${VENTANA_2} ${LOG}
+	#if [ -e /etc/default/grub ]; then
+	#	rm /etc/default/grub
+	#fi
+        #ESTADO=$?
+	ESTADO=0
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 9)
 	# Limpiando Canaima 2.1 de aplicaciones no utilizadas en 3.0
-	echo "Limpiando Canaima 2.1 de aplicaciones no utilizadas en 3.0" | tee -a ${VENTANA_2} ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes ~nopenoffice ~nfirefox ~nthunderbird ~ncanaima-instalador-vivo ~ncanaima-particionador | tee -a ${LOG}
-        ESTADO=$?
+	#echo "Limpiando Canaima 2.1 de aplicaciones no utilizadas en 3.0" | tee -a ${VENTANA_2} ${LOG}
+	#DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes ~nopenoffice ~nfirefox ~nthunderbird ~ncanaima-instalador-vivo ~ncanaima-particionador | tee -a ${LOG}
+        #ESTADO=$?
+ 	ESTADO=0
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
@@ -193,44 +187,45 @@ case ${PASO} in
 	# ------- ACTUALIZANDO COMPONENTES DE INSTALACIÓN DE LA BASE (DEBIAN SQUEEZE) ---------------------#
 	#==================================================================================================#
 
-	echo "Actualizando componentes de la base (Debian Squeeze)" | tee -a ${VENTANA_1} ${LOG}
-	echo "Estableciendo repositorios para el sistema base" | tee -a ${VENTANA_2} ${LOG}
+	#echo "Actualizando componentes de la base (Debian Squeeze)" | tee -a ${VENTANA_1} ${LOG}
+	#echo "Estableciendo repositorios para el sistema base" | tee -a ${VENTANA_2} ${LOG}
 
 	# Aseguramos que tenemos los repositorios correctos
-	cp ${SOURCES_DEBIAN} ${SOURCES}
+	#cp ${SOURCES_DEBIAN} ${SOURCES}
 	# Estableciendo prioridades superiores para paquetes provenientes de Debian
-	cp ${PREFERENCES_DEBIAN} ${PREFERENCES}
+	#cp ${PREFERENCES_DEBIAN} ${PREFERENCES}
 
 	# Actualizamos la lista de paquetes
-	aptitude update | tee -a ${LOG}
-        ESTADO=$?
-
+	#aptitude update | tee -a ${LOG}
+        #ESTADO=$?
+	ESTADO=0
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 11) 
 	# Actualizando componentes fundamentales de instalación
-	echo "Actualizando componentes fundamentales de instalación" | tee -a ${VENTANA_2} ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" aptitude apt dpkg debian-keyring locales --without-recommends | tee -a ${LOG} 
-        ESTADO=$?
+	#echo "Actualizando componentes fundamentales de instalación" | tee -a ${VENTANA_2} ${LOG}
+	#DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" aptitude apt dpkg debian-keyring locales --without-recommends | tee -a ${LOG} 
+        #ESTADO=$?
+	ESTADO=0
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 12)
 	# Estableciendo repositorios sólo para el sistema base
-	echo "Estableciendo repositorios para el sistema base" | tee -a ${VENTANA_2} ${LOG}
+	#echo "Estableciendo repositorios para el sistema base" | tee -a ${VENTANA_2} ${LOG}
 
 	# Aseguramos que tenemos los repositorios correctos
-	cp ${SOURCES_DEBIAN} ${SOURCES}
+	#cp ${SOURCES_DEBIAN} ${SOURCES}
 	# Estableciendo prioridades superiores para paquetes provenientes de Debian
-	cp ${PREFERENCES_DEBIAN} ${PREFERENCES}
+	#cp ${PREFERENCES_DEBIAN} ${PREFERENCES}
 
 	# Actualizamos la lista de paquetes
-	aptitude update | tee -a ${LOG}
-        ESTADO=$?
-
+	#aptitude update | tee -a ${LOG}
+        #ESTADO=$?
+	ESTADO=0
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
@@ -238,78 +233,81 @@ case ${PASO} in
 
 13)
 	# Instalando nuevo Kernel y librerías Perl
-	echo "Instalando nuevo Núcleo y librerías Perl" | tee -a ${VENTANA_2} ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" linux-image-2.6.32-5-$(uname -r | awk -F - '{print $3}') perl libperl5.10 | tee -a ${LOG}
-        ESTADO=$?
+	#echo "Instalando nuevo Núcleo y librerías Perl" | tee -a ${VENTANA_2} ${LOG}
+	#DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" linux-image-2.6.32-5-$(uname -r | awk -F - '{print $3}') perl libperl5.10 | tee -a ${LOG}
+        #ESTADO=$?
+	ESTADO=0
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 14)
 	# Estableciendo repositorios sólo para el sistema base
-	echo "Estableciendo repositorios para el sistema base" | tee -a ${VENTANA_2} ${LOG}
+	#echo "Estableciendo repositorios para el sistema base" | tee -a ${VENTANA_2} ${LOG}
 
 	# Aseguramos que tenemos los repositorios correctos
-	cp ${SOURCES_DEBIAN} ${SOURCES}
+	#cp ${SOURCES_DEBIAN} ${SOURCES}
 	# Estableciendo prioridades superiores para paquetes provenientes de Debian
-	cp ${PREFERENCES_DEBIAN} ${PREFERENCES}
+	#cp ${PREFERENCES_DEBIAN} ${PREFERENCES}
 
 	# Actualizamos la lista de paquetes
-	aptitude update | tee -a ${LOG}
-        ESTADO=$?
-
+	#aptitude update | tee -a ${LOG}
+        #ESTADO=$?
+	ESTADO=0
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 15)
 	# Actualizando gestor de dispositivos UDEV
-	echo "Actualizando gestor de dispositivos udev" | tee -a ${VENTANA_2} ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" udev | tee -a ${LOG}
-        ESTADO=$?
+	#echo "Actualizando gestor de dispositivos udev" | tee -a ${VENTANA_2} ${LOG}
+	#DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" udev | tee -a ${LOG}
+        #ESTADO=$?
+	ESTADO=0
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 16)
 	# Estableciendo repositorios sólo para el sistema base
-	echo "Estableciendo repositorios para el sistema base" | tee -a ${VENTANA_2} ${LOG}
+	#echo "Estableciendo repositorios para el sistema base" | tee -a ${VENTANA_2} ${LOG}
 
 	# Aseguramos que tenemos los repositorios correctos
-	cp ${SOURCES_DEBIAN} ${SOURCES}
+	#cp ${SOURCES_DEBIAN} ${SOURCES}
 	# Estableciendo prioridades superiores para paquetes provenientes de Debian
-	cp ${PREFERENCES_DEBIAN} ${PREFERENCES}
+	#cp ${PREFERENCES_DEBIAN} ${PREFERENCES}
 
 	# Actualizamos la lista de paquetes
-	aptitude update | tee -a ${LOG}
-        ESTADO=$?
-
+	#aptitude update | tee -a ${LOG}
+        #ESTADO=$?
+	ESTADO=0
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 17)
 	# Actualizando gconf2
-	echo "Actualizando gconf2" | tee -a ${VENTANA_2} ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" install gconf2=2.28.1-6 libgconf2-4=2.28.1-6 gconf2-common=2.28.1-6 libbonobo2-0=2.24.3-1 | tee -a ${LOG}
-        ESTADO=$?
+	#echo "Actualizando gconf2" | tee -a ${VENTANA_2} ${LOG}
+	#DEBIAN_FRONTEND=noninteractive aptitude --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" install gconf2=2.28.1-6 libgconf2-4=2.28.1-6 gconf2-common=2.28.1-6 libbonobo2-0=2.24.3-1 | tee -a ${LOG}
+        #ESTADO=$?
+	ESTADO=0
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 18)
 	# Estableciendo repositorios para el sistema base
-	echo "Estableciendo repositorios para el sistema base" | tee -a ${VENTANA_2} ${LOG}
+	#echo "Estableciendo repositorios para el sistema base" | tee -a ${VENTANA_2} ${LOG}
 
 	# Aseguramos que tenemos los repositorios correctos
-	cp ${SOURCES_DEBIAN} ${SOURCES}
+	#cp ${SOURCES_DEBIAN} ${SOURCES}
 	# Estableciendo prioridades superiores para paquetes provenientes de Debian
-	cp ${PREFERENCES_DEBIAN} ${PREFERENCES}
+	#cp ${PREFERENCES_DEBIAN} ${PREFERENCES}
 
 	# Actualizamos la lista de paquetes
-	aptitude update | tee -a ${LOG}
-        ESTADO=$?
-
+	#aptitude update | tee -a ${LOG}
+        #ESTADO=$?
+	ESTADO=0
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
@@ -326,77 +324,80 @@ case ${PASO} in
 
 20)
 	# Actualización parcial de la base
-	echo "Primera fase de actualización de todas las aplicaciones" | tee -a ${VENTANA_2} ${LOG}
-	DEBIAN_FRONTEND=noninteractive apt-get --allow-unauthenticated -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" -y --force-yes upgrade | tee -a ${LOG}
-        ESTADO=$?
+	#echo "Primera fase de actualización de todas las aplicaciones" | tee -a ${VENTANA_2} ${LOG}
+	#DEBIAN_FRONTEND=noninteractive apt-get --allow-unauthenticated -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" -y --force-yes upgrade | tee -a ${LOG}
+        #ESTADO=$?
+	ESTADO=0
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 21)
 	# Estableciendo repositorios para el sistema base
-	echo "Estableciendo repositorios para el sistema base" | tee -a ${VENTANA_2} ${LOG}
+	#echo "Estableciendo repositorios para el sistema base" | tee -a ${VENTANA_2} ${LOG}
 
 	# Aseguramos que tenemos los repositorios correctos
-	cp ${SOURCES_DEBIAN} ${SOURCES}
+	#cp ${SOURCES_DEBIAN} ${SOURCES}
 	# Estableciendo prioridades superiores para paquetes provenientes de Debian
-	cp ${PREFERENCES_DEBIAN} ${PREFERENCES}
+	#cp ${PREFERENCES_DEBIAN} ${PREFERENCES}
 
 	# Actualizamos la lista de paquetes
-	aptitude update | tee -a ${LOG}
-        ESTADO=$?
-
+	#aptitude update | tee -a ${LOG}
+        #ESTADO=$?
+	ESTADO=0
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 22)
 	# Actualización total de la base
-	echo "Segunda fase de actualización de todas las aplicaciones" | tee -a ${VENTANA_2} ${LOG}
-	DEBIAN_FRONTEND=noninteractive apt-get --allow-unauthenticated -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" -y --force-yes dist-upgrade | tee -a ${LOG}
-        ESTADO=$?
+	#echo "Segunda fase de actualización de todas las aplicaciones" | tee -a ${VENTANA_2} ${LOG}
+	#DEBIAN_FRONTEND=noninteractive apt-get --allow-unauthenticated -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" -y --force-yes dist-upgrade | tee -a ${LOG}
+        #ESTADO=$?
+	ESTADO=0
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 23)
 	# Estableciendo repositorios para el sistema base
-	echo "Estableciendo repositorios para el sistema base" | tee -a ${VENTANA_2} ${LOG}
+	#echo "Estableciendo repositorios para el sistema base" | tee -a ${VENTANA_2} ${LOG}
 
 	# Aseguramos que tenemos los repositorios correctos
-	cp ${SOURCES_DEBIAN} ${SOURCES}
+	#cp ${SOURCES_DEBIAN} ${SOURCES}
 	# Estableciendo prioridades superiores para paquetes provenientes de Debian
-	cp ${PREFERENCES_DEBIAN} ${PREFERENCES}
+	#cp ${PREFERENCES_DEBIAN} ${PREFERENCES}
 
 	# Actualizamos la lista de paquetes
-	aptitude update | tee -a ${LOG}
-        ESTADO=$?
-
+	#aptitude update | tee -a ${LOG}
+        #ESTADO=$?
+	ESTADO=0
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 24)
 	# Actualización completa de la base
-	echo "Tercera fase de actualización de todas las aplicaciones" | tee -a ${VENTANA_2} ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" full-upgrade | tee -a ${LOG}
-        ESTADO=$?
+	#echo "Tercera fase de actualización de todas las aplicaciones" | tee -a ${VENTANA_2} ${LOG}
+	#DEBIAN_FRONTEND=noninteractive aptitude --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" full-upgrade | tee -a ${LOG}
+        #ESTADO=$?
+	ESTADO=0
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 25)
-	# ------- ACTUALIZANDO COMPONENTES DE CANAIMA 3.0 -------------------------------------------------#
+	# ------- ACTUALIZANDO COMPONENTES DE CANAIMA 3.1 -------------------------------------------------#
 	#==================================================================================================#
 
-	# Estableciendo repositorios para Canaima 3.0
-	echo "Actualizando a Canaima 3.0" | tee -a ${VENTANA_1} ${LOG}
-	echo "Estableciendo repositorios para Canaima 3.0" | tee -a ${VENTANA_2} ${LOG}
+	# Estableciendo repositorios para Canaima 3.1
+	echo "Actualizando a Canaima 3.1" | tee -a ${VENTANA_1} ${LOG}
+	echo "Estableciendo repositorios para Canaima 3.1" | tee -a ${VENTANA_2} ${LOG}
 
 	# Aseguramos que tenemos los repositorios correctos
-	cp ${SOURCES_CANAIMA_3} ${SOURCES}
+	cp ${SOURCES_CANAIMA_31} ${SOURCES}
 	# Estableciendo prioridades superiores para paquetes provenientes de Debian
-	cp ${PREFERENCES_CANAIMA_3} ${PREFERENCES}
+	cp ${PREFERENCES_CANAIMA_31} ${PREFERENCES}
 
 	# Actualizamos la lista de paquetes	
 	aptitude update | tee -a ${LOG}
@@ -408,7 +409,7 @@ case ${PASO} in
 
 26) 
 	# Instalando llaves del repositorio Canaima
-	echo "Instalando llaves del repositorio de Canaima 3.0" | tee -a ${VENTANA_2} ${LOG}
+	echo "Instalando llaves del repositorio de Canaima 3.1" | tee -a ${VENTANA_2} ${LOG}
 	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" canaima-llaves | tee -a ${LOG}
         ESTADO=$?
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
@@ -417,39 +418,40 @@ case ${PASO} in
 
 27) 
 	# Removiendo paquetes innecesarios
-	echo "Removiendo paquetes innecesarios" | tee -a ${VENTANA_2} ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" epiphany-browser epiphany-browser-data libgraphviz4 libslab0 gtkhtml3.14 busybox-syslogd dsyslog inetutils-syslogd rsyslog socklog-run sysklogd syslog-ng libfam0c102 | tee -a ${LOG}
-        ESTADO=$?
+	#echo "Removiendo paquetes innecesarios" | tee -a ${VENTANA_2} ${LOG}
+	#DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" epiphany-browser epiphany-browser-data libgraphviz4 libslab0 gtkhtml3.14 busybox-syslogd dsyslog inetutils-syslogd rsyslog socklog-run sysklogd syslog-ng libfam0c102 | tee -a ${LOG}
+        #ESTADO=$?
+        ESTADO=0
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 28) 
 	# Removemos configuraciones obsoletas
-	echo "Removiendo configuraciones obsoletas" | tee -a ${VENTANA_2} ${LOG}
-	if [ -d /etc/skel/.purple/ ]; then
-		rm -rf /etc/skel/.purple/
-	        ESTADO=$?
-	        [ ${ESTADO} != 0 ] && ERROR_INESPERADO
-	fi
-	if [ -e /etc/canaima_version ]; then
-		rm /etc/canaima_version
-		ESTADO=$?
-                [ ${ESTADO} != 0 ] && ERROR_INESPERADO
-	fi
-        if [ -e /usr/share/applications/openoffice.org-writer.desktop ]; then
-		rm /usr/share/applications/openoffice.org-*
-		ESTADO=$?
-		[ ${ESTADO} != 0 ] && ERROR_INESPERADO
-	fi
-
+	#echo "Removiendo configuraciones obsoletas" | tee -a ${VENTANA_2} ${LOG}
+	#if [ -d /etc/skel/.purple/ ]; then
+	#	rm -rf /etc/skel/.purple/
+	#        ESTADO=$?
+	#        [ ${ESTADO} != 0 ] && ERROR_INESPERADO
+	#fi
+	#if [ -e /etc/canaima_version ]; then
+	#	rm /etc/canaima_version
+	#	ESTADO=$?
+        #        [ ${ESTADO} != 0 ] && ERROR_INESPERADO
+	#fi
+        #if [ -e /usr/share/applications/openoffice.org-writer.desktop ]; then
+	#	rm /usr/share/applications/openoffice.org-*
+	#	ESTADO=$?
+	#	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
+	#fi
+	ESTADO=0
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 29) 
-	# Instalando escritorio de Canaima 3.0
-	echo "Instalando escritorio de Canaima 3.0" | tee -a ${VENTANA_2} ${LOG}
+	# Instalando escritorio de Canaima 3.1
+	echo "Instalando escritorio de Canaima 3.1" | tee -a ${VENTANA_2} ${LOG}
 	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" canaima-escritorio-gnome | tee -a ${LOG}
         ESTADO=$?
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
@@ -458,16 +460,17 @@ case ${PASO} in
 
 30) 
 	# Removiendo Navegador web de transición
-	echo "Removiendo proveedor de gnome-www-browser galeon" | tee -a ${VENTANA_2} ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" galeon | tee -a ${LOG}
-        ESTADO=$?
+	#echo "Removiendo proveedor de gnome-www-browser galeon" | tee -a ${VENTANA_2} ${LOG}
+	#DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" galeon | tee -a ${LOG}
+        #ESTADO=$?
+	ESTADO=0
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 31) 
-	# Actualización final a Canaima 3.0
-	echo "Sincronizando aplicaciones con el Repositorio de Canaima 3.0" | tee -a ${VENTANA_2} ${LOG}
+	# Actualización final a Canaima 3.1
+	echo "Sincronizando aplicaciones con el Repositorio de Canaima 3.1" | tee -a ${VENTANA_2} ${LOG}
 	DEBIAN_FRONTEND=noninteractive aptitude --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" full-upgrade | tee -a ${LOG}
         ESTADO=$?
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
@@ -476,18 +479,20 @@ case ${PASO} in
 
 32)
 	# Removiendo paquetes innecesarios
-	echo "Removiendo paquetes innecesarios" | tee -a ${VENTANA_2} ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" gstreamer0.10-gnomevfs splashy canaima-accesibilidad | tee -a ${LOG}
-        ESTADO=$?
+	#echo "Removiendo paquetes innecesarios" | tee -a ${VENTANA_2} ${LOG}
+	#DEBIAN_FRONTEND=noninteractive aptitude purge --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" gstreamer0.10-gnomevfs splashy canaima-accesibilidad | tee -a ${LOG}
+        #ESTADO=$?
+	ESTADO=0
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 33)
 	# Actualizando a GDM3
-	echo "Actualizando el gestor de escritorios (gdm -> gdm3)" | tee -a ${VENTANA_2} ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" gdm3 | tee -a ${LOG}
-        ESTADO=$?
+	#echo "Actualizando el gestor de escritorios (gdm -> gdm3)" | tee -a ${VENTANA_2} ${LOG}
+	#DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" gdm3 | tee -a ${LOG}
+        #ESTADO=$?
+	ESTADO=0
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
@@ -502,7 +507,7 @@ case ${PASO} in
 	debconf-set-selections ${DEBCONF_SEL}
 
 	# Actualizando a BURG
-	echo "Actualizando el gestor de arranque (grub -> burg)" | tee -a ${VENTANA_2} ${LOG}
+	echo "Actualizando el gestor de arranque" | tee -a ${VENTANA_2} ${LOG}
 	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" burg | tee -a ${LOG}
 	burg-install --force ${DISCO}
         ESTADO=$?
@@ -515,7 +520,6 @@ case ${PASO} in
 	echo "Fase final de la actualizacion" | tee -a ${VENTANA_2} ${LOG}
 	echo "Verificando la instalación de canaima-base" | tee -a ${VENTANA_2} ${LOG}
 	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" canaima-base | tee -a ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" canaima-base | tee -a ${LOG}
         ESTADO=$?
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
@@ -524,8 +528,7 @@ case ${PASO} in
 36)
 	# Reinstalando Estilo Visual
 	echo "Verificando la instalación de canaima-estilo-visual" | tee -a ${VENTANA_2} ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" canaima-estilo-visual | tee -a ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" canaima-estilo-visual | tee -a ${LOG}
+	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" canaima-estilo-visual-gnome | tee -a ${LOG}
         ESTADO=$?
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
@@ -535,7 +538,6 @@ case ${PASO} in
 	# Reinstalando Escritorio
 	echo "Verificando la instalación de canaima-escritorio-gnome" | tee -a ${VENTANA_2} ${LOG}
 	DEBIAN_FRONTEND=noninteractive aptitude install --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" canaima-escritorio-gnome | tee -a ${LOG}
-	DEBIAN_FRONTEND=noninteractive aptitude reinstall --assume-yes --allow-untrusted -o DPkg::Options::="--force-confmiss" -o DPkg::Options::="--force-confnew" -o DPkg::Options::="--force-overwrite" canaima-escritorio-gnome | tee -a ${LOG}
         ESTADO=$?
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
@@ -561,8 +563,8 @@ case ${PASO} in
 
 40)
 	# Reconfigurando el Estilo Visual
-	echo "Verificando la instalación de canaima-estilo-visual" | tee -a ${VENTANA_2} ${LOG}
-	DEBIAN_FRONTEND=noninteractive dpkg-reconfigure canaima-estilo-visual | tee -a ${LOG}
+	echo "Verificando la instalación de componentes" | tee -a ${VENTANA_2} ${LOG}
+	DEBIAN_FRONTEND=noninteractive dpkg-reconfigure canaima-estilo-visual-gnome canaima-plymouth canaima-chat-gnome canaima-bienvenido-gnome canaima-escritorio-gnome canaima-base | tee -a ${LOG}
         ESTADO=$?
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
@@ -570,15 +572,16 @@ case ${PASO} in
 
 41)
 	# Actualizando entradas del BURG
-	echo "Actualizando sistemas operativos en el gestor de arranque" | tee -a ${VENTANA_2} ${LOG}
-	update-burg | tee -a ${LOG}
-        ESTADO=$?
+	#echo "Actualizando sistemas operativos en el gestor de arranque" | tee -a ${VENTANA_2} ${LOG}
+	#update-burg | tee -a ${LOG}
+        #ESTADO=$?
+	ESTADO=0
 	[ ${ESTADO} == 0 ] && echo "PASO=$[${PASO}+1]" > ${PASO_FILE}
 	[ ${ESTADO} != 0 ] && ERROR_INESPERADO
 ;;
 
 42) 
-	echo "Aplicando configuraciones por defecto para Canaima 3.0" | tee -a ${VENTANA_2} ${LOG}
+	echo "Aplicando configuraciones por defecto para Canaima 3.1" | tee -a ${VENTANA_2} ${LOG}
 
 	# Para cada usuario en /home/ ...
 	for HOME_U in /home/*?; do

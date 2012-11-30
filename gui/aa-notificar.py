@@ -81,7 +81,7 @@ if __name__ == '__main__':
 
             pynotify.init("Asistente de Actualización")
             loop=gobject.MainLoop()
-            n=pynotify.Notification("Nueva actualización disponible", "Ya puede actualizar a Canaima 3.0")
+            n=pynotify.Notification("Nueva actualización disponible", "Ya puede actualizar a Canaima 3.1")
             n.set_urgency(pynotify.URGENCY_CRITICAL)
             n.set_timeout(pynotify.EXPIRES_NEVER)
             n.add_action("actualizar", "Actualizar Ahora", actualizar)
@@ -119,7 +119,7 @@ if __name__ == '__main__':
             check_cb_conf.close()
             pynotify.init("Asistente de Actualización")
             loop=gobject.MainLoop()
-            n=pynotify.Notification("Bienvenido a Canaima GNU/Linux 3.0","Ya puede usar su sistema.")
+            n=pynotify.Notification("Bienvenido a Canaima GNU/Linux 3.1","Ya puede usar su sistema.")
             n.set_timeout(pynotify.EXPIRES_NEVER)
             n.show()
             loop.run()
