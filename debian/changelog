@@ -1,4 +1,4 @@
-asistente-actualizacion (2.0+2) unstable; urgency=low
+asistente-actualizacion (3.0-1) stable; urgency=low
 
   * [cba65d6] Adaptando asistente para la actualización de Canaima 3.0 a Canaima 3.1.
 

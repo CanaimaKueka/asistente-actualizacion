@@ -17,7 +17,7 @@
         <child>
           <widget class="GtkLabel" id="mensaje1">
             <property name="visible">True</property>
-            <property name="label" translatable="yes">Asistente de Actualizaci&#xF3;n de Canaima 2.1 a 3.0</property>
+            <property name="label" translatable="yes">Asistente de Actualizaci&#xF3;n de Canaima 3.0 a 3.1</property>
           </widget>
           <packing>
             <property name="position">0</property>

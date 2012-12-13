@@ -83,8 +83,6 @@ case ${PASO} in
 
 	# Aseguramos que tenemos los repositorios correctos
 	cp ${SOURCES_CANAIMA_31} ${SOURCES}
-	# Estableciendo prioridades superiores para paquetes provenientes de Debian
-	cp ${PREFERENCES_CANAIMA_31} ${PREFERENCES}
 
 	# Actualizamos la lista de paquetes
 	aptitude update | tee -a ${LOG}
@@ -131,8 +129,6 @@ case ${PASO} in
 
 	# Aseguramos que tenemos los repositorios correctos
 	cp ${SOURCES_CANAIMA_30} ${SOURCES}
-	# Estableciendo prioridades superiores para paquetes provenientes de Debian
-	cp ${PREFERENCES_CANAIMA_30} ${PREFERENCES}
 
 	# Actualizamos la lista de paquetes
 	aptitude update | tee -a ${LOG}
@@ -396,8 +392,6 @@ case ${PASO} in
 
 	# Aseguramos que tenemos los repositorios correctos
 	cp ${SOURCES_CANAIMA_31} ${SOURCES}
-	# Estableciendo prioridades superiores para paquetes provenientes de Debian
-	cp ${PREFERENCES_CANAIMA_31} ${PREFERENCES}
 
 	# Actualizamos la lista de paquetes	
 	aptitude update | tee -a ${LOG}
